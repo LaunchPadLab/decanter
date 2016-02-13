@@ -7,7 +7,7 @@ Installation
 Add Gem:
 
 ```ruby
-gem "params_transformer"
+gem "decanter"
 ```
 
 ```
