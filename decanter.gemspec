@@ -6,11 +6,11 @@ require 'decanter/version'
 Gem::Specification.new do |spec|
   spec.name          = "decanter"
   spec.version       = Decanter::VERSION
-  spec.authors       = ["Ryan Francis"]
-  spec.email         = ["ryan.p.francis@gmail.com"]
+  spec.authors       = ["Ryan Francis", "Dave Corwin"]
+  spec.email         = ["ryan@launchpadlab.com"]
 
-  spec.summary       = %q{Rails form parser}
-  spec.description   = %q{Framework for intuitively parsing Rails forms}
+  spec.summary       = %q{Form Parser for Rails}
+  spec.description   = %q{Decanter aims to reduce complexity in Rails controllers by creating a place for transforming data before it hits the model and database.}
   spec.homepage      = "https://github.com/launchpadlab/decanter"
   spec.license       = "MIT"
 

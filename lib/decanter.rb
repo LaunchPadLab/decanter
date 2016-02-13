@@ -15,6 +15,7 @@ module Decanter
   end
 end
 
+require 'decanter/version'
 require 'active_support/inflector'
 require 'decanter/base'
 require 'decanter/core'
