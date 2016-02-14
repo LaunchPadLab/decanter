@@ -9,7 +9,7 @@ module Decanter
   def self.decanter_for(klass_or_sym)
     name = klass_or_sym.is_a?(Class) ?
             klass_or_sym.name :
-            klass_or_sym.to_s.singularize.capitalize
+            klass_or_sym.to_s.singularize.camelize
 
     @@decanters["#{name}Decanter"] || (raise NameError.new("unknown decanter #{name}Decanter"))
   end
