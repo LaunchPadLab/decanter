@@ -6,12 +6,12 @@ module Decanter
     end
 
     def decant_update(args={}, context=nil)
-      self.attributes = self.decant(args, context)
+      self.attributes = self.class.decant(args, context)
       self.save(context: context)
     end
 
     def decant_update!(args={}, context=nil)
-      self.attributes = self.decant(args, context)
+      self.attributes = self.class.decant(args, context)
       self.save!(context: context)
     end
 
