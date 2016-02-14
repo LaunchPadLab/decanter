@@ -4,7 +4,7 @@ module Decanter
 
       allow String
 
-      parser do |val, options|
+      parser do |name, val, options|
         val.to_s
       end
     end

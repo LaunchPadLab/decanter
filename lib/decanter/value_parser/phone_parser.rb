@@ -1,12 +1,12 @@
 module Decanter
   module ValueParser
     class PhoneParser < Base
-      REGEX = /(\d|[.])/
+      REGEX = /\d/
 
       allow Fixnum
 
-      parser do |val, options|
-        val.scan(REGEX).join.try(:to_s)
+      parser do |name, val, options|
+        val.scan(REGEX).join.to_s
       end
     end
   end

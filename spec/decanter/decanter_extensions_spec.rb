@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Decanter::Extensions do
 
   let(:dummy_class)    { Class.new { include Decanter::Extensions } }
-  let(:dummy_instance) { Class.new { include Decanter::Extensions }.new }
+  let(:dummy_instance) { dummy_class.new }
 
   before(:each) do
     allow(dummy_class).to receive(:new).and_return(dummy_instance)
@@ -11,7 +11,7 @@ describe Decanter::Extensions do
     allow(dummy_instance).to receive(:attributes=)
     allow(dummy_instance).to receive(:save)
     allow(dummy_instance).to receive(:save!)
-    allow(dummy_instance).to receive(:decant) { |args, context| args }
+    # allow(dummy_instance).to receive(:decant) { |args, context| args }
   end
 
   shared_examples 'a decanter update' do |strict|
