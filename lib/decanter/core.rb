@@ -3,20 +3,19 @@ module Decanter
 
     def self.included(base)
       base.extend(ClassMethods)
-      Decanter.register(base)
     end
 
     module ClassMethods
 
       def associations
-        @associations ||= {}
+        @associations ||= {}.with_indifferent_access
       end
 
       def inputs
-        @inputs ||= {}
+        @inputs ||= {}.with_indifferent_access
       end
 
-      def input(name, type, **options)
+      def input(name=nil, type, **options)
         set_input options, {
           name:    name,
           options: options.reject { |k| k == :context },
@@ -32,7 +31,7 @@ module Decanter
         (inputs[context || :default] || {})[name]
       end
 
-      def has_many(name, **options)
+      def has_many(name=nil, **options)
         set_association options, {
           key:     options[:key] || "#{name}_attributes".to_sym,
           name:    name,
@@ -41,7 +40,7 @@ module Decanter
         }
       end
 
-      def has_one(name, **options)
+      def has_one(name=nil, **options)
         set_association options, {
           key:     options[:key] || "#{name}_attributes".to_sym,
           name:    name,
@@ -88,7 +87,7 @@ module Decanter
       def handle_arg(name, value, context)
         case
         when input_cfg = input_for(name, context)
-          [name, parse(input_cfg[:type], value)]
+          [name, parse(name, input_cfg[:type], value, input_cfg[:options])]
         when assoc = has_one_for(name, context)
           [assoc.pop[:key], Decanter::decanter_for(assoc.first).decant(value, context)]
         when assoc = has_many_for(name, context)
@@ -99,8 +98,10 @@ module Decanter
         end
       end
 
-      def parse(type, val)
-        ValueParser.value_parser_for(type).parse(val)
+      def parse(name, type, val, options)
+        type ?
+          ValueParser.value_parser_for(type).parse(name, val, options) :
+          val
       end
     end
   end

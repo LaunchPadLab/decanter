@@ -1,8 +1,8 @@
 module Decanter
   module ValueParser
-    class DateParser < Base
+    class DateTimeParser < Base
 
-      allow Date
+      allow DateTime
 
       parser do |name, val, options|
         parse_format = options.fetch(:parse_format, '%m/%d/%Y')
@@ -11,4 +11,3 @@ module Decanter
     end
   end
 end
-

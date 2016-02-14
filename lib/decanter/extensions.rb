@@ -6,12 +6,12 @@ module Decanter
     end
 
     def decant_update(args={}, context=nil)
-      self.attributes = self.decant(args, context)
+      self.attributes = self.class.decant(args, context)
       self.save(context: context)
     end
 
     def decant_update!(args={}, context=nil)
-      self.attributes = self.decant(args, context)
+      self.attributes = self.class.decant(args, context)
       self.save!(context: context)
     end
 
@@ -26,9 +26,8 @@ module Decanter
       end
 
       def decant(args, context)
-        decanter_for(self).decant(args, context)
+        Decanter.decanter_for(self).decant(args, context)
       end
     end
   end
 end
-ActiveRecord::Base.include(Decanter::Extensions) if defined? ActiveRecord
