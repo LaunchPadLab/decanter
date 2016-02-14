@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Decanter::ValueParser::BooleanParser do
+describe 'BooleanParser' do
   describe '#parse' do
     context '1' do
       it 'returns true' do

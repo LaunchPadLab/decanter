@@ -3,9 +3,9 @@ module Decanter
     class DateParser < Base
       def self.parse(val, options = {})
         parse_format = options.fetch(:parse_format, '%m/%d/%Y')
-        return input_value unless input_value.present?
-        return input_value if input_value.is_a?(Date)
-        ::Date.strptime(input_value, parse_format)
+        return val unless val.present?
+        return val if val.is_a?(Date)
+        ::Date.strptime(val, parse_format)
       end
     end
   end

@@ -15,4 +15,5 @@ end
 require_relative 'value_parser/base'
 require_relative 'value_parser/core'
 require_relative 'value_parser/boolean_parser'
+require_relative 'value_parser/date_parser'
 require_relative 'value_parser/string_parser'
