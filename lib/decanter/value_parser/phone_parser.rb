@@ -1,11 +1,12 @@
 module Decanter
   module ValueParser
-    class StringParser < Base
+    class PhoneParser < Base
+      REGEX = /\d/
 
-      allow String
+      allow Fixnum
 
       parser do |name, val, options|
-        val.to_s
+        val.scan(REGEX).join.to_s
       end
     end
   end

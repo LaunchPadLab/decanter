@@ -1,3 +1,5 @@
+require_relative 'core'
+
 module Decanter
   module ValueParser
     class Base

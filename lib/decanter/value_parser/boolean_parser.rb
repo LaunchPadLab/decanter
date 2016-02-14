@@ -1,15 +1,11 @@
 module Decanter
   module ValueParser
     class BooleanParser < Base
-      def self.parse(val)
-        case val
-        when nil
-          nil
-        when 1, '1', true, 'true'
-          true
-        else
-          false
-        end
+
+      allow TrueClass, FalseClass
+
+      parser do |name, val, options|
+        [1, '1'].include?(val) || !!/true/i.match(val.to_s)
       end
     end
   end

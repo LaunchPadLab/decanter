@@ -1,16 +1,41 @@
 require 'spec_helper'
 
-describe Decanter::ValueParser::BooleanParser do
+describe 'BooleanParser' do
+
+  let(:parser) { Decanter::ValueParser::BooleanParser }
+
   describe '#parse' do
-    context '1' do
-      it 'returns true' do
-        expect(Decanter::ValueParser::BooleanParser.parse(1)).to be true
+
+    trues = [
+      ['number', 1],
+      ['string', 1],
+      ['boolean', true],
+      ['string', 'true'],
+      ['string', 'True'],
+      ['string', 'truE']
+    ]
+
+    falses = [
+      ['number', 0],
+      ['number', 2],
+      ['string', 2],
+      ['boolean', false],
+      ['string', 'tru']
+    ]
+
+    context 'returns true for' do
+      trues.each do |cond|
+        it "#{cond[0]}: #{cond[1]}" do
+          expect(parser.parse('foo', cond[1])).to be true
+        end
       end
     end
 
-    context 'foo' do
-      it 'returns false' do
-        expect(Decanter::ValueParser::BooleanParser.parse('foo')).to be false
+    context 'returns false for' do
+      falses.each do |cond|
+        it "#{cond[0]}: #{cond[1]}" do
+          expect(parser.parse('foo', cond[1])).to be false
+        end
       end
     end
   end
