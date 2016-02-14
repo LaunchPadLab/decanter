@@ -156,13 +156,14 @@ describe Decanter::Core do
     end
 
     it 'calls Decanter::ValueParser.value_parser_for with the given type' do
-      dummy.parse(:foo, 'bar')
+      dummy.parse(:foo, 'bar', {})
       expect(Decanter::ValueParser).to have_received(:value_parser_for).with(:foo)
     end
 
-    it 'calls parse with the given value on the found parser' do
-      dummy.parse(:foo, 'bar')
-      expect(parser).to have_received(:parse).with('bar')
+    it 'calls parse with the given value and options on the found parser' do
+      options = {}
+      dummy.parse(:foo, 'bar', options)
+      expect(parser).to have_received(:parse).with('bar', options)
     end
   end
 

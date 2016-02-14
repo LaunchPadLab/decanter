@@ -7,7 +7,7 @@ module Decanter
       end
 
       module ClassMethods
-        def parse(val)
+        def parse(val, options={})
           val
         end
       end

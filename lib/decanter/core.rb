@@ -87,7 +87,7 @@ module Decanter
       def handle_arg(name, value, context)
         case
         when input_cfg = input_for(name, context)
-          [name, parse(input_cfg[:type], value)]
+          [name, parse(input_cfg[:type], value, input_cfg[:options])]
         when assoc = has_one_for(name, context)
           [assoc.pop[:key], Decanter::decanter_for(assoc.first).decant(value, context)]
         when assoc = has_many_for(name, context)
@@ -98,8 +98,8 @@ module Decanter
         end
       end
 
-      def parse(type, val)
-        ValueParser.value_parser_for(type).parse(val)
+      def parse(type, val, options)
+        ValueParser.value_parser_for(type).parse(val, options)
       end
     end
   end

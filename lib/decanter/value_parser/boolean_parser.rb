@@ -1,7 +1,7 @@
 module Decanter
   module ValueParser
     class BooleanParser < Base
-      def self.parse(val)
+      def self.parse(val, options={})
         case val
         when nil
           nil
