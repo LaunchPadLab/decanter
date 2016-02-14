@@ -16,7 +16,7 @@ module Decanter
         @inputs ||= {}
       end
 
-      def input(name, type, **options)
+      def input(name=nil, type, **options)
         set_input options, {
           name:    name,
           options: options.reject { |k| k == :context },
@@ -32,7 +32,7 @@ module Decanter
         (inputs[context || :default] || {})[name]
       end
 
-      def has_many(name, **options)
+      def has_many(name=nil, **options)
         set_association options, {
           key:     options[:key] || "#{name}_attributes".to_sym,
           name:    name,
@@ -41,7 +41,7 @@ module Decanter
         }
       end
 
-      def has_one(name, **options)
+      def has_one(name=nil, **options)
         set_association options, {
           key:     options[:key] || "#{name}_attributes".to_sym,
           name:    name,
@@ -99,7 +99,9 @@ module Decanter
       end
 
       def parse(type, val, options)
-        ValueParser.value_parser_for(type).parse(val, options)
+        type ?
+          ValueParser.value_parser_for(type).parse(name, val, options) :
+          val
       end
     end
   end
