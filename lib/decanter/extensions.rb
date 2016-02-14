@@ -31,4 +31,3 @@ module Decanter
     end
   end
 end
-ActiveRecord::Base.include(Decanter::Extensions) if defined? ActiveRecord

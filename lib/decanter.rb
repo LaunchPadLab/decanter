@@ -21,3 +21,4 @@ require 'decanter/base'
 require 'decanter/core'
 require 'decanter/extensions'
 require 'decanter/value_parser'
+require 'decanter/railtie' if defined? ::Rails::Railtie
