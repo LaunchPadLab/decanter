@@ -79,6 +79,7 @@ module Decanter
       end
 
       def decant(args={}, context=nil)
+        args = args.to_h if args.is_a?(ActionController::Parameters) # i.e. Rails 5
         Hash[
           args.map { |name, value| handle_arg(name, value, context) }.compact
         ]
