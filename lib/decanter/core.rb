@@ -3,7 +3,6 @@ module Decanter
 
     def self.included(base)
       base.extend(ClassMethods)
-      Decanter.register(base)
     end
 
     module ClassMethods

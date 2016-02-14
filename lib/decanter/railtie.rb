@@ -3,7 +3,7 @@ require_relative 'extensions'
 
 class Decanter::Railtie < Rails::Railtie
 
-  initializer 'decanter.configure' do |app|
+  initializer 'decanter.configure'
     ActiveRecord::Base.include(Decanter::Extensions) if defined? ActiveRecord
   end
 end

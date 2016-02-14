@@ -222,14 +222,10 @@ describe Decanter::Core do
       context 'for an argument with a has_one association for that context' do
 
         before(:each) do
-          foo = Class.new do
-            def self.name
-              'ProfileDecanter'
-            end
+          class ProfileDecanter < Decanter::Base
           end
-          foo.include Decanter::Core
-          foo.input :is_cool, :boolean, context: :foo
-          allow(foo).to receive(:parse) { |name, type, val, options| val }
+          ProfileDecanter.input :is_cool, :boolean, context: :foo
+          allow(ProfileDecanter).to receive(:parse) { |name, type, val, options| val }
         end
 
         it 'includes the field' do
@@ -241,14 +237,10 @@ describe Decanter::Core do
       context 'for an argument with a has_many association for that context' do
 
         before(:each) do
-          foo = Class.new do
-            def self.name
-              'PhotoDecanter'
-            end
+          class PhotoDecanter < Decanter::Base
           end
-          foo.include Decanter::Core
-          foo.input :title, :string, context: :foo
-          allow(foo).to receive(:parse) { |name, type, val, options| val }
+          PhotoDecanter.input :title, :string, context: :foo
+          allow(PhotoDecanter).to receive(:parse) { |name, type, val, options| val }
         end
 
         it 'includes the field' do
