@@ -26,7 +26,7 @@ module Decanter
       end
 
       def decant(args, context)
-        decanter_for(self).decant(args, context)
+        Decanter.decanter_for(self).decant(args, context)
       end
     end
   end
