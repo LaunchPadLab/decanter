@@ -11,7 +11,6 @@ describe Decanter::Extensions do
     allow(dummy_instance).to receive(:attributes=)
     allow(dummy_instance).to receive(:save)
     allow(dummy_instance).to receive(:save!)
-    # allow(dummy_instance).to receive(:decant) { |args, context| args }
   end
 
   shared_examples 'a decanter update' do |strict|
