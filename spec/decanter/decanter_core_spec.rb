@@ -156,21 +156,21 @@ describe Decanter::Core do
     end
 
     it 'calls Decanter::ValueParser.value_parser_for with the given type' do
-      dummy.parse(:foo, 'bar', {})
+      dummy.parse('first_name', :foo, 'bar', {})
       expect(Decanter::ValueParser).to have_received(:value_parser_for).with(:foo)
     end
 
     it 'calls parse with the given value and options on the found parser' do
       options = {}
-      dummy.parse(:foo, 'bar', options)
-      expect(parser).to have_received(:parse).with('bar', options)
+      dummy.parse('first_name', :foo, 'bar', options)
+      expect(parser).to have_received(:parse).with('first_name', 'bar', options)
     end
   end
 
   describe '#decant' do
 
     before(:each) do
-      allow(dummy).to receive(:parse) { |type, val| val }
+      allow(dummy).to receive(:parse) { |name, type, val, options| val }
       dummy.input :first_name, :string
       dummy.input :last_name,  :string, context: :foo
       dummy.input :phone,      :string, context: :bar
@@ -229,7 +229,7 @@ describe Decanter::Core do
           end
           foo.include Decanter::Core
           foo.input :is_cool, :boolean, context: :foo
-          allow(foo).to receive(:parse) { |type, val| val }
+          allow(foo).to receive(:parse) { |name, type, val, options| val }
         end
 
         it 'includes the field' do
@@ -248,7 +248,7 @@ describe Decanter::Core do
           end
           foo.include Decanter::Core
           foo.input :title, :string, context: :foo
-          allow(foo).to receive(:parse) { |type, val| val }
+          allow(foo).to receive(:parse) { |name, type, val, options| val }
         end
 
         it 'includes the field' do

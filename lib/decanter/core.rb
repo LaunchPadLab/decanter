@@ -9,11 +9,11 @@ module Decanter
     module ClassMethods
 
       def associations
-        @associations ||= {}
+        @associations ||= {}.with_indifferent_access
       end
 
       def inputs
-        @inputs ||= {}
+        @inputs ||= {}.with_indifferent_access
       end
 
       def input(name=nil, type, **options)
@@ -87,7 +87,7 @@ module Decanter
       def handle_arg(name, value, context)
         case
         when input_cfg = input_for(name, context)
-          [name, parse(input_cfg[:type], value, input_cfg[:options])]
+          [name, parse(name, input_cfg[:type], value, input_cfg[:options])]
         when assoc = has_one_for(name, context)
           [assoc.pop[:key], Decanter::decanter_for(assoc.first).decant(value, context)]
         when assoc = has_many_for(name, context)
@@ -98,7 +98,7 @@ module Decanter
         end
       end
 
-      def parse(type, val, options)
+      def parse(name, type, val, options)
         type ?
           ValueParser.value_parser_for(type).parse(name, val, options) :
           val

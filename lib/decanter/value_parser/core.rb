@@ -35,7 +35,7 @@ module Decanter
         end
 
         def allow(*args)
-          @allowed = args.map { |arg| arg == :boolean ? [TrueClass, FalseClass] : arg.to_s.capitalize.constantize }.flatten
+          @allowed = args
         end
       end
     end

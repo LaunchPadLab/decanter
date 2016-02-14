@@ -14,7 +14,7 @@ describe 'Core' do
 
   describe '#allow' do
     it 'adds the constantized values to the allowed pass through types' do
-      core.allow :date, :boolean
+      core.allow Date, TrueClass, FalseClass
       expect(core.instance_variable_get(:@allowed)).to match([Date, TrueClass, FalseClass])
     end
   end
@@ -45,7 +45,7 @@ describe 'Core' do
 
       before(:each) do
         allow(parser).to receive(:call)
-        core.allow :string
+        core.allow String
       end
 
       context 'when type is allowed' do

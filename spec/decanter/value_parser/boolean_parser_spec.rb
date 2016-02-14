@@ -26,7 +26,7 @@ describe 'BooleanParser' do
     context 'returns true for' do
       trues.each do |cond|
         it "#{cond[0]}: #{cond[1]}" do
-          expect(parser.parse(cond[1])).to be true
+          expect(parser.parse('foo', cond[1])).to be true
         end
       end
     end
@@ -34,7 +34,7 @@ describe 'BooleanParser' do
     context 'returns false for' do
       falses.each do |cond|
         it "#{cond[0]}: #{cond[1]}" do
-          expect(parser.parse(cond[1])).to be false
+          expect(parser.parse('foo', cond[1])).to be false
         end
       end
     end
