@@ -86,7 +86,7 @@ module Decanter
       def handle_arg(name, value, context)
         case
         when input_cfg = input_for(name, context)
-          parse(name, input_cfg[:type], value, input_cfg[:options])
+          parse(name, input_cfg[:type], value, input_cfg[:options]).flatten
         when assoc = has_one_for(name, context)
           [assoc.pop[:key], Decanter::decanter_for(assoc[1][:options][:decanter] || assoc.first).decant(value, context)]
         when assoc = has_many_for(name, context)
