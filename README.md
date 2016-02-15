@@ -1,4 +1,4 @@
-ParamsTransformer
+Decanter
 ===
 
 What is Decanter?
