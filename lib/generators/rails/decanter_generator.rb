@@ -23,14 +23,6 @@ module Rails
         attributes - inputs
       end
 
-      # def attributes_names
-      #   [:id] + attributes.reject(&:reference?).map! { |a| a.name.to_sym }
-      # end
-
-      # def association_names
-      #   attributes.select(&:reference?).map! { |a| a.name.to_sym }
-      # end
-
       def parent_class_name
         'Decanter::Base'
       end
