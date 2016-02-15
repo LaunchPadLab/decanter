@@ -79,14 +79,14 @@ module Decanter
 
       def decant(args={}, context=nil)
         Hash[
-          args.keys.map { |key| handle_arg(key, args[key], context) }.compact
+          *args.keys.map { |key| handle_arg(key, args[key], context) }.flatten.compact
         ]
       end
 
       def handle_arg(name, value, context)
         case
         when input_cfg = input_for(name, context)
-          [name, parse(name, input_cfg[:type], value, input_cfg[:options])]
+          parse(name, input_cfg[:type], value, input_cfg[:options])
         when assoc = has_one_for(name, context)
           [assoc.pop[:key], Decanter::decanter_for(assoc[1][:options][:decanter] || assoc.first).decant(value, context)]
         when assoc = has_many_for(name, context)
@@ -100,7 +100,7 @@ module Decanter
       def parse(name, type, val, options)
         type ?
           ValueParser.value_parser_for(type).parse(name, val, options) :
-          val
+          [name, val]
       end
     end
   end
