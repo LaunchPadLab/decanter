@@ -19,11 +19,23 @@ gem "decanter"
 bundle
 ```
 
+Add the following to application.rb:
+
+```
+config.paths.add "app/decanters", eager_load: true
+config.paths.add "app/parsers", eager_load: true
+config.to_prepare do
+  Dir[ File.expand_path(Rails.root.join("app/decanters/*.rb")), File.expand_path(Rails.root.join("app/parsers/*.rb")) ].each do |file|
+    require_dependency file
+  end
+end
+```
+
 Basic Usage
 ---
 
 ```
-rails g decanter Trip name:string start_date:date end_date:date destinations:has_many
+rails g decanter Trip name:string start_date:date end_date:date
 ```
 
 **app/decanters/trip_decanter.rb**
@@ -33,7 +45,6 @@ class TripDecanter < Decanter::Base
   input :name, :string
   input :start_date, :date
   input :end_date, :date
-  has_many :destinations
 end
 ```
 
@@ -175,5 +186,40 @@ class DateParser < Decanter::ValueParser::Base
   parser do |name, value, options|    
     # your parsing logic here
   end
+end
+```
+
+Nested Example
+---
+
+**app/models/trip.rb**
+
+```ruby
+class Trip < ActiveRecord::Base
+  has_many :destinations
+  accepts_nested_attributes_for :destinations
+end
+```
+
+```
+rails g decanter Trip name destinations:has_many
+rails g decanter Destination city state arrival_date:date departure_date:date
+```
+
+Which produces app/decanters/trip and app/decanters/destination:
+
+```ruby
+class TripDecanter < Decanter::Base
+  input :name, :string
+  has_many :destinations
+end
+```
+
+```ruby
+class DestinationDecanter < Decanter::Base
+  input :city, :string
+  input :state, :string
+  input :arrival_date, :date
+  input :departure_date, :date
 end
 ```
