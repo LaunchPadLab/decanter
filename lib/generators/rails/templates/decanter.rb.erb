@@ -1,0 +1,11 @@
+<% module_namespacing do -%>
+class <%= class_name %>Decanter < <%= parent_class_name %>
+  <% attributes_name.each do |attr| %>
+    input :<%= attr %>, :string
+  <% end %>
+
+  <% association_names.each do |attribute| -%>
+    has_many :<%= attribute %>
+  <% end -%>
+end
+<% end -%>
