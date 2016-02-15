@@ -6,6 +6,51 @@ What is Decanter?
 
 Decanter is a Rails gem that makes it easy to manipulate form data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A users selects January 15th, 2015 as the date, but this is going to come in as a string like "01/15/2015", so we need to convert this string into a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
 
+Installation
+---
+
+Add Gem:
+
+```ruby
+gem "decanter"
+```
+
+```
+bundle
+```
+
+Basic Usage
+---
+
+```
+rails g decanter Trip name:string start_date:date end_date:date destinations:has_many
+```
+
+**app/decanters/trip_decanter.rb**
+
+```ruby
+class TripDecanter < Decanter::Base
+  input :name, :string
+  input :start_date, :date
+  input :end_date, :date
+  has_many :destinations
+end
+```
+
+In your controller:
+
+```ruby
+  def create
+    @trip = Trip.decant_new(params[:trip])
+
+    if @trip.save
+      redirect_to trips_path
+    else
+      render "new"
+    end
+  end
+```
+
 Basic Example
 ---
 
@@ -67,64 +112,58 @@ class TripDecanter < Decanter::Base
 end
 ```
 
-That's it! When we call ```Trip.decant_new(trip_params)```, Decanter will take the name, start_date, and end_date and process the values through parsers that correspond with the input's type. So start_date and end_date are ran through a DateParser that lives in Decanter. Let's take a look at the DateParser:
+
+That's it! Decanter will take your trip_params which look like:
+
+```ruby
+{ 
+  name: "My Trip",
+  start_date: "01/15/2015",
+  end_date: "01/20/2015"
+}
+```
+
+and convert them to:
+
+```ruby
+{ 
+  name: "My Trip",
+  start_date: Mon, 15 Jan 2015,
+  end_date: Mon, 20 Jan 2015
+}
+```
+
+And then pass these parsed params to Trip.new.
+
+Adding Custom Parsers
+---
+
+In the above example, start_date and end_date are ran through a DateParser that lives in Decanter. Let's take a look at the DateParser:
 
 ```ruby
 class DateParser < Decanter::ValueParser::Base
 
   allow Date
 
-  parser do |name, val, options|
+  parser do |name, value, options|
     parse_format = options.fetch(:parse_format, '%m/%d/%Y')
-    ::Date.strptime(val, parse_format)
+    ::Date.strptime(value, parse_format)
   end
 end
 ```
 
-If we want more control over the parsing rules for a particular format type, we can even create our own parsers.
+If we want more control over the parsing rules for a particular format type, we can create our own parsers.
 
-Installation
----
+```
+rails g parser Date
+```
 
-Add Gem:
+**app/parsers/date_parser**
 
 ```ruby
-gem "decanter"
-```
-
-```
-bundle
-```
-
-Basic Usage
----
-
-```
-rails g decanter Trip name:string start_date:date end_date:date destinations:has_many
-```
-
-**app/decanters/trip_decanter.rb**
-
-```ruby
-class TripDecanter < Decanter::Base
-  input :name, :string
-  input :start_date, :date
-  input :end_date, :date
-  has_many :destinations
+class DateParser < Decanter::ValueParser::Base
+  parser do |name, value, options|    
+    # your parsing logic here
+  end
 end
 ```
-
-In your controller:
-
-```ruby
-  def create
-    @trip = Trip.decant_new(params[:trip])
-
-    if @trip.save
-      redirect_to trips_path
-    else
-      render "new"
-    end
-  end
-```
-

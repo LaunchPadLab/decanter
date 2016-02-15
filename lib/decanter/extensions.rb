@@ -29,7 +29,7 @@ module Decanter
         self.new(decant(args, context)).save!(context: context)
       end
 
-      def decant(args, context)
+      def decant(args, context=nil)
         Decanter.decanter_for(self).decant(args, context)
       end
     end
