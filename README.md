@@ -4,7 +4,7 @@ Decanter
 What is Decanter?
 ---
 
-Decanter is a Rails gem that makes it easy to manipulate form data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A users selects January 15th, 2015 as the date, but this is going to come in as a string like "01/15/2015", so we need to convert this string into a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
+Decanter is a Rails gem that makes it easy to manipulate form data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A users selects January 15th, 2015 as the date, but this is going to come in as a string like "01/15/2015", so we need to convert this string to a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
 
 Installation
 ---
@@ -44,6 +44,16 @@ In your controller:
     @trip = Trip.decant_new(params[:trip])
 
     if @trip.save
+      redirect_to trips_path
+    else
+      render "new"
+    end
+  end
+
+  def create
+    @trip = Trip.find(params[:id])
+    
+    if @trip.decant_update(params[:trip])
       redirect_to trips_path
     else
       render "new"
