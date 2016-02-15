@@ -78,9 +78,8 @@ module Decanter
       end
 
       def decant(args={}, context=nil)
-        args = args.to_h if args.is_a?(ActionController::Parameters) # i.e. Rails 5
         Hash[
-          args.map { |name, value| handle_arg(name, value, context) }.compact
+          args.keys.map { |key| handle_arg(key, args[key], context) }.compact
         ]
       end
 
@@ -89,9 +88,9 @@ module Decanter
         when input_cfg = input_for(name, context)
           [name, parse(name, input_cfg[:type], value, input_cfg[:options])]
         when assoc = has_one_for(name, context)
-          [assoc.pop[:key], Decanter::decanter_for(assoc.first).decant(value, context)]
+          [assoc.pop[:key], Decanter::decanter_for(assoc[1][:options][:decanter] || assoc.first).decant(value, context)]
         when assoc = has_many_for(name, context)
-          decanter = Decanter::decanter_for(assoc.first)
+          decanter = Decanter::decanter_for(assoc[1][:options][:decanter] || assoc.first)
           [assoc.pop[:key], value.map { |val| decanter.decant(val, context) }]
         else
           context ? nil : [name, value]

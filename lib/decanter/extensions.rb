@@ -21,6 +21,10 @@ module Decanter
         self.new(decant(args, context)).save(context: context)
       end
 
+      def decant_new(args={}, context=nil)
+        self.new(decant(args, context))
+      end
+
       def decant_create!(args={}, context=nil)
         self.new(decant(args, context)).save!(context: context)
       end
