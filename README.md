@@ -22,10 +22,9 @@ bundle
 Add the following to application.rb:
 
 ```
-config.paths.add "app/decanters", eager_load: true
-config.paths.add "app/parsers", eager_load: true
+config.paths.add "app/decanter", eager_load: true
 config.to_prepare do
-  Dir[ File.expand_path(Rails.root.join("app/decanters/*.rb")), File.expand_path(Rails.root.join("app/parsers/*.rb")) ].each do |file|
+  Dir[ File.expand_path(Rails.root.join("app/decanter/**/*.rb")) ].each do |file|
     require_dependency file
   end
 end
@@ -38,7 +37,7 @@ Basic Usage
 rails g decanter Trip name:string start_date:date end_date:date
 ```
 
-**app/decanters/trip_decanter.rb**
+**app/decanter/decanters/trip_decanter.rb**
 
 ```ruby
 class TripDecanter < Decanter::Base
@@ -123,7 +122,7 @@ From terminal we ran:
 rails g decanter Trip name:string start_date:date end_date:date
 ```
 
-Which generates app/decanters/trip_decanter.rb:
+Which generates app/decanter/decanters/trip_decanter.rb:
 
 ```ruby
 class TripDecanter < Decanter::Base
@@ -179,7 +178,7 @@ If we want more control over the parsing rules for a particular format type, we 
 rails g parser Date
 ```
 
-**app/parsers/date_parser**
+**app/decanter/parsers/date_parser**
 
 ```ruby
 class DateParser < Decanter::ValueParser::Base
@@ -206,7 +205,7 @@ rails g decanter Trip name destinations:has_many
 rails g decanter Destination city state arrival_date:date departure_date:date
 ```
 
-Which produces app/decanters/trip and app/decanters/destination:
+Which produces app/decanter/decanters/trip and app/decanter/decanters/destination:
 
 ```ruby
 class TripDecanter < Decanter::Base
