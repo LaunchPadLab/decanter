@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    decanter (0.5.0)
+    decanter (0.5.2)
       activesupport
 
 GEM
