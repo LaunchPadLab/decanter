@@ -50,7 +50,7 @@ In your controller:
     end
   end
 
-  def create
+  def update
     @trip = Trip.find(params[:id])
     
     if @trip.decant_update(params[:trip])
