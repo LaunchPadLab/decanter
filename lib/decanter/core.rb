@@ -78,9 +78,8 @@ module Decanter
       end
 
       def decant(args={}, context=nil)
-        keys = args.keys
         Hash[
-          keys.map { |key| handle_arg(key, args[key], context) }.compact
+          args.keys.map { |key| handle_arg(key, args[key], context) }.compact
         ]
       end
 
