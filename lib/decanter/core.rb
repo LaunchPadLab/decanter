@@ -51,12 +51,12 @@ module Decanter
 
       def has_many_for(key, context)
         (associations[context || :default] || {})
-          .detect { |name, assoc| assoc[:type] == :has_many && assoc[:key] == key}
+          .detect { |name, assoc| assoc[:type] == :has_many && assoc[:key] == key.to_sym}
       end
 
       def has_one_for(key, context)
         (associations[context || :default] || {})
-          .detect { |name, assoc| assoc[:type] == :has_one && assoc[:key] == key}
+          .detect { |name, assoc| assoc[:type] == :has_one && assoc[:key] == key.to_sym}
       end
 
       def set_association(options, assoc)
