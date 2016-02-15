@@ -10,8 +10,8 @@ module Decanter
     name = klass_or_sym.is_a?(Class) ?
             klass_or_sym.name :
             klass_or_sym.to_s.singularize.camelize
-
-    @@decanters["#{name}Decanter"] || (raise NameError.new("unknown decanter #{name}Decanter"))
+    full_name = name.include?('Decanter') ? name : "#{name}Decanter"
+    @@decanters[full_name] || (raise NameError.new("unknown decanter #{name}Decanter"))
   end
 end
 
