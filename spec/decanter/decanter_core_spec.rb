@@ -176,6 +176,7 @@ describe Decanter::Core do
       dummy.input :phone,      :string, context: :bar
       dummy.has_one :profile, context: :foo
       dummy.has_many :photos, context: :foo
+      dummy.input :foo, :key_value_splitter, context: :splitter
     end
 
     context 'without context' do
@@ -247,6 +248,12 @@ describe Decanter::Core do
           expect(dummy.decant({photos_attributes: [{title: 'foobar'}, {title: 'baz'}] }, :foo))
             .to match({photos_attributes: [{title: 'foobar'}, {title: 'baz'}] })
         end
+      end
+    end
+
+    context 'with splitter' do
+      it 'returns the correct data' do
+        expect(dummy.decant({foo: 'foo:bar,baz:foo'}, :splitter)).to match({foo: 'bar', baz: 'foo'})
       end
     end
   end
