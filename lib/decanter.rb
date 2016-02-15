@@ -3,7 +3,7 @@ module Decanter
   @@decanters = {}
 
   def self.register(decanter)
-    @@decanters[decanter.name] = decanter
+    @@decanters[decanter.name.demodulize] = decanter
   end
 
   def self.decanter_for(klass_or_sym)

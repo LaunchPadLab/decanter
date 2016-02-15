@@ -3,11 +3,12 @@ module Decanter
     @@value_parsers = {}
 
     def self.register(value_parser)
-      @@value_parsers[value_parser.name] = value_parser
+      @@value_parsers[value_parser.name.demodulize] = value_parser
     end
 
     def self.value_parser_for(sym)
-      @@value_parsers["#{sym.to_s.capitalize}Parser"] || (raise NameError.new("unknown value parser #{sym.to_s.capitalize}Parser"))
+      p "find parser for #{sym}"
+      @@value_parsers["#{sym.to_s.camelize}Parser"] || (raise NameError.new("unknown value parser #{sym.to_s.capitalize}Parser"))
     end
   end
 end

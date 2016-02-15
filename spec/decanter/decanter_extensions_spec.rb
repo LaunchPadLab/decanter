@@ -110,4 +110,6 @@ describe Decanter::Extensions do
   describe '#decant_create!' do
     it_behaves_like 'a decanter create', true
   end
+
+  describe ''
 end
