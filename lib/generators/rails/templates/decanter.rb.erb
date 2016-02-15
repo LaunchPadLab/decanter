@@ -1,0 +1,10 @@
+<% module_namespacing do -%>
+class <%= class_name %>Decanter < <%= parent_class_name %>
+<% inputs.each do |input| -%>
+  input :<%= input.name %>, :<%= input.type %>
+<% end -%>
+<% associations.each do |assoc| -%>
+  <%= assoc.type %> :<%= assoc.name %>
+<% end -%>
+end
+<% end -%>
