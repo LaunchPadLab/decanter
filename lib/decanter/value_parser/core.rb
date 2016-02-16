@@ -4,7 +4,6 @@ module Decanter
 
       def self.included(base)
         base.extend(ClassMethods)
-        ValueParser.register(base)
       end
 
       module ClassMethods
