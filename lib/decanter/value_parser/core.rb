@@ -15,12 +15,12 @@ module Decanter
             if options[:required]
               raise ArgumentError.new("No value for required argument: #{name}")
             else
-              return val
+              return [name, val]
             end
           end
 
           if @allowed && @allowed.include?(val.class)
-            return val
+            return [name, val]
           end
 
           unless @parser
@@ -33,7 +33,7 @@ module Decanter
             #  A 1-D array in the form [key, value, key, value, ...]
             #  A 2-D array in the form [[key, value], [key, value], ...]
             #  A hash
-            @parser.call(name, val, options).flatten(1)
+            @parser.call(name, val, options)
           else
             # Parser result will be treated as a single value
             # belonging to the name

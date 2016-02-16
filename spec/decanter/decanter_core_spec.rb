@@ -323,6 +323,7 @@ describe Decanter::Core do
     let(:handler) { { key: key, parser: parser, options: options } }
 
     before(:each) do
+      allow(output).to receive(:flatten).and_return(output)
       allow(dummy).to receive(:parse).and_return(output)
     end
 
@@ -333,8 +334,8 @@ describe Decanter::Core do
         .with(key, parser, values, options)
     end
 
-    it 'returns the response' do
-      expect(dummy.handle_input(handler, values)).to eq output
+    it 'returns the flattened response' do
+      expect(dummy.handle_input(handler, values)).to eq output.flatten
     end
   end
 

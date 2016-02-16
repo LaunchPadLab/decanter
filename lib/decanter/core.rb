@@ -81,7 +81,7 @@ module Decanter
         end
 
         def handle_input(handler, values)
-           parse(handler[:key], handler[:parser], values, handler[:options])
+           parse(handler[:key], handler[:parser], values, handler[:options]).flatten(1)
         end
 
         def handle_has_many(handler, values)
