@@ -29,8 +29,14 @@ module Decanter
 
           case @result
           when :raw
-            @parser.call(name, val, options)
+            # Parser result must be one of the following:
+            #  A 1-D array in the form [key, value, key, value, ...]
+            #  A 2-D array in the form [[key, value], [key, value], ...]
+            #  A hash
+            @parser.call(name, val, options).flatten(1)
           else
+            # Parser result will be treated as a single value
+            # belonging to the name
             [name, @parser.call(name, val, options)]
           end
         end
