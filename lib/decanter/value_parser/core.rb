@@ -8,22 +8,22 @@ module Decanter
 
       module ClassMethods
 
-        def parse(name, val=nil, options={})
+        def parse(name, values=[], options={})
 
-          if val.blank?
+          if values.none?
             if options[:required]
               raise ArgumentError.new("No value for required argument: #{name}")
             else
-              return [name, val]
+              return [name, nil]
             end
           end
 
-          if @allowed && @allowed.include?(val.class)
-            return [name, val]
+          if @allowed && values.all? { |value| @allowed.include?(value.class) }
+            return [name, values]
           end
 
           unless @parser
-            raise ArgumentError.new("No parser for argument: #{name} with type: #{val.class}")
+            raise ArgumentError.new("No parser for argument: #{name} with types: #{values.map(&:class).join(', ')}")
           end
 
           case @result
@@ -32,11 +32,11 @@ module Decanter
             #  A 1-D array in the form [key, value, key, value, ...]
             #  A 2-D array in the form [[key, value], [key, value], ...]
             #  A hash
-            @parser.call(name, val, options)
+            @parser.call(name, values.length == 1 ? values.first : values, options)
           else
             # Parser result will be treated as a single value
             # belonging to the name
-            [name, @parser.call(name, val, options)]
+            [name, @parser.call(name, values.length == 1 ? values.first : values, options)]
           end
         end
 

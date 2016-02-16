@@ -7,7 +7,6 @@ module Decanter
     end
 
     def self.value_parser_for(sym)
-      p "find parser for #{sym}"
       @@value_parsers["#{sym.to_s.camelize}Parser"] || (raise NameError.new("unknown value parser #{sym.to_s.capitalize}Parser"))
     end
   end
