@@ -34,7 +34,7 @@ describe 'Core' do
       context 'when not required' do
 
         it 'returns the value' do
-          expect(core.parse('first_name', nil, required: false)).to eq nil
+          expect(core.parse('first_name', nil, required: false)).to match(['first_name', nil])
         end
       end
     end
@@ -51,7 +51,7 @@ describe 'Core' do
       context 'when type is allowed' do
 
         it 'returns the value' do
-          expect(core.parse('first_name', 'foo')).to eq 'foo'
+          expect(core.parse('first_name', 'foo')).to match(['first_name', 'foo'])
         end
 
         it 'does not call the parser' do

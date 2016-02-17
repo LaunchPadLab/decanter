@@ -5,32 +5,35 @@ module Decanter
       base.extend(ClassMethods)
     end
 
-    def decant_update(args={}, context=nil)
-      self.attributes = self.class.decant(args, context)
-      self.save(context: context)
+    def decant_update(args={}, **options)
+      self.attributes = self.class.decant(args, options)
+      self.save(context: options[:context])
     end
 
-    def decant_update!(args={}, context=nil)
-      self.attributes = self.class.decant(args, context)
-      self.save!(context: context)
+    def decant_update!(args={}, **options)
+      self.attributes = self.class.decant(args, options)
+      self.save!(context: options[:context])
     end
 
     module ClassMethods
 
-      def decant_create(args={}, context=nil)
-        self.new(decant(args, context)).save(context: context)
+      def decant_create(args={}, **options)
+        self.new(decant(args, options))
+            .save(context: options[:context])
       end
 
-      def decant_new(args={}, context=nil)
-        self.new(decant(args, context))
+      def decant_new(args={}, **options)
+        self.new(decant(args, options))
       end
 
-      def decant_create!(args={}, context=nil)
-        self.new(decant(args, context)).save!(context: context)
+      def decant_create!(args={}, **options)
+        self.new(decant(args, options))
+            .save!(context: options[:context])
       end
 
-      def decant(args, context=nil)
-        Decanter.decanter_for(self).decant(args, context)
+      def decant(args)
+        options.fetch(:decanter, Decanter.decanter_for(self))
+          .decant(args)
       end
     end
   end

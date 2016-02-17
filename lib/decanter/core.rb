@@ -7,101 +7,128 @@ module Decanter
 
     module ClassMethods
 
-      def associations
-        @associations ||= {}.with_indifferent_access
-      end
+      def input(name=nil, parser=nil, **options)
 
-      def inputs
-        @inputs ||= {}.with_indifferent_access
-      end
+        _name = [name].flatten
 
-      def input(name=nil, type, **options)
-        set_input options, {
-          name:    name,
-          options: options.reject { |k| k == :context },
-          type:    type
+        if _name.length > 1 && parser.blank?
+          raise ArgumentError.new("#{self.name} no parser specified for input with multiple values.")
+        end
+
+        handlers[_name] = {
+          key:     options.fetch(:key, _name.first),
+          name:    _name,
+          options: options,
+          parser:  parser,
+          type:    :input
         }
       end
 
-      def set_input(options, input_cfg)
-        set_for_context options, input_cfg, inputs
-      end
-
-      def input_for(name, context)
-        (inputs[context || :default] || {})[name]
-      end
-
-      def has_many(name=nil, **options)
-        set_association options, {
-          key:     options[:key] || "#{name}_attributes".to_sym,
+      def has_many(assoc=nil, **options)
+        name = ["#{assoc}_attributes".to_sym]
+        handlers[name] = {
+          assoc:   assoc,
+          key:     options.fetch(:key, name.first),
           name:    name,
-          options: options.reject { |k| k == :context },
+          options: options,
           type:    :has_many
         }
       end
 
-      def has_one(name=nil, **options)
-        set_association options, {
-          key:     options[:key] || "#{name}_attributes".to_sym,
+      def has_one(assoc=nil, **options)
+        name = ["#{assoc}_attributes".to_sym]
+        handlers[name] = {
+          assoc:   assoc,
+          key:     options.fetch(:key, name.first),
           name:    name,
-          options: options.reject { |k| k == :context },
+          options: options,
           type:    :has_one
         }
       end
 
-      def has_many_for(key, context)
-        (associations[context || :default] || {})
-          .detect { |name, assoc| assoc[:type] == :has_many && assoc[:key] == key.to_sym}
+      def strict(mode=nil)
+        raise( ArgumentError.new("#{self.name}: Unknown strict value #{mode}")) unless [:with_exception, true, false].include? mode
+        @strict_mode = mode
       end
 
-      def has_one_for(key, context)
-        (associations[context || :default] || {})
-          .detect { |name, assoc| assoc[:type] == :has_one && assoc[:key] == key.to_sym}
+      def decant(args={})
+        {}.merge( unhandled_keys(args) )
+          .merge( handled_keys(args) )
       end
 
-      def set_association(options, assoc)
-        set_for_context options, assoc, associations
-      end
+      # protected
 
-      def set_for_context(options, arg, hash)
-        context = options[:context] || @context || :default
-        hash[context] = {} unless hash.has_key? context
-        hash[context][arg[:name]] = arg
-      end
+        def unhandled_keys(args)
 
-      def with_context(context, &block)
-        raise NameError.new('no context argument provided to with_context') unless context
+          unhandled_keys = args.keys - handlers.keys.flatten.uniq
 
-        @context = context
-        block.arity.zero? ? instance_eval(&block) : block.call(self)
-        @context = nil
-      end
-
-      def decant(args={}, context=nil)
-        Hash[
-          *args.keys.map { |key| handle_arg(key, args[key], context) }.flatten.compact
-        ]
-      end
-
-      def handle_arg(name, value, context)
-        case
-        when input_cfg = input_for(name, context)
-          parse(name, input_cfg[:type], value, input_cfg[:options]).flatten
-        when assoc = has_one_for(name, context)
-          [assoc.pop[:key], Decanter::decanter_for(assoc[1][:options][:decanter] || assoc.first).decant(value, context)]
-        when assoc = has_many_for(name, context)
-          decanter = Decanter::decanter_for(assoc[1][:options][:decanter] || assoc.first)
-          [assoc.pop[:key], value.map { |val| decanter.decant(val, context) }]
-        else
-          context ? nil : [name, value]
+          if unhandled_keys.any?
+            case strict_mode
+            when true
+              p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
+              {}
+            when :with_exception
+              raise ArgumentError.new("#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
+            else
+              args.select { |key| unhandled_keys.include? key }
+            end
+          else
+            {}
+          end
         end
-      end
 
-      def parse(name, type, val, options)
-        type ?
-          ValueParser.value_parser_for(type).parse(name, val, options) :
-          [name, val]
-      end
+        def handled_keys(args)
+          Hash[
+            *handlers.values
+                     .select { |handler| (args.keys & handler[:name]).any? }
+                     .map    { |handler| handle(handler, args) }
+                     .flatten(1)
+          ]
+        end
+
+        def handle(handler, args)
+          values = args.values_at(*handler[:name])
+          self.send("handle_#{handler[:type]}", handler, values)
+        end
+
+        def handle_input(handler, values)
+           parse(handler[:key], handler[:parser], values, handler[:options]).flatten(1)
+        end
+
+        def handle_has_many(handler, values)
+            decanter = decanter_for_handler(handler)
+            [
+              handler[:key],
+              values.flatten(1).compact.map { |value| decanter.decant(value) }
+            ]
+        end
+
+        def handle_has_one(handler, values)
+            [
+              handler[:key],
+              decanter_for_handler(handler).decant(values.first)
+            ]
+        end
+
+        def decanter_for_handler(handler)
+          Decanter::decanter_for(handler[:options][:decanter] || handler[:assoc])
+        end
+
+        def parse(key, parser, values, options)
+          parser ?
+            ValueParser.value_parser_for(parser)
+                       .parse(key, values, options)
+            :
+            [key, values]
+        end
+
+        def handlers
+          @handlers ||= {}
+        end
+
+        def strict_mode
+          @strict_mode ||= {}
+        end
     end
   end
 end
