@@ -320,23 +320,19 @@ Sometimes, you may want to take several inputs and combine them into one finishe
 
 ```ruby
 class TripDecanter < Decanter::Base
-  input :day, :integer
-  input :month, :integer
-  input :year, :integer
-  squashed_input :start_date, :date, squash: [:day, :month, :year]
+  input [:day, :month, :year], :squash_date, key: :start_date  
 end
 ```
 
 ```
-rails g squasher Date
+rails g parser SquashDate
 ```
 
 ```ruby
 # app/decanter/squashers/date_squasher.rb
 
-class DateSquasher < Decanter::Squasher::Base
-  squasher do |name, values, options|    
-    # i.e. values = [1, 15, 2015] to correspond with squash option above
+class SquashDateParser < Decanter::Parser::Base
+  parser do |name, values, options|    
     day = values[0]
     month = values[1]
     year = values[2]
