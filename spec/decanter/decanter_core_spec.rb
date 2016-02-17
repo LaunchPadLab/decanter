@@ -182,7 +182,7 @@ describe Decanter::Core do
     context 'when a parser is not specified' do
 
       it 'returns an array with the key and value' do
-        expect(dummy.parse(:first_name, nil, 'bar', {})).to eq [:first_name, 'bar']
+        expect(dummy.parse(:first_name, nil, 'bar', {})).to eq({:first_name => 'bar'})
       end
 
       it 'does not sall ValueParser.value_parser_for' do
@@ -357,7 +357,7 @@ describe Decanter::Core do
 
     it 'returns an array containing the key, and the decanted value' do
       expect(dummy.handle_has_one(handler, values))
-        .to match ([handler[:key], output])
+        .to match ({handler[:key] => output})
     end
   end
 
@@ -398,7 +398,7 @@ describe Decanter::Core do
 
     it 'returns an array containing the key, and an array of decanted values' do
       expect(dummy.handle_has_many(handler, values))
-        .to match ([handler[:key], output])
+        .to match ({handler[:key] => output})
     end
   end
 

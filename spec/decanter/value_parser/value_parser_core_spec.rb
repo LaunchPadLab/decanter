@@ -26,7 +26,7 @@ describe 'Core' do
       context 'when required' do
 
         it 'raises an argument error' do
-          expect { core.parse('first_name', [nil], required: true) }
+          expect { core.parse('first_name', nil, required: true) }
             .to raise_error(ArgumentError, 'No value for required argument: first_name')
         end
       end
@@ -34,7 +34,7 @@ describe 'Core' do
       context 'when not required' do
 
         it 'returns the value' do
-          expect(core.parse('first_name', [nil], required: false)).to match(['first_name', nil])
+          expect(core.parse('first_name', nil, required: false)).to match({'first_name' => nil})
         end
       end
     end
@@ -51,7 +51,7 @@ describe 'Core' do
       context 'when type is allowed' do
 
         it 'returns the value' do
-          expect(core.parse('first_name', ['foo'])).to match(['first_name', 'foo'])
+          expect(core.parse('first_name', 'foo')).to match({'first_name' => 'foo'})
         end
 
         it 'does not call the parser' do
@@ -67,7 +67,7 @@ describe 'Core' do
 
           it 'calls the parser' do
             core.parser &parser
-            core.parse('first_name', [5], required: true)
+            core.parse('first_name', 5, required: true)
             expect(parser)
               .to have_received(:call)
               .with('first_name', 5, required: true)
@@ -76,7 +76,7 @@ describe 'Core' do
 
         context 'when a parser is not defined' do
           it 'raises an ArgmentError' do
-            expect { core.parse('first_name', [5], required: true) }
+            expect { core.parse('first_name', 5, required: true) }
               .to raise_error(ArgumentError, "No parser for argument: first_name with types: #{5.class}")
           end
         end

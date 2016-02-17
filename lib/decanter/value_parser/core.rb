@@ -8,37 +8,37 @@ module Decanter
 
       module ClassMethods
 
-        def parse(name, values=[], options={})
+        def parse(name, values, options={})
 
-          values = [values] unless values.is_a? Array
+          value_ary = values.is_a?(Array) ? values : [values]
 
-          if values.all? { |val| val.nil? || val == "" }
+          # want to treat 'false' as an actual value
+          if value_ary.all? { |value| value.nil? || value == "" }
             if options[:required]
               raise ArgumentError.new("No value for required argument: #{name}")
             else
-              return [name, nil]
+              return { name => nil }
             end
           end
 
-          if @allowed && values.all? { |value| @allowed.include?(value.class) }
-            return [name, values.length == 1 ? values.first : values]
+          if @allowed && value_ary.all? { |value| @allowed.include?(value.class) }
+            return { name => values }
           end
 
           unless @parser
-            raise ArgumentError.new("No parser for argument: #{name} with types: #{values.map(&:class).join(', ')}")
+            raise ArgumentError.new("No parser for argument: #{name} with types: #{value_ary.map(&:class).join(', ')}")
           end
 
           case @result
           when :raw
-            # Parser result must be one of the following:
-            #  A 1-D array in the form [key, value, key, value, ...]
-            #  A 2-D array in the form [[key, value], [key, value], ...]
-            #  A hash
-            @parser.call(name, values.length == 1 ? values.first : values, options)
+            # Parser result must be a hash
+            parsed = @parser.call(name, values, options)
+            parsed.is_a?(Hash) ?
+              parsed :
+              raise(ArgumentError.new("Result of parser #{self.name} with values #{values} was #{parsed} when it must be a hash."))
           else
-            # Parser result will be treated as a single value
-            # belonging to the name
-            [name, @parser.call(name, values.length == 1 ? values.first : values, options)]
+            # Parser result will be treated as a single value belonging to the name
+            { name => @parser.call(name, values, options) }
           end
         end
 
