@@ -9,31 +9,37 @@ module Decanter
 
       def input(name=nil, parser=nil, **options)
 
-        if name.is_a?(Array) && name.length > 1 && parser.blank?
+        _name = [name].flatten
+
+        if _name.length > 1 && parser.blank?
           raise ArgumentError.new("#{self.name} no parser specified for input with multiple values.")
         end
 
-        handlers[name] = {
-          key:     options.fetch(:key, [name].flatten.first),
-          name:    name,
+        handlers[_name] = {
+          key:     options.fetch(:key, _name.first),
+          name:    _name,
           options: options,
           parser:  parser,
           type:    :input
         }
       end
 
-      def has_many(name=nil, **options)
+      def has_many(assoc=nil, **options)
+        name = ["#{assoc}_attributes".to_sym]
         handlers[name] = {
-          key:     options.fetch(:key, "#{name}_attributes".to_sym),
+          assoc:   assoc,
+          key:     options.fetch(:key, name.first),
           name:    name,
           options: options,
           type:    :has_many
         }
       end
 
-      def has_one(name=nil, **options)
+      def has_one(assoc=nil, **options)
+        name = ["#{assoc}_attributes".to_sym]
         handlers[name] = {
-          key:     options.fetch(:key, "#{name}_attributes".to_sym),
+          assoc:   assoc,
+          key:     options.fetch(:key, name.first),
           name:    name,
           options: options,
           type:    :has_one
@@ -46,10 +52,6 @@ module Decanter
       end
 
       def decant(args={})
-
-        # will this cause problems? Or i could try ot fetch everything as strings...
-        args = args.with_indifferent_access
-
         {}.merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
       end
@@ -64,15 +66,24 @@ module Decanter
             case strict_mode
             when true
               p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
+              {}
             when :with_exception
               raise ArgumentError.new("#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
+            else
+              args.select { |key| unhandled_keys.include? key }
             end
+          else
+            {}
           end
-          args.select { |key| unhandled_keys.include? key }
         end
 
         def handled_keys(args)
-          Hash[ handlers.values.map { |handler| handle(handler, args) } ]
+          Hash[
+            *handlers.values
+                     .select { |handler| (args.keys & handler[:name]).any? }
+                     .map    { |handler| handle(handler, args) }
+                     .flatten(1)
+          ]
         end
 
         def handle(handler, args)
@@ -88,19 +99,19 @@ module Decanter
             decanter = decanter_for_handler(handler)
             [
               handler[:key],
-              values.map { |value| decanter.decant(value) }
+              values.flatten(1).compact.map { |value| decanter.decant(value) }
             ]
         end
 
         def handle_has_one(handler, values)
             [
               handler[:key],
-              decanter_for_handler(handler).decant(values)
+              decanter_for_handler(handler).decant(values.first)
             ]
         end
 
         def decanter_for_handler(handler)
-          Decanter::decanter_for(handler[:options][:decanter] || handler[:name])
+          Decanter::decanter_for(handler[:options][:decanter] || handler[:assoc])
         end
 
         def parse(key, parser, values, options)
