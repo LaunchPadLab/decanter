@@ -7,7 +7,7 @@ module Decanter
 
     module ClassMethods
 
-      def input(name=nil, parser=nil, **options)
+      def input(name, parser=nil, **options)
 
         _name = [name].flatten
 
@@ -24,7 +24,7 @@ module Decanter
         }
       end
 
-      def has_many(assoc=nil, **options)
+      def has_many(assoc, **options)
         name = ["#{assoc}_attributes".to_sym]
         handlers[name] = {
           assoc:   assoc,
@@ -35,7 +35,7 @@ module Decanter
         }
       end
 
-      def has_one(assoc=nil, **options)
+      def has_one(assoc, **options)
         name = ["#{assoc}_attributes".to_sym]
         handlers[name] = {
           assoc:   assoc,
@@ -46,12 +46,13 @@ module Decanter
         }
       end
 
-      def strict(mode=nil)
+      def strict(mode)
         raise( ArgumentError.new("#{self.name}: Unknown strict value #{mode}")) unless [:with_exception, true, false].include? mode
         @strict_mode = mode
       end
 
-      def decant(args={})
+      def decant(args)
+        args = args.to_unsafe_h if args.class.name == 'ActionController::Parameters'
         {}.merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
       end
@@ -78,36 +79,32 @@ module Decanter
         end
 
         def handled_keys(args)
-          Hash[
-            *handlers.values
-                     .select { |handler| (args.keys & handler[:name]).any? }
-                     .map    { |handler| handle(handler, args) }
-                     .flatten(1)
-          ]
+          handlers.values
+                  .select     { |handler| (args.keys.map(&:to_sym) & handler[:name]).any? }
+                  .reduce({}) { |memo, handler| memo.merge handle(handler, args) }
         end
 
         def handle(handler, args)
           values = args.values_at(*handler[:name])
+          values = values.length == 1 ? values.first : values
           self.send("handle_#{handler[:type]}", handler, values)
         end
 
         def handle_input(handler, values)
-           parse(handler[:key], handler[:parser], values, handler[:options]).flatten(1)
+           parse(handler[:key], handler[:parser], values, handler[:options])
         end
 
         def handle_has_many(handler, values)
             decanter = decanter_for_handler(handler)
-            [
-              handler[:key],
-              values.flatten(1).compact.map { |value| decanter.decant(value) }
-            ]
+            {
+              handler[:key] => values.compact.map { |value| decanter.decant(value) }
+            }
         end
 
         def handle_has_one(handler, values)
-            [
-              handler[:key],
-              decanter_for_handler(handler).decant(values.first)
-            ]
+            {
+              handler[:key] => decanter_for_handler(handler).decant(values)
+            }
         end
 
         def decanter_for_handler(handler)
@@ -119,7 +116,7 @@ module Decanter
             ValueParser.value_parser_for(parser)
                        .parse(key, values, options)
             :
-            [key, values]
+            { key => values }
         end
 
         def handlers

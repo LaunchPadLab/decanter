@@ -7,7 +7,7 @@ describe Decanter::Extensions do
 
   before(:each) do
     allow(dummy_class).to receive(:new).and_return(dummy_instance)
-    allow(dummy_class).to receive(:decant) { |args, context| args }
+    allow(dummy_class).to receive(:decant) { |args| args }
     allow(dummy_instance).to receive(:attributes=)
     allow(dummy_instance).to receive(:save)
     allow(dummy_instance).to receive(:save!)
@@ -17,40 +17,17 @@ describe Decanter::Extensions do
 
     let(:args) { { foo: 'bar' } }
 
-    context 'with no context' do
+    before(:each) { strict ?
+                      dummy_instance.decant_update!(args) :
+                      dummy_instance.decant_update(args)
+    }
 
-      before(:each) { strict ?
-                        dummy_instance.decant_update!(args) :
-                        dummy_instance.decant_update(args)
-      }
-
-      it 'sets the attributes on the model with the results from the decanter' do
-        expect(dummy_instance).to have_received(:attributes=).with(args)
-      end
-
-      it "calls #{strict ? 'save!' : 'save'} on the model" do
-        expect(dummy_instance).to have_received( strict ? :save! : :save )
-      end
+    it 'sets the attributes on the model with the results from the decanter' do
+      expect(dummy_instance).to have_received(:attributes=).with(args)
     end
 
-    context 'with context' do
-
-      let(:_context) { :foo }
-
-      before(:each) { strict ?
-                        dummy_instance.decant_update!(args, _context) :
-                        dummy_instance.decant_update(args, _context)
-      }
-
-      it 'sets the attributes on the model with the results from the decanter' do
-        expect(dummy_instance).to have_received(:attributes=).with(args)
-      end
-
-      it "calls #{strict ? 'save!' : 'save'} on the model with the context" do
-        expect(dummy_instance)
-          .to have_received(strict ? :save! : :save)
-          .with(context: _context)
-      end
+    it "calls #{strict ? 'save!' : 'save'} on the model" do
+      expect(dummy_instance).to have_received( strict ? :save! : :save )
     end
   end
 
@@ -71,26 +48,6 @@ describe Decanter::Extensions do
 
       it "calls #{strict ? 'save!' : 'save'} on the model" do
         expect(dummy_instance).to have_received( strict ? :save! : :save )
-      end
-    end
-
-    context 'with context' do
-
-      let(:_context) { :foo }
-
-      before(:each) { strict ?
-                        dummy_class.decant_create!(args, _context) :
-                        dummy_class.decant_create(args, _context)
-      }
-
-      it 'sets the attributes on the model with the results from the decanter' do
-        expect(dummy_class).to have_received(:new).with(args)
-      end
-
-      it "calls #{strict ? 'save!' : 'save'} on the model with the context" do
-        expect(dummy_instance)
-          .to have_received(strict ? :save! : :save)
-          .with(context: _context)
       end
     end
   end

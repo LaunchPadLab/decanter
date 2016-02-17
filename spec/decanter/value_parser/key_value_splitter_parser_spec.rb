@@ -6,7 +6,7 @@ describe 'KeyValueSplitterParser' do
 
   describe '#parse' do
     it 'returns an array with the split pairs' do
-      expect(parser.parse('foo', 'foo:bar,baz:foo')).to match [['foo', 'bar'], ['baz', 'foo']]
+      expect(parser.parse('foo', 'foo:bar,baz:foo')).to match({'foo' => 'bar', 'baz' => 'foo'})
     end
   end
 end

@@ -16,7 +16,7 @@ describe Decanter::Core do
 
   describe '#input' do
 
-    let(:name) { :profile }
+    let(:name) { [:profile] }
     let(:parser) { :string }
     let(:options) { {} }
 
@@ -44,7 +44,7 @@ describe Decanter::Core do
     end
 
     it 'the handler has default key equal to the name' do
-      expect(dummy.handlers[name][:key]).to eq name
+      expect(dummy.handlers[name][:key]).to eq name.first
     end
 
     it 'the handler has name = provided name' do
@@ -70,12 +70,13 @@ describe Decanter::Core do
 
   describe '#has_one' do
 
-    let(:name) { :profile }
+    let(:assoc) { :profile }
+    let(:name) { ["#{assoc}_attributes".to_sym] }
     let(:options) { {} }
 
-    before(:each) { dummy.has_one name, options }
+    before(:each) { dummy.has_one assoc, options }
 
-    it 'adds a handler for the provided name' do
+    it 'adds a handler for the computed name' do
       expect(dummy.handlers.has_key? name ).to be true
     end
 
@@ -84,7 +85,7 @@ describe Decanter::Core do
     end
 
     it 'the handler has default key :#{name}_attributes' do
-      expect(dummy.handlers[name][:key]).to eq "#{name}_attributes".to_sym
+      expect(dummy.handlers[name][:key]).to eq name.first
     end
 
     it 'the handler has name = provided name' do
@@ -93,6 +94,10 @@ describe Decanter::Core do
 
     it 'the handler passes through the options' do
       expect(dummy.handlers[name][:options]).to eq options
+    end
+
+    it 'the handler has assoc = provided assoc' do
+      expect(dummy.handlers[name][:assoc]).to eq assoc
     end
 
     context 'with key specified in options' do
@@ -106,12 +111,13 @@ describe Decanter::Core do
 
   describe '#has_many' do
 
-    let(:name) { :profile }
+    let(:assoc) { :profile }
+    let(:name) { ["#{assoc}_attributes".to_sym] }
     let(:options) { {} }
 
-    before(:each) { dummy.has_many name, options }
+    before(:each) { dummy.has_many assoc, options }
 
-    it 'adds a handler for the provided name' do
+    it 'adds a handler for the computed name' do
       expect(dummy.handlers.has_key? name ).to be true
     end
 
@@ -120,11 +126,15 @@ describe Decanter::Core do
     end
 
     it 'the handler has default key :#{name}_attributes' do
-      expect(dummy.handlers[name][:key]).to eq "#{name}_attributes".to_sym
+      expect(dummy.handlers[name][:key]).to eq name.first
     end
 
-    it 'the handler has name = provided name' do
+    it 'the handler has name = computed name' do
       expect(dummy.handlers[name][:name]).to eq name
+    end
+
+    it 'the handler has assoc = provided assoc' do
+      expect(dummy.handlers[name][:assoc]).to eq assoc
     end
 
     it 'the handler passes through the options' do
@@ -139,7 +149,6 @@ describe Decanter::Core do
       end
     end
   end
-
 
   describe '#strict' do
 
@@ -173,7 +182,7 @@ describe Decanter::Core do
     context 'when a parser is not specified' do
 
       it 'returns an array with the key and value' do
-        expect(dummy.parse(:first_name, nil, 'bar', {})).to eq [:first_name, 'bar']
+        expect(dummy.parse(:first_name, nil, 'bar', {})).to eq({:first_name => 'bar'})
       end
 
       it 'does not sall ValueParser.value_parser_for' do
@@ -200,15 +209,15 @@ describe Decanter::Core do
 
   describe '#decanter_for_handler' do
 
-    let(:handler) { { name: :foo, options: {} } }
+    let(:handler) { { assoc: :foo, options: {} } }
 
     before(:each) do
       allow(Decanter).to receive(:decanter_for)
     end
 
-    it 'calls Decanter::decanter_for with the default name' do
+    it 'calls Decanter::decanter_for with the assoc' do
       dummy.decanter_for_handler(handler)
-      expect(Decanter).to have_received(:decanter_for).with(handler[:name])
+      expect(Decanter).to have_received(:decanter_for).with(handler[:assoc])
     end
 
     context 'with the decanter specified in options' do
@@ -262,31 +271,6 @@ describe Decanter::Core do
           expect(dummy.unhandled_keys(args)).to match(args)
         end
       end
-    end
-  end
-
-  describe '#handled_keys' do
-
-    let(:args)     { { baz: 'fob', far: 'baf' } }
-    let(:handlers) { { foo: 'foo', bar: 'bar' } }
-
-    before(:each) do
-      allow(dummy).to receive(:handlers).and_return(handlers)
-      allow(dummy).to receive(:handle)
-        .and_return([:baz, 'fob'],[:far, 'baf'])
-    end
-
-    it 'calls handle for each handler with the handler and args' do
-      dummy.handled_keys(args)
-      handlers.values.each do |handler|
-        expect(dummy)
-          .to have_received(:handle)
-          .with(handler, args)
-      end
-    end
-
-    it 'returns a hash with the results of handling each handler' do
-      expect(dummy.handled_keys(args)).to eq args
     end
   end
 
@@ -373,7 +357,7 @@ describe Decanter::Core do
 
     it 'returns an array containing the key, and the decanted value' do
       expect(dummy.handle_has_one(handler, values))
-        .to match ([handler[:key], output])
+        .to match ({handler[:key] => output})
     end
   end
 
@@ -414,7 +398,7 @@ describe Decanter::Core do
 
     it 'returns an array containing the key, and an array of decanted values' do
       expect(dummy.handle_has_many(handler, values))
-        .to match ([handler[:key], output])
+        .to match ({handler[:key] => output})
     end
   end
 
