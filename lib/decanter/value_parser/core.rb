@@ -10,7 +10,9 @@ module Decanter
 
         def parse(name, values=[], options={})
 
-          if values.none?
+          values = [values] unless values.is_a? Array
+
+          if values.all? { |val| val.nil? || val == "" }
             if options[:required]
               raise ArgumentError.new("No value for required argument: #{name}")
             else
@@ -19,7 +21,7 @@ module Decanter
           end
 
           if @allowed && values.all? { |value| @allowed.include?(value.class) }
-            return [name, values]
+            return [name, values.length == 1 ? values.first : values]
           end
 
           unless @parser
