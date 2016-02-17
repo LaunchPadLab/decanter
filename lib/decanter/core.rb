@@ -52,7 +52,7 @@ module Decanter
       end
 
       def decant(args)
-        args = args.to_unsafe_h if args.is_a? ActionController::Parameters
+        args = args.to_unsafe_h if args.class.name == 'ActionController::Parameters'
         {}.merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
       end
