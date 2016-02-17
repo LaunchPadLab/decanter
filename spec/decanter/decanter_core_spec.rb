@@ -327,7 +327,7 @@ describe Decanter::Core do
 
     let(:output)   { { foo: 'bar' } }
     let(:handler)  { { key: 'key', options: {} } }
-    let(:values)   { [{ baz: 'foo' }] }
+    let(:values)   { { baz: 'foo' } }
     let(:decanter) { double('decanter') }
 
     before(:each) do
@@ -352,7 +352,7 @@ describe Decanter::Core do
       dummy.handle_has_one(handler, values)
       expect(decanter)
         .to have_received(:decant)
-        .with(values.first)
+        .with(values)
     end
 
     it 'returns an array containing the key, and the decanted value' do
