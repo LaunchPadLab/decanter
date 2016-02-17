@@ -31,7 +31,7 @@ module Decanter
             .save!(context: options[:context])
       end
 
-      def decant(args)
+      def decant(args, options)
         options.fetch(:decanter, Decanter.decanter_for(self))
           .decant(args)
       end

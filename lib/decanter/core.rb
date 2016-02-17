@@ -51,7 +51,8 @@ module Decanter
         @strict_mode = mode
       end
 
-      def decant(args={})
+      def decant(args)
+        args = args.to_unsafe_h if args.is_a? ActionController::Parameters
         {}.merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
       end
