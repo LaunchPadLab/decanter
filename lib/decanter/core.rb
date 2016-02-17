@@ -86,23 +86,24 @@ module Decanter
 
         def handle(handler, args)
           values = args.values_at(*handler[:name])
+          values = values.length == 1 ? values.first : values
           self.send("handle_#{handler[:type]}", handler, values)
         end
 
         def handle_input(handler, values)
-           parse(handler[:key], handler[:parser], values, handler[:options]).flatten(1)
+           parse(handler[:key], handler[:parser], values, handler[:options])
         end
 
         def handle_has_many(handler, values)
             decanter = decanter_for_handler(handler)
             {
-              handler[:key] => values.flatten(1).compact.map { |value| decanter.decant(value) }
+              handler[:key] => values.compact.map { |value| decanter.decant(value) }
             }
         end
 
         def handle_has_one(handler, values)
             {
-              handler[:key] => decanter_for_handler(handler).decant(values.first)
+              handler[:key] => decanter_for_handler(handler).decant(values)
             }
         end
 
