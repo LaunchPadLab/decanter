@@ -6,7 +6,7 @@ require 'decanter/version'
 Gem::Specification.new do |spec|
   spec.name          = "decanter"
   spec.version       = Decanter::VERSION
-  spec.authors       = ["Ryan Francis", "Dave Corwin"]
+  spec.authors       = ["Ryan Francis", "David Corwin"]
   spec.email         = ["ryan@launchpadlab.com"]
 
   spec.summary       = %q{Form Parser for Rails}
