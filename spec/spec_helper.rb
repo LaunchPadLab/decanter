@@ -1,4 +1,8 @@
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'decanter'
+require 'dotenv'
+Dotenv.load
+# Report Coverage to Code Climate
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
+
+$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+require 'decanter'

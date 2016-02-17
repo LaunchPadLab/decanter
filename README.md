@@ -1,6 +1,10 @@
 Decanter
 ===
 
+[![Code Climate](https://codeclimate.com/github/LaunchPadLab/decanter/badges/gpa.svg)](https://codeclimate.com/github/LaunchPadLab/decanter) [![Test Coverage](https://codeclimate.com/github/LaunchPadLab/decanter/badges/coverage.svg)](https://codeclimate.com/github/LaunchPadLab/decanter/coverage)
+---
+
+
 What is Decanter?
 ---
 
