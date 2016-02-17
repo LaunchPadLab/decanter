@@ -4,12 +4,10 @@ Decanter
 What is Decanter?
 ---
 
-Decanter is a Rails gem that makes it easy to manipulate form data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A users selects January 15th, 2015 as the date, but this is going to come in as a string like "01/15/2015", so we need to convert this string to a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
+Decanter is a Rails gem that makes it easy to manipulate form data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A user selects January 15th, 2015 as the date, but this is going to come into our controller as a string like "01/15/2015", so we need to convert this string to a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
 
 Installation
 ---
-
-Add Gem:
 
 ```ruby
 gem "decanter"
@@ -19,7 +17,7 @@ gem "decanter"
 bundle
 ```
 
-Add the following to application.rb:
+Add the following to application.rb so we can load your decanters properly:
 
 ```
 config.paths.add "app/decanter", eager_load: true
@@ -81,9 +79,9 @@ Without Decanter, here is what our create action may look like:
 ```ruby
 class TripsController < ApplicationController
   def create
-    @trip = Trip.new(trip_params)
-    start_date = Date.strptime(trip_params[:start_date], '%m/%d/%Y')
-    end_date = Date.strptime(trip_params[:end_date], '%m/%d/%Y')
+    @trip = Trip.new(params[:trip])
+    start_date = Date.strptime(params[:trip][:start_date], '%m/%d/%Y')
+    end_date = Date.strptime(params[:trip][:end_date], '%m/%d/%Y')
     @trip.start_date = start_date
     @trip.end_date = end_date
 
@@ -96,14 +94,14 @@ class TripsController < ApplicationController
 end
 ```
 
-We can see here that converting start_date and end_date to a Ruby date is creating complexity. Could you imagine the complexity involved with performing similar parsing with a deeply nested resource? If you're curious how ugly it would get, we took the liberty of implementing an example here: [Nested Example (Without Decanter)](https://github.com/LaunchPadLab/decanter_demo/blob/master/app/controllers/nested_example/trips_no_decanter_controller.rb)
+We can see here that converting start_date and end_date to a Ruby date is creating complexity. Could you imagine the complexity involved with performing similar parsing with a nested resource? If you're curious how ugly it would get, we took the liberty of implementing an example here: [Nested Example (Without Decanter)](https://github.com/LaunchPadLab/decanter_demo/blob/master/app/controllers/nested_example/trips_no_decanter_controller.rb)
 
-With Decanter, here is what the same action looks like:
+With Decanter installed, here is what the same controller action would look like:
 
 ```ruby
 class TripsController < ApplicationController
   def create
-    @trip = Trip.decant_new(trip_params)
+    @trip = Trip.decant_new(params[:trip])
 
     if @trip.save
       redirect_to trips_path
@@ -132,8 +130,7 @@ class TripDecanter < Decanter::Base
 end
 ```
 
-
-That's it! Decanter will take your trip_params which look like:
+You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do ```@trip = Trip.decant_new(params[:trip])```. ```decant_new`` is where the magic happens. It is converting the params from this:
 
 ```ruby
 { 
@@ -143,7 +140,7 @@ That's it! Decanter will take your trip_params which look like:
 }
 ```
 
-and convert them to:
+to this:
 
 ```ruby
 { 
@@ -153,7 +150,7 @@ and convert them to:
 }
 ```
 
-And then pass these parsed params to Trip.new.
+As you can see, the converted params hash has converted start_date and end_date to a Ruby Date object that is ready to be stored in our database.
 
 Adding Custom Parsers
 ---
@@ -172,7 +169,21 @@ class DateParser < Decanter::ValueParser::Base
 end
 ```
 
-If we want more control over the parsing rules for a particular format type, we can create our own parsers.
+```allow Date``` basically tells Decanter that if the value comes in as a Date object, we don't need to parse it at all. Other than that, the parser is really just doing ```Date.strptime("01/15/2015", '%m/%d/%Y')```, which is just a vanilla date parse.
+
+You'll notice that the above ```parser do``` block takes a ```:parse_format``` option. This allows you to specify the format your date string will come in. For example, if you expect "2016-01-15" instead of "01/15/2016", you can adjust the TripDecanter like so:
+
+```ruby
+# app/decanter/decanters/trip_decanter.rb
+
+class TripDecanter < Decanter::Base
+  input :name, :string
+  input :start_date, :date, parse_format: '%Y-%m-%d'
+  input :end_date, :date, parse_format: '%Y-%m-%d'
+end
+```
+
+You can add your own parser if you want more control over the logic, or if you have a peculiar format type we don't support.
 
 ```
 rails g parser Date
@@ -191,14 +202,26 @@ end
 Nested Example
 ---
 
-**app/models/trip.rb**
+Let's say we have two models in our app: a Trip and a Destination. A trip has many destinations, and is prepared to accept nested attributes from the form.
 
 ```ruby
+# app/models/trip.rb
+
 class Trip < ActiveRecord::Base
   has_many :destinations
   accepts_nested_attributes_for :destinations
 end
 ```
+
+```ruby
+# app/models/destination.rb
+
+class Destination < ActiveRecord::Base
+  belongs_to :trip
+end
+```
+
+First, let's create our decanters for Trip and Destination. Note: decanters are automatically created whenever you run ```rails g resource```.
 
 ```
 rails g decanter Trip name destinations:has_many
@@ -220,5 +243,104 @@ class DestinationDecanter < Decanter::Base
   input :state, :string
   input :arrival_date, :date
   input :departure_date, :date
+end
+```
+
+With that, we can use the same vanilla create action syntax you saw in the basic example above:
+
+```ruby
+class TripsController < ApplicationController
+  def create
+    @trip = Trip.decant_new(params[:trip])
+
+    if @trip.save
+      redirect_to trips_path
+    else
+      render 'new'
+    end
+  end
+end
+```
+
+Each of the destinations in our params[:trip] are automatically parsed according to the DestinationDecanter inputs set above. This means that ```arrival_date``` and ```departure_date``` are converted to Ruby Date objects for each of the destinations passed through the nested params. Yeehaw!
+
+Non Database-Backed Objects
+---
+
+Decanter will work for you non database-backed objects as well. We just need to call ```decant``` to parse our params according to our decanter logic. 
+
+Let's say we have a search filtering object called ```SearchFilter```. We start by generating our decanter:
+
+```
+rails g decanter SearchFilter start_date:date end_date:date city:string state:string
+```
+
+```ruby
+# app/decanter/decanters/search_filter_decanter.rb
+
+class SearchFilterDecanter < Decanter::Base
+
+end
+```
+
+```ruby
+# app/controllers/search_controller.rb
+
+def search
+  decanted_params = SearchFilterDecanter.decant(params[:search])
+  # decanted_params is now parsed according to the parsers defined
+  # in SearchFilterDecanter
+end
+```
+
+Default Parsers
+---
+
+Decanter comes with the following parsers:
+- boolean
+- date
+- datetime
+- float
+- integer
+- phone
+- string
+
+As an example as to how these parsers differ, let's consider ```float```. The float parser will perform a regex to find only characters that are digits or decimals. By doing that, your users can enter in commas and currency symbols without your backend throwing a hissy fit.
+
+We encourage you to create your own parsers for other needs in your app, or generate one of the above listed parsers to override its behavior.
+
+```
+rails g parser Zip
+```
+
+Squashing Inputs
+---
+
+Sometimes, you may want to take several inputs and combine them into one finished input prior to sending to your model. For example, if day, month, and year come in as separate parameters, but your database really only cares about start_date. 
+
+```ruby
+class TripDecanter < Decanter::Base
+  input :day, :integer
+  input :month, :integer
+  input :year, :integer
+  squashed_input :start_date, :date, squash: [:day, :month, :year]
+end
+```
+
+```
+rails g squasher Date
+```
+
+```ruby
+# app/decanter/squashers/date_squasher.rb
+
+class DateSquasher < Decanter::Squasher::Base
+  squasher do |name, values, options|    
+    # i.e. values = [1, 15, 2015] to correspond with squash option above
+    day = values[0]
+    month = values[1]
+    year = values[2]
+    Date.new(year, month, day)
+  end
 end
 ```
