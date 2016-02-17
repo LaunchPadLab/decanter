@@ -79,12 +79,9 @@ module Decanter
         end
 
         def handled_keys(args)
-          Hash[
-            *handlers.values
-                     .select { |handler| (args.keys & handler[:name]).any? }
-                     .map    { |handler| handle(handler, args) }
-                     .flatten(1)
-          ]
+          handlers_present_in_args = *handlers.values.select { |handler| (args.keys.map(&:to_sym) & handler[:name]).any? }
+          handled_values = handlers_present_in_args.map { |handler| handle(handler, args) }
+          Hash[handled_values]
         end
 
         def handle(handler, args)
