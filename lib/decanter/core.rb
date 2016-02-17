@@ -52,7 +52,7 @@ module Decanter
       end
 
       def decant(args)
-        args = args.to_unsafe_h if args.class.name == 'ActionController::Parameters'
+        args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
         {}.merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
       end
@@ -61,7 +61,7 @@ module Decanter
 
         def unhandled_keys(args)
 
-          unhandled_keys = args.keys - handlers.keys.flatten.uniq
+          unhandled_keys = args.keys.map(&:to_sym) - handlers.keys.flatten.uniq
 
           if unhandled_keys.any?
             case strict_mode
