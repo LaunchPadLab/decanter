@@ -93,6 +93,7 @@ DEPENDENCIES
   decanter!
   rake (~> 10.0)
   rspec-rails
+  simplecov
 
 BUNDLED WITH
    1.10.6
