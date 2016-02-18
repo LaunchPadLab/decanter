@@ -97,6 +97,7 @@ module Decanter
           decanter = decanter_for_handler(handler)
           if values.is_a?(Hash)
             parsed_values = values.map do |index, input_values|
+              next if input_values.nil?
               decanter.decant(input_values)
             end
             return { handler[:key] => parsed_values }
