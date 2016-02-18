@@ -77,7 +77,7 @@ In your controller:
 
 Or, if you would prefer to get the parsed hash and then do your own logic, you can do the following:
 
-```
+```ruby
 def create
   parsed_params = Trip.decant(params[:trip])
   @trip = Trip.new(parsed_params)
