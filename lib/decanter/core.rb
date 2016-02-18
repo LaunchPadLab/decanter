@@ -60,7 +60,6 @@ module Decanter
       # protected
 
         def unhandled_keys(args)
-
           unhandled_keys = args.keys.map(&:to_sym) - handlers.keys.flatten.uniq
 
           if unhandled_keys.any?
@@ -95,10 +94,18 @@ module Decanter
         end
 
         def handle_has_many(handler, values)
-            decanter = decanter_for_handler(handler)
+          decanter = decanter_for_handler(handler)
+          if values.is_a?(Hash)
+            parsed_values = values.map do |index, input_values|
+              next if input_values.nil?
+              decanter.decant(input_values)
+            end
+            return { handler[:key] => parsed_values }
+          else
             {
               handler[:key] => values.compact.map { |value| decanter.decant(value) }
             }
+          end
         end
 
         def handle_has_one(handler, values)
