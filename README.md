@@ -8,7 +8,9 @@ Decanter
 What is Decanter?
 ---
 
-Decanter is a Rails gem that makes it easy to manipulate form data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A user selects January 15th, 2015 as the date, but this is going to come into our controller as a string like "01/15/2015", so we need to convert this string to a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
+Decanter is a Rails gem that makes it easy to transform incoming data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A user selects January 15th, 2015 as the date, but this is going to come into our controller as a string like "01/15/2015", so we need to convert this string to a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
+
+You can think of Decanter as the opposite of Active Model Serializer. Whereas AMS transforms your outbound data into a format that your frontend consumes, Decanter transforms your incoming data into a format that your backend consumes.
 
 Installation
 ---
@@ -71,6 +73,17 @@ In your controller:
       render "new"
     end
   end
+```
+
+Or, if you would prefer to get the parsed hash and then do your own logic, you can do the following:
+
+```
+def create
+  parsed_params = Trip.decant(params[:trip])
+  @trip = Trip.new(parsed_params)
+
+  # save logic here
+end
 ```
 
 Basic Example
@@ -336,11 +349,34 @@ rails g parser SquashDate
 # app/decanter/squashers/date_squasher.rb
 
 class SquashDateParser < Decanter::Parser::Base
-  parser do |name, values, options|    
-    day = values[0]
-    month = values[1]
-    year = values[2]
+  parser do |name, values, options|
+    day, month, year = values.map(&:to_i)
     Date.new(year, month, day)
   end
+end
+```
+
+No Need for Strong Params
+---
+
+Since you are already defining your expected inputs in Decanter, you really don't need strong_params anymore.
+
+In order to tell Decanter to ignore the params not defined in your Decanter, just add the ```strict``` flag to your Decanters:
+
+```ruby
+class TripDecanter <  Decanter::Base
+  strict true
+
+  input :name
+end
+```
+
+Or to raise exceptions when parameters arrive in your Decanter that you didn't expect:
+
+```ruby
+class TripDecanter <  Decanter::Base
+  strict :with_exception
+
+  input :name
 end
 ```
