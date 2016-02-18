@@ -147,7 +147,7 @@ class TripDecanter < Decanter::Base
 end
 ```
 
-You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do ```@trip = Trip.decant_new(params[:trip])```. ```decant_new`` is where the magic happens. It is converting the params from this:
+You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do ```@trip = Trip.decant_new(params[:trip])```. ```decant_new``` is where the magic happens. It is converting the params from this:
 
 ```ruby
 { 
@@ -284,7 +284,7 @@ Each of the destinations in our params[:trip] are automatically parsed according
 Non Database-Backed Objects
 ---
 
-Decanter will work for you non database-backed objects as well. We just need to call ```decant``` to parse our params according to our decanter logic. 
+Decanter will work for your non database-backed objects as well. We just need to call ```decant``` to parse our params according to our decanter logic. 
 
 Let's say we have a search filtering object called ```SearchFilter```. We start by generating our decanter:
 
