@@ -36,5 +36,11 @@ module Decanter
           .decant(args)
       end
     end
+
+    module ActiveRecord
+      def self.enable!
+        ::ActiveRecord::Base.include(Decanter::Extensions)
+      end
+    end
   end
 end
