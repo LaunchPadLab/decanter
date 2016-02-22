@@ -15,6 +15,10 @@ module Decanter
       self.save!(context: options[:context])
     end
 
+    def decant(args, **options)
+      self.class.decant(args, options)
+    end
+
     module ClassMethods
 
       def decant_create(args, **options)
@@ -31,7 +35,7 @@ module Decanter
             .save!(context: options[:context])
       end
 
-      def decant(args, options)
+      def decant(args, options={})
         options.fetch(:decanter, Decanter.decanter_for(self))
           .decant(args)
       end
