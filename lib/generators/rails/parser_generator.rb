@@ -7,7 +7,7 @@ module Rails
       class_option :parent, :type => :string, :desc => 'The parent class for the generated parser'
 
       def create_parser_file
-        template 'parser.rb.erb', File.join('app/decanter/parsers', class_path, "#{file_name}_parser.rb")
+        template 'parser.rb.erb', File.join('lib/decanter/parsers', class_path, "#{file_name}_parser.rb")
       end
 
       private
