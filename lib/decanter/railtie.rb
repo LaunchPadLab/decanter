@@ -1,10 +1,19 @@
-require 'rails'
-require_relative 'extensions'
+require 'decanter'
 
 class Decanter::Railtie < Rails::Railtie
 
-  initializer 'decanter.configure' do
-    ActiveRecord::Base.include(Decanter::Extensions) if defined? ActiveRecord
+  initializer 'decanter.active_record' do
+    ActiveSupport.on_load :active_record do
+      require 'decanter/extensions'
+      Decanter::Extensions::ActiveRecord.enable!
+    end
+  end
+
+  config.to_prepare do
+    Dir[
+      File.expand_path(Rails.root.join("app/decanters/*")),
+      File.expand_path(Rails.root.join("lib/decanter/parsers/*"))
+    ].each { |file| require file }
   end
 
   generators do |app|

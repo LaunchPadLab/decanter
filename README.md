@@ -23,17 +23,6 @@ gem "decanter"
 bundle
 ```
 
-Add the following to application.rb so we can load your decanters properly:
-
-```
-config.paths.add "app/decanter", eager_load: true
-config.to_prepare do
-  Dir[ File.expand_path(Rails.root.join("app/decanter/**/*.rb")) ].each do |file|
-    require_dependency file
-  end
-end
-```
-
 Basic Usage
 ---
 
@@ -41,7 +30,7 @@ Basic Usage
 rails g decanter Trip name:string start_date:date end_date:date
 ```
 
-**app/decanter/decanters/trip_decanter.rb**
+**app/decanters/trip_decanter.rb**
 
 ```ruby
 class TripDecanter < Decanter::Base
@@ -137,7 +126,7 @@ From terminal we ran:
 rails g decanter Trip name:string start_date:date end_date:date
 ```
 
-Which generates app/decanter/decanters/trip_decanter.rb:
+Which generates app/decanters/trip_decanter.rb:
 
 ```ruby
 class TripDecanter < Decanter::Base
@@ -191,7 +180,7 @@ end
 You'll notice that the above ```parser do``` block takes a ```:parse_format``` option. This allows you to specify the format your date string will come in. For example, if you expect "2016-01-15" instead of "01/15/2016", you can adjust the TripDecanter like so:
 
 ```ruby
-# app/decanter/decanters/trip_decanter.rb
+# app/decanters/trip_decanter.rb
 
 class TripDecanter < Decanter::Base
   input :name, :string
@@ -206,7 +195,7 @@ You can add your own parser if you want more control over the logic, or if you h
 rails g parser Date
 ```
 
-**app/decanter/parsers/date_parser**
+**lib/decanter/parsers/date_parser**
 
 ```ruby
 class DateParser < Decanter::ValueParser::Base
@@ -245,7 +234,7 @@ rails g decanter Trip name destinations:has_many
 rails g decanter Destination city state arrival_date:date departure_date:date
 ```
 
-Which produces app/decanter/decanters/trip and app/decanter/decanters/destination:
+Which produces app/decanters/trip and app/decanters/destination:
 
 ```ruby
 class TripDecanter < Decanter::Base
@@ -293,7 +282,7 @@ rails g decanter SearchFilter start_date:date end_date:date city:string state:st
 ```
 
 ```ruby
-# app/decanter/decanters/search_filter_decanter.rb
+# app/decanters/search_filter_decanter.rb
 
 class SearchFilterDecanter < Decanter::Base
 
@@ -346,7 +335,7 @@ rails g parser SquashDate
 ```
 
 ```ruby
-# app/decanter/squashers/date_squasher.rb
+# lib/decanter/parsers/squash_date_parser.rb
 
 class SquashDateParser < Decanter::Parser::Base
   parser do |name, values, options|

@@ -10,7 +10,7 @@ module Rails
       class_option :parent, :type => :string, :desc => 'The parent class for the generated decanter'
 
       def create_decanter_file
-        template 'decanter.rb.erb', File.join('app/decanter/decanters', class_path, "#{file_name}_decanter.rb")
+        template 'decanter.rb.erb', File.join('app/decanters', class_path, "#{file_name}_decanter.rb")
       end
 
       private

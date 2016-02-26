@@ -1,3 +1,5 @@
+require 'active_support/all'
+
 module Decanter
 
   @@decanters = {}
@@ -13,12 +15,13 @@ module Decanter
     full_name = name.include?('Decanter') ? name : "#{name}Decanter"
     @@decanters[full_name] || (raise NameError.new("unknown decanter #{name}Decanter"))
   end
+
+  ActiveSupport.run_load_hooks(:decanter, self)
 end
 
 require 'decanter/version'
-require 'active_support/all'
 require 'decanter/base'
 require 'decanter/core'
 require 'decanter/extensions'
 require 'decanter/value_parser'
-require 'decanter/railtie' if defined? ::Rails::Railtie
+require 'decanter/railtie' if defined?(::Rails)
