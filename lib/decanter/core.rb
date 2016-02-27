@@ -115,7 +115,11 @@ module Decanter
         end
 
         def decanter_for_handler(handler)
-          Decanter::decanter_for(handler[:options][:decanter] || handler[:assoc])
+          if specified_decanter = handler[:options][:decanter]
+            Decanter::decanter_from(specified_decanter)
+          else
+            Decanter::decanter_for(handler[:assoc])
+          end
         end
 
         def parse(key, parser, values, options)

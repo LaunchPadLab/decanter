@@ -2,18 +2,36 @@ require 'active_support/all'
 
 module Decanter
 
-  @@decanters = {}
+  class << self
 
-  def self.register(decanter)
-    @@decanters[decanter.name.demodulize] = decanter
-  end
+    def decanter_for(klass_or_sym)
+      case klass_or_sym
+      when Class
+        klass_or_sym.name
+      when Symbol
+        klass_or_sym.to_s.singularize.camelize
+      else
+        raise ArgumentError.new("cannot lookup decanter for #{klass_or_sym} with class #{klass_or_sym.class}")
+      end.concat('Decanter').constantize
+    end
 
-  def self.decanter_for(klass_or_sym)
-    name = klass_or_sym.is_a?(Class) ?
-            klass_or_sym.name :
-            klass_or_sym.to_s.singularize.camelize
-    full_name = name.include?('Decanter') ? name : "#{name}Decanter"
-    @@decanters[full_name] || (raise NameError.new("unknown decanter #{name}Decanter"))
+    def decanter_from(klass_or_string)
+      constant =
+        case klass_or_string
+        when Class
+          klass_or_string
+        when String
+          klass_or_string.constantize
+        else
+          raise ArgumentError.new("cannot find decanter from #{klass_or_string} with class #{klass_or_string.class}")
+        end
+
+      unless constant.ancestors.include? Decanter::Base
+        raise ArgumentError.new("#{constant.name} is not a decanter")
+      end
+
+      constant
+    end
   end
 
   ActiveSupport.run_load_hooks(:decanter, self)

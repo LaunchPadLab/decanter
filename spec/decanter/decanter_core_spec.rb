@@ -209,24 +209,27 @@ describe Decanter::Core do
 
   describe '#decanter_for_handler' do
 
-    let(:handler) { { assoc: :foo, options: {} } }
+    context 'when decanter option is specified' do
 
-    before(:each) do
-      allow(Decanter).to receive(:decanter_for)
-    end
+      let(:handler) { { options: { decanter: 'FooDecanter' } } }
 
-    it 'calls Decanter::decanter_for with the assoc' do
-      dummy.decanter_for_handler(handler)
-      expect(Decanter).to have_received(:decanter_for).with(handler[:assoc])
-    end
+      before(:each) { allow(Decanter).to receive(:decanter_from) }
 
-    context 'with the decanter specified in options' do
-
-      let(:handler) { { name: :foo, options: { decanter: :bar } } }
-
-      it 'calls Decanter::decanter_for with the specified name' do
+      it 'calls Decanter::decanter_from with the specified decanter' do
         dummy.decanter_for_handler(handler)
-        expect(Decanter).to have_received(:decanter_for).with(handler[:options][:decanter])
+        expect(Decanter).to have_received(:decanter_from).with(handler[:options][:decanter])
+      end
+    end
+
+    context 'when decanter option is not specified' do
+
+      let(:handler) { { assoc: :foo, options: {} } }
+
+      before(:each) { allow(Decanter).to receive(:decanter_for) }
+
+      it 'calls Decanter::decanter_for with the assoc' do
+        dummy.decanter_for_handler(handler)
+        expect(Decanter).to have_received(:decanter_for).with(handler[:assoc])
       end
     end
   end
