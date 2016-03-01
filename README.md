@@ -1,8 +1,7 @@
 Decanter
 ===
 
-[![Code Climate](https://codeclimate.com/github/LaunchPadLab/decanter/badges/gpa.svg)](https://codeclimate.com/github/LaunchPadLab/decanter) 
-[![Test Coverage](https://codeclimate.com/github/LaunchPadLab/decanter/badges/coverage.svg)](https://codeclimate.com/github/LaunchPadLab/decanter/coverage)
+[![Code Climate](https://codeclimate.com/github/LaunchPadLab/decanter/badges/gpa.svg)](https://codeclimate.com/github/LaunchPadLab/decanter?ignore=me) [![Test Coverage](https://codeclimate.com/github/LaunchPadLab/decanter/badges/coverage.svg?ignore=me)](https://codeclimate.com/github/LaunchPadLab/decanter/coverage)
 ---
 
 
