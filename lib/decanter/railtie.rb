@@ -11,7 +11,6 @@ class Decanter::Railtie < Rails::Railtie
 
   config.to_prepare do
     Dir[
-      File.expand_path(Rails.root.join("app/decanters/*")),
       File.expand_path(Rails.root.join("lib/decanter/parsers/*"))
     ].each { |file| require file }
   end

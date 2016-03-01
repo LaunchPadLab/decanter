@@ -36,8 +36,11 @@ module Decanter
       end
 
       def decant(args, options={})
-        options.fetch(:decanter, Decanter.decanter_for(self))
-          .decant(args)
+        if specified_decanter = options[:decanter]
+          Decanter.decanter_from(specified_decanter)
+        else
+          Decanter.decanter_for(self)
+        end.decant(args)
       end
     end
 
