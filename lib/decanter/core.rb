@@ -25,25 +25,29 @@ module Decanter
       end
 
       def has_many(assoc, **options)
-        name = ["#{assoc}_attributes".to_sym]
-        handlers[name] = {
-          assoc:   assoc,
-          key:     options.fetch(:key, name.first),
-          name:    name,
-          options: options,
-          type:    :has_many
-        }
+        names = [["#{assoc}_attributes".to_sym], [assoc]]
+        names.each do |name|
+          handlers[name] = {
+            assoc:   assoc,
+            key:     options.fetch(:key, name.first),
+            name:    name,
+            options: options,
+            type:    :has_many
+          }
+        end
       end
 
       def has_one(assoc, **options)
-        name = ["#{assoc}_attributes".to_sym]
-        handlers[name] = {
-          assoc:   assoc,
-          key:     options.fetch(:key, name.first),
-          name:    name,
-          options: options,
-          type:    :has_one
-        }
+        names = [["#{assoc}_attributes".to_sym], [assoc]]
+        names.each do |name|
+          handlers[name] = {
+            assoc:   assoc,
+            key:     options.fetch(:key, name.first),
+            name:    name,
+            options: options,
+            type:    :has_one
+          }
+        end
       end
 
       def strict(mode)
