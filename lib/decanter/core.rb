@@ -25,29 +25,23 @@ module Decanter
       end
 
       def has_many(assoc, **options)
-        names = [["#{assoc}_attributes".to_sym], [assoc]]
-        names.each do |name|
-          handlers[name] = {
-            assoc:   assoc,
-            key:     options.fetch(:key, name.first),
-            name:    name,
-            options: options,
-            type:    :has_many
-          }
-        end
+        handlers[assoc] = {
+          assoc:   assoc,
+          key:     options.fetch(:key, assoc.first),
+          name:    assoc,
+          options: options,
+          type:    :has_many
+        }
       end
 
       def has_one(assoc, **options)
-        names = [["#{assoc}_attributes".to_sym], [assoc]]
-        names.each do |name|
-          handlers[name] = {
-            assoc:   assoc,
-            key:     options.fetch(:key, name.first),
-            name:    name,
-            options: options,
-            type:    :has_one
-          }
-        end
+        handlers[assoc] = {
+          assoc:   assoc,
+          key:     options.fetch(:key, assoc),
+          name:    assoc,
+          options: options,
+          type:    :has_one
+        }
       end
 
       def strict(mode)
@@ -82,9 +76,23 @@ module Decanter
         end
 
         def handled_keys(args)
-          handlers.values
-                  .select     { |handler| (args.keys.map(&:to_sym) & handler[:name]).any? }
-                  .reduce({}) { |memo, handler| memo.merge handle(handler, args) }
+          # handlers.values
+          #         .select     { |handler| (args.keys.map(&:to_sym) & handler[:name]).any? }
+          #         .reduce({}) { |memo, handler| memo.merge handle(handler, args) }
+
+          arg_keys = args.keys.map(&:to_sym)
+
+          {}.merge(
+
+            # Inputs
+            handlers.values.select     { |handler| handler[:type] == :input }
+                           .select     { |handler| (arg_keys & handler[:name]).any? }
+                           .reduce({}) { |memo, handler| memo.merge handle_input(handler, args) },
+
+            # Has One & Has Many
+            handlers.values.select     { |handler| handler[:type] != :input }
+                           .reduce({}) { |memo, handler| memo.merge handle_association(handler, args) }
+          )
         end
 
         def handle(handler, args)
@@ -93,8 +101,32 @@ module Decanter
           self.send("handle_#{handler[:type]}", handler, values)
         end
 
-        def handle_input(handler, values)
+        def handle_input(handler, args)
+           values = args.values_at(*handler[:name])
+           values = values.length == 1 ? values.first : values
            parse(handler[:key], handler[:parser], values, handler[:options])
+        end
+
+        def handle_association(handler, args)
+          assoc_handlers = [
+            handler,
+            handler.merge({
+              name: "#{handler[:name]}_attributes",
+              key: handler.options.fetch(:key, "#{handler[:name]}_attributes")
+            })
+          ]
+
+          assoc_handler_names = assoc_handlers.map { |_handler| _handler[:name] }
+
+          case args.values_at(*assoc_handler_names).compact.length
+          when 0
+            {}
+          when 1
+            _handler = assoc_handlers.detect { |_handler| args.has_key?(_handler[:name]) }
+            self.send("handle_#{_handler[:type]}", _handler, args)
+          else
+            raise ArgumentError.new("Handler #{handler[:name]} matches multiple keys: #{has_one_handler_names}.")
+          end
         end
 
         def handle_has_many(handler, values)
@@ -113,9 +145,7 @@ module Decanter
         end
 
         def handle_has_one(handler, values)
-            {
-              handler[:key] => decanter_for_handler(handler).decant(values)
-            }
+          { handler[:key] => decanter_for_handler(handler).decant(values) }
         end
 
         def decanter_for_handler(handler)
