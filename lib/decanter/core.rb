@@ -81,17 +81,16 @@ module Decanter
           #         .reduce({}) { |memo, handler| memo.merge handle(handler, args) }
 
           arg_keys = args.keys.map(&:to_sym)
+          inputs, assocs = handlers.values.partition { |handler| handler[:type] == :input }
 
           {}.merge(
 
             # Inputs
-            handlers.values.select     { |handler| handler[:type] == :input }
-                           .select     { |handler| (arg_keys & handler[:name]).any? }
-                           .reduce({}) { |memo, handler| memo.merge handle_input(handler, args) },
+            inputs.select     { |handler| (arg_keys & handler[:name]).any? }
+                  .reduce({}) { |memo, handler| memo.merge handle_input(handler, args) },
 
             # Has One & Has Many
-            handlers.values.select     { |handler| handler[:type] != :input }
-                           .reduce({}) { |memo, handler| memo.merge handle_association(handler, args) }
+            assocs.reduce({}) { |memo, handler| memo.merge handle_association(handler, args) }
           )
         end
 
@@ -125,7 +124,7 @@ module Decanter
             _handler = assoc_handlers.detect { |_handler| args.has_key?(_handler[:name]) }
             self.send("handle_#{_handler[:type]}", _handler, args)
           else
-            raise ArgumentError.new("Handler #{handler[:name]} matches multiple keys: #{has_one_handler_names}.")
+            raise ArgumentError.new("Handler #{handler[:name]} matches multiple keys: #{assoc_handler_names}.")
           end
         end
 
