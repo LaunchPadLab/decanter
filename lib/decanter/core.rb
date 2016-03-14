@@ -25,22 +25,20 @@ module Decanter
       end
 
       def has_many(assoc, **options)
-        name = ["#{assoc}_attributes".to_sym]
-        handlers[name] = {
+        handlers[assoc] = {
           assoc:   assoc,
-          key:     options.fetch(:key, name.first),
-          name:    name,
+          key:     options.fetch(:key, assoc),
+          name:    assoc,
           options: options,
           type:    :has_many
         }
       end
 
       def has_one(assoc, **options)
-        name = ["#{assoc}_attributes".to_sym]
-        handlers[name] = {
+        handlers[assoc] = {
           assoc:   assoc,
-          key:     options.fetch(:key, name.first),
-          name:    name,
+          key:     options.fetch(:key, assoc),
+          name:    assoc,
           options: options,
           type:    :has_one
         }
@@ -59,84 +57,118 @@ module Decanter
 
       # protected
 
-        def unhandled_keys(args)
-          unhandled_keys = args.keys.map(&:to_sym) - handlers.keys.flatten.uniq
-
-          if unhandled_keys.any?
-            case strict_mode
-            when true
-              p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
-              {}
-            when :with_exception
-              raise ArgumentError.new("#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
-            else
-              args.select { |key| unhandled_keys.include? key }
-            end
-          else
-            {}
-          end
-        end
-
-        def handled_keys(args)
+      def unhandled_keys(args)
+        unhandled_keys = args.keys.map(&:to_sym) -
+          handlers.keys.flatten.uniq -
           handlers.values
-                  .select     { |handler| (args.keys.map(&:to_sym) & handler[:name]).any? }
-                  .reduce({}) { |memo, handler| memo.merge handle(handler, args) }
-        end
+            .select { |handler| handler[:type] != :input }
+            .map { |handler| "#{handler[:name]}_attributes".to_sym }
 
-        def handle(handler, args)
-          values = args.values_at(*handler[:name])
-          values = values.length == 1 ? values.first : values
-          self.send("handle_#{handler[:type]}", handler, values)
-        end
-
-        def handle_input(handler, values)
-           parse(handler[:key], handler[:parser], values, handler[:options])
-        end
-
-        def handle_has_many(handler, values)
-          decanter = decanter_for_handler(handler)
-          if values.is_a?(Hash)
-            parsed_values = values.map do |index, input_values|
-              next if input_values.nil?
-              decanter.decant(input_values)
-            end
-            return { handler[:key] => parsed_values }
+        if unhandled_keys.any?
+          case strict_mode
+          when true
+            p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
+            {}
+          when :with_exception
+            raise ArgumentError.new("#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
           else
-            {
-              handler[:key] => values.compact.map { |value| decanter.decant(value) }
-            }
+            args.select { |key| unhandled_keys.include? key }
           end
+        else
+          {}
         end
+      end
 
-        def handle_has_one(handler, values)
-            {
-              handler[:key] => decanter_for_handler(handler).decant(values)
-            }
+      def handled_keys(args)
+        arg_keys = args.keys.map(&:to_sym)
+        inputs, assocs = handlers.values.partition { |handler| handler[:type] == :input }
+
+        {}.merge(
+          # Inputs
+          inputs.select     { |handler| (arg_keys & handler[:name]).any? }
+                .reduce({}) { |memo, handler| memo.merge handle_input(handler, args) }
+        ).merge(
+          # Associations
+          assocs.reduce({}) { |memo, handler| memo.merge handle_association(handler, args) }
+        )
+      end
+
+      def handle(handler, args)
+        values = args.values_at(*handler[:name])
+        values = values.length == 1 ? values.first : values
+        self.send("handle_#{handler[:type]}", handler, values)
+      end
+
+      def handle_input(handler, args)
+         values = args.values_at(*handler[:name])
+         values = values.length == 1 ? values.first : values
+         parse(handler[:key], handler[:parser], values, handler[:options])
+      end
+
+      def handle_association(handler, args)
+        assoc_handlers = [
+          handler,
+          handler.merge({
+            key:   handler[:options].fetch(:key, "#{handler[:name]}_attributes").to_sym,
+            name:  "#{handler[:name]}_attributes".to_sym
+          })
+        ]
+
+        assoc_handler_names = assoc_handlers.map { |_handler| _handler[:name] }
+
+        case args.values_at(*assoc_handler_names).compact.length
+        when 0
+          {}
+        when 1
+          _handler = assoc_handlers.detect { |_handler| args.has_key?(_handler[:name]) }
+          self.send("handle_#{_handler[:type]}", _handler, args[_handler[:name]])
+        else
+          raise ArgumentError.new("Handler #{handler[:name]} matches multiple keys: #{assoc_handler_names}.")
         end
+      end
 
-        def decanter_for_handler(handler)
-          if specified_decanter = handler[:options][:decanter]
-            Decanter::decanter_from(specified_decanter)
-          else
-            Decanter::decanter_for(handler[:assoc])
+      def handle_has_many(handler, values)
+        decanter = decanter_for_handler(handler)
+        if values.is_a?(Hash)
+          parsed_values = values.map do |index, input_values|
+            next if input_values.nil?
+            decanter.decant(input_values)
           end
+          return { handler[:key] => parsed_values }
+        else
+          {
+            handler[:key] => values.compact.map { |value| decanter.decant(value) }
+          }
         end
+      end
 
-        def parse(key, parser, values, options)
-          parser ?
-            ValueParser.value_parser_for(parser)
-                       .parse(key, values, options)
-            :
-            { key => values }
-        end
+      def handle_has_one(handler, values)
+        { handler[:key] => decanter_for_handler(handler).decant(values) }
+      end
 
-        def handlers
-          @handlers ||= {}
+      def decanter_for_handler(handler)
+        if specified_decanter = handler[:options][:decanter]
+          Decanter::decanter_from(specified_decanter)
+        else
+          Decanter::decanter_for(handler[:assoc])
         end
+      end
 
-        def strict_mode
-          @strict_mode ||= {}
-        end
+      def parse(key, parser, values, options)
+        parser ?
+          ValueParser.value_parser_for(parser)
+                     .parse(key, values, options)
+          :
+          { key => values }
+      end
+
+      def handlers
+        @handlers ||= {}
+      end
+
+      def strict_mode
+        @strict_mode ||= {}
+      end
     end
   end
 end

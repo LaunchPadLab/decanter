@@ -76,35 +76,35 @@ describe Decanter::Core do
 
     before(:each) { dummy.has_one assoc, options }
 
-    it 'adds a handler for the computed name' do
-      expect(dummy.handlers.has_key? name ).to be true
+    it 'adds a handler for the association' do
+      expect(dummy.handlers.has_key? assoc ).to be true
     end
 
     it 'the handler has type :has_one' do
-      expect(dummy.handlers[name][:type]).to eq :has_one
+      expect(dummy.handlers[assoc][:type]).to eq :has_one
     end
 
-    it 'the handler has default key :#{name}_attributes' do
-      expect(dummy.handlers[name][:key]).to eq name.first
+    it 'the handler has default key :profile' do
+      expect(dummy.handlers[assoc][:key]).to eq assoc
     end
 
-    it 'the handler has name = provided name' do
-      expect(dummy.handlers[name][:name]).to eq name
+    it 'the handler has name = assoc' do
+      expect(dummy.handlers[assoc][:name]).to eq assoc
     end
 
     it 'the handler passes through the options' do
-      expect(dummy.handlers[name][:options]).to eq options
+      expect(dummy.handlers[assoc][:options]).to eq options
     end
 
     it 'the handler has assoc = provided assoc' do
-      expect(dummy.handlers[name][:assoc]).to eq assoc
+      expect(dummy.handlers[assoc][:assoc]).to eq assoc
     end
 
     context 'with key specified in options' do
       let(:options) { { key: :foo } }
 
       it 'the handler has key from options' do
-        expect(dummy.handlers[name][:key]).to eq options[:key]
+        expect(dummy.handlers[assoc][:key]).to eq options[:key]
       end
     end
   end
@@ -117,35 +117,35 @@ describe Decanter::Core do
 
     before(:each) { dummy.has_many assoc, options }
 
-    it 'adds a handler for the computed name' do
-      expect(dummy.handlers.has_key? name ).to be true
+    it 'adds a handler for the assoc' do
+      expect(dummy.handlers.has_key? assoc ).to be true
     end
 
     it 'the handler has type :has_many' do
-      expect(dummy.handlers[name][:type]).to eq :has_many
+      expect(dummy.handlers[assoc][:type]).to eq :has_many
     end
 
-    it 'the handler has default key :#{name}_attributes' do
-      expect(dummy.handlers[name][:key]).to eq name.first
+    it 'the handler has default key :profile' do
+      expect(dummy.handlers[assoc][:key]).to eq assoc
     end
 
-    it 'the handler has name = computed name' do
-      expect(dummy.handlers[name][:name]).to eq name
+    it 'the handler has name = assoc' do
+      expect(dummy.handlers[assoc][:name]).to eq assoc
     end
 
     it 'the handler has assoc = provided assoc' do
-      expect(dummy.handlers[name][:assoc]).to eq assoc
+      expect(dummy.handlers[assoc][:assoc]).to eq assoc
     end
 
     it 'the handler passes through the options' do
-      expect(dummy.handlers[name][:options]).to eq options
+      expect(dummy.handlers[assoc][:options]).to eq options
     end
 
     context 'with key specified in options' do
       let(:options) { { key: :foo } }
 
       it 'the handler has key from options' do
-        expect(dummy.handlers[name][:key]).to eq options[:key]
+        expect(dummy.handlers[assoc][:key]).to eq options[:key]
       end
     end
   end
@@ -240,7 +240,7 @@ describe Decanter::Core do
 
     context 'when there are no unhandled keys' do
 
-      before(:each) { allow(dummy).to receive(:handlers).and_return({ foo: nil }) }
+      before(:each) { allow(dummy).to receive(:handlers).and_return({foo: { type: :input }}) }
 
       it 'returns an empty hash' do
         expect(dummy.unhandled_keys(args)).to match({})
@@ -302,27 +302,22 @@ describe Decanter::Core do
 
   describe '#handle_input' do
 
-    let(:key)     { double('key') }
+    let(:name)    { :name }
     let(:parser)  { double('parser') }
     let(:options) { double('options') }
-    let(:values)  { double('values') }
-    let(:output)  { double('output') }
-    let(:handler) { { key: key, parser: parser, options: options } }
+    let(:args)    { { name => 'Hi', foo: 'bar' } }
+    let(:values)  { args[name] }
+    let(:handler) { { key: name, name: name, parser: parser, options: options } }
 
     before(:each) do
-      allow(output).to receive(:flatten).and_return(output)
-      allow(dummy).to receive(:parse).and_return(output)
+      allow(dummy).to receive(:parse)
     end
 
     it 'calls parse with the handler key, handler parser, values and options' do
-      dummy.handle_input(handler, values)
+      dummy.handle_input(handler, args)
       expect(dummy)
         .to have_received(:parse)
-        .with(key, parser, values, options)
-    end
-
-    it 'returns the flattened response' do
-      expect(dummy.handle_input(handler, values)).to eq output.flatten
+        .with(name, parser, values, options)
     end
   end
 
@@ -402,6 +397,70 @@ describe Decanter::Core do
     it 'returns an array containing the key, and an array of decanted values' do
       expect(dummy.handle_has_many(handler, values))
         .to match ({handler[:key] => output})
+    end
+  end
+
+  describe '#handle_association' do
+
+    let(:assoc) { :profile }
+    let(:handler)  { {
+      assoc: assoc,
+      key:   assoc,
+      name:  assoc,
+      type:  :has_one,
+      options: {}
+    } }
+
+    before(:each) do
+      allow(dummy).to receive(:handle_has_one)
+    end
+
+    context 'when there is a verbatim matching key' do
+
+      let(:args) { { assoc => 'bar', :baz => 'foo'} }
+
+      it 'calls handler_has_one with the handler and args' do
+        dummy.handle_association(handler, args)
+        expect(dummy)
+          .to have_received(:handle_has_one)
+          .with(handler, args[assoc])
+      end
+    end
+
+    context 'when there is a matching key for _attributes' do
+
+      let(:args) { { "#{assoc}_attributes".to_sym => 'bar', :baz => 'foo'} }
+
+      it 'calls handler_has_one with the _attributes handler and args' do
+        dummy.handle_association(handler, args)
+        expect(dummy)
+          .to have_received(:handle_has_one)
+          .with(hash_including(name: "#{assoc}_attributes".to_sym), args[:profile_attributes])
+      end
+    end
+
+    context 'when there is no matching key' do
+
+      let(:args) { { :foo => 'bar', :baz => 'foo'} }
+
+      it 'does not call handler_has_one' do
+        dummy.handle_association(handler, args)
+        expect(dummy).to_not have_received(:handle_has_one)
+      end
+
+      it 'returns an empty hash' do
+        expect(dummy.handle_association(handler, args)).to eq({})
+      end
+    end
+
+    context 'when there are multiple matching keys' do
+
+      let(:args) { { "#{assoc}_attributes".to_sym => 'bar', assoc => 'foo' } }
+
+      it 'raises an argument error' do
+        expect { dummy.handle_association(handler, args) }
+          .to raise_error(ArgumentError, "Handler #{handler[:name]} matches multiple keys: [:profile, :profile_attributes].")
+      end
     end
   end
 
