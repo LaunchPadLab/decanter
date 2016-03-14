@@ -27,7 +27,7 @@ module Decanter
       def has_many(assoc, **options)
         handlers[assoc] = {
           assoc:   assoc,
-          key:     options.fetch(:key, assoc.first),
+          key:     options.fetch(:key, assoc),
           name:    assoc,
           options: options,
           type:    :has_many
