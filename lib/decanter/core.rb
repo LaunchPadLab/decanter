@@ -111,7 +111,7 @@ module Decanter
             handler,
             handler.merge({
               name: "#{handler[:name]}_attributes",
-              key: handler.options.fetch(:key, "#{handler[:name]}_attributes")
+              key: handler[:options].fetch(:key, "#{handler[:name]}_attributes")
             })
           ]
 
