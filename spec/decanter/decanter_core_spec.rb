@@ -240,7 +240,7 @@ describe Decanter::Core do
 
     context 'when there are no unhandled keys' do
 
-      before(:each) { allow(dummy).to receive(:handlers).and_return({ foo: nil }) }
+      before(:each) { allow(dummy).to receive(:handlers).and_return({foo: { type: :input }}) }
 
       it 'returns an empty hash' do
         expect(dummy.unhandled_keys(args)).to match({})
@@ -423,19 +423,19 @@ describe Decanter::Core do
         dummy.handle_association(handler, args)
         expect(dummy)
           .to have_received(:handle_has_one)
-          .with(handler, args)
+          .with(handler, args[assoc])
       end
     end
 
     context 'when there is a matching key for _attributes' do
 
-      let(:args) { { "#{assoc}_attributes" => 'bar', :baz => 'foo'} }
+      let(:args) { { "#{assoc}_attributes".to_sym => 'bar', :baz => 'foo'} }
 
       it 'calls handler_has_one with the _attributes handler and args' do
         dummy.handle_association(handler, args)
         expect(dummy)
           .to have_received(:handle_has_one)
-          .with(hash_including(name: "#{assoc}_attributes"), args)
+          .with(hash_including(name: "#{assoc}_attributes".to_sym), args[:profile_attributes])
       end
     end
 
@@ -455,11 +455,11 @@ describe Decanter::Core do
 
     context 'when there are multiple matching keys' do
 
-      let(:args) { { "#{assoc}_attributes" => 'bar', assoc => 'foo' } }
+      let(:args) { { "#{assoc}_attributes".to_sym => 'bar', assoc => 'foo' } }
 
       it 'raises an argument error' do
         expect { dummy.handle_association(handler, args) }
-          .to raise_error(ArgumentError, "Handler #{handler[:name]} matches multiple keys: [:profile, \"profile_attributes\"].")
+          .to raise_error(ArgumentError, "Handler #{handler[:name]} matches multiple keys: [:profile, :profile_attributes].")
       end
     end
   end
