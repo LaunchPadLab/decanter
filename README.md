@@ -305,7 +305,7 @@ Default Parsers
 Decanter comes with the following parsers:
 - boolean
 - date
-- datetime
+- date_time
 - float
 - integer
 - phone
