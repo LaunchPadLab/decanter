@@ -16,4 +16,6 @@ module Decanter
   end
 end
 
-Dir["#{File.dirname(__FILE__)}/value_parser/*.rb"].each { |f| require f }
+require "#{File.dirname(__FILE__)}/value_parser/core.rb"
+require "#{File.dirname(__FILE__)}/value_parser/base.rb"
+Dir["#{File.dirname(__FILE__)}/value_parser/*_parser.rb"].each { |f| require f }
