@@ -1,6 +1,6 @@
 require 'decanter'
 
-class Decanter::Rails::Railtie < Rails::Railtie
+class Decanter::Railtie < Rails::Railtie
 
   initializer 'decanter.active_record' do
     ActiveSupport.on_load :active_record do
