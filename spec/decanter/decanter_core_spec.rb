@@ -175,7 +175,7 @@ describe Decanter::Core do
 
     before(:each) do
       allow(Decanter::ValueParser)
-        .to receive(:value_parser_for)
+        .to receive(:parser_for)
         .and_return(parser)
     end
 
@@ -185,17 +185,17 @@ describe Decanter::Core do
         expect(dummy.parse(:first_name, nil, 'bar', {})).to eq({:first_name => 'bar'})
       end
 
-      it 'does not sall ValueParser.value_parser_for' do
+      it 'does not sall ValueParser.parser_for' do
         dummy.parse(:first_name, nil, 'bar', {})
-        expect(Decanter::ValueParser).to_not have_received(:value_parser_for)
+        expect(Decanter::ValueParser).to_not have_received(:parser_for)
       end
     end
 
     context 'when a parser is specified' do
 
-      it 'calls ValueParser.value_parser_for with the parser' do
+      it 'calls ValueParser.parser_for with the parser' do
         dummy.parse(:first_name, :foo, 'bar', {})
-        expect(Decanter::ValueParser).to have_received(:value_parser_for).with(:foo)
+        expect(Decanter::ValueParser).to have_received(:parser_for).with(:foo)
       end
 
       it 'calls parse on the returned parser with the key, values and options' do
