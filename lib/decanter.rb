@@ -37,9 +37,8 @@ module Decanter
   ActiveSupport.run_load_hooks(:decanter, self)
 end
 
-require 'decanter/version'
-require 'decanter/base'
-require 'decanter/core'
-require 'decanter/extensions'
-require 'decanter/value_parser'
-require 'decanter/railtie' if defined?(::Rails)
+Dir["#{File.dirname(__FILE__)}/decanter/*.rb"].each { |f| require f }
+
+if defined?(::Rails)
+  Dir["#{File.dirname(__FILE__)}/decanter/rails/*.rb"].each { |f| require f }
+end
