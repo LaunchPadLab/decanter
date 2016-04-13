@@ -21,7 +21,7 @@ module Decanter
             end
           end
 
-          if @allowed && value_ary.all? { |value| @allowed.include?(value.class) }
+          if @allowed && value_ary.all? { |value| @allowed.any? { |allowed| value.is_a? allowed } }
             return { name => values }
           end
 
