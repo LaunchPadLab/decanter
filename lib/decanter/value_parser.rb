@@ -13,7 +13,7 @@ module Decanter
         end.concat('Parser')
 
         parser = parser_str.safe_constantize || "Decanter::ValueParser::".concat(parser_str).safe_constantize
-        raise ArgumentError.new("cannot find parser #{parser_str}") unless parser
+        raise NameError.new("cannot find parser #{parser_str}") unless parser
         parser
       end
     end

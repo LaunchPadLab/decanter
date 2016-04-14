@@ -38,7 +38,7 @@ describe Decanter::ValueParser do
 
         it 'raises a name error' do
           expect { Decanter::ValueParser::parser_for(foo) }
-            .to raise_error(NameError, "uninitialized constant #{foo.name.concat('Parser')}")
+            .to raise_error(NameError, "cannot find parser #{foo.name.concat('Parser')}")
         end
       end
 
@@ -65,7 +65,7 @@ describe Decanter::ValueParser do
       context 'when a corresponding parser does not exist' do
         it 'raises a name error' do
           expect { Decanter::ValueParser::parser_for(foo) }
-            .to raise_error(NameError, "uninitialized constant #{foo.to_s.capitalize.concat('Parser')}")
+            .to raise_error(NameError, "cannot find parser #{foo.to_s.capitalize.concat('Parser')}")
         end
       end
 
