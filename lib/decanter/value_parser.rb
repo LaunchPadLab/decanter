@@ -14,6 +14,7 @@ module Decanter
 
         parser = parser_str.safe_constantize || ("Decanter::ValueParser::" + parser_str).safe_constantize
         raise ArgumentError.new("cannot find parser #{parser_str}") unless parser
+        parser
       end
     end
   end
