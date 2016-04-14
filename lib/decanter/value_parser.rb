@@ -12,7 +12,7 @@ module Decanter
           raise ArgumentError.new("cannot lookup parser for #{klass_or_sym} with class #{klass_or_sym.class}")
         end.concat('Parser')
 
-        parser = parser_str.safe_constantize || ("Decanter::ValueParser::" + parser_str).safe_constantize
+        parser = parser_str.safe_constantize || "Decanter::ValueParser::".concat(parser_str).safe_constantize
         raise ArgumentError.new("cannot find parser #{parser_str}") unless parser
         parser
       end

@@ -9,11 +9,7 @@ class Decanter::Railtie < Rails::Railtie
     end
   end
 
-  config.to_prepare do
-    Dir[
-      File.expand_path(Rails.root.join("lib/decanter/parsers/*"))
-    ].each { |file| require file }
-  end
+  config.autoload_paths << Rails.root.join("lib/decanter/parsers")
 
   generators do |app|
     Rails::Generators.configure!(app.config.generators)
