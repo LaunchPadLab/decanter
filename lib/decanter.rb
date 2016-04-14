@@ -38,8 +38,8 @@ module Decanter
 end
 
 require 'decanter/version'
-require 'decanter/base'
 require 'decanter/core'
+require 'decanter/base'
 require 'decanter/extensions'
 require 'decanter/value_parser'
 require 'decanter/railtie' if defined?(::Rails)
