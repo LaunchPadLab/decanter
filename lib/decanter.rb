@@ -32,6 +32,11 @@ module Decanter
 
       constant
     end
+
+    def config
+      @config = Decanter::Configuration.new
+      yield @config
+    end
   end
 
   ActiveSupport.run_load_hooks(:decanter, self)

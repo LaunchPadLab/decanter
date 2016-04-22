@@ -167,7 +167,7 @@ module Decanter
       end
 
       def strict_mode
-        @strict_mode ||= {}
+        @strict_mode ||= Decanter::Configuration.strict
       end
     end
   end
