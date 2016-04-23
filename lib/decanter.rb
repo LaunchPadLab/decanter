@@ -33,9 +33,12 @@ module Decanter
       constant
     end
 
+    def configuration
+      @config ||= Decanter::Configuration.new
+    end
+
     def config
-      @config = Decanter::Configuration.new
-      yield @config
+      yield configuration
     end
   end
 
@@ -43,6 +46,7 @@ module Decanter
 end
 
 require 'decanter/version'
+require 'decanter/configuration'
 require 'decanter/core'
 require 'decanter/base'
 require 'decanter/extensions'
