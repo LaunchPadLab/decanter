@@ -348,7 +348,7 @@ end
 No Need for Strong Params
 ---
 
-Since you are already defining your expected inputs in Decanter, you really don't need strong_params anymore.
+Since you are already defining your expected inputs in Decanter, you really don't need strong params anymore.
 
 In order to tell Decanter to ignore the params not defined in your Decanter, just add the ```strict``` flag to your Decanters:
 
@@ -369,3 +369,25 @@ class TripDecanter <  Decanter::Base
   input :name
 end
 ```
+
+Configuration
+---
+
+You can generate a local copy of the default configuration with ```rails generate decanter:install```. This will create the initializer ```../config/initializers/decanter.rb```.
+
+Starting with version 0.7.2, the default strict mode is ```:with_exception```. If this is what you prefer, you no longer have to set it in every decanter. You can still set this on individual decanters or you can configure it globally in the initializer:
+
+```ruby
+# ../config/initializers/decanter.rb
+
+Decanter.config do |config|
+  config.strict = true
+end
+
+# Or
+
+Decanter.configuration.strict = true
+```
+
+Likewise, you can put the above code in a specific environment configuration.
+
