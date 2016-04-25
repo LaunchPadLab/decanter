@@ -208,7 +208,7 @@ end
 ```
 
 
-By inheriting from Decanter::Parser::ValueParser, the assumption is that the value returned from the parser will be the value associated with the provided key. If you need more control over the result, for example, you want a parser that returns multiple key value pairs, you should instead inherit from Decanter::Parser::HashParser. This required that the value returned is a hash. For example:
+By inheriting from Decanter::Parser::ValueParser, the assumption is that the value returned from the parser will be the value associated with the provided key. If you need more control over the result, for example, you want a parser that returns multiple key value pairs, you should instead inherit from Decanter::Parser::HashParser. This requires that the value returned is a hash. For example:
 
 ```ruby
 class KeyValueSplitterParser < Decanter::Parser::HashParser
