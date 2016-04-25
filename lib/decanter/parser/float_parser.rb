@@ -1,11 +1,11 @@
 module Decanter
   module Parser
-    class FloatParser < Base
+    class FloatParser < ValueParser
       REGEX = /(\d|[.])/
 
       allow Float, Fixnum
 
-      parser do |name, val, options|
+      parser do |val, options|
         val.scan(REGEX).join.try(:to_f)
       end
     end

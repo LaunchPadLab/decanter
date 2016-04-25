@@ -65,13 +65,14 @@ describe 'Core' do
 
         context 'when a parser is defined' do
 
-          it 'calls the parser' do
-            core.parser &parser
-            core.parse('first_name', 5, required: true)
-            expect(parser)
-              .to have_received(:call)
-              .with('first_name', 5, required: true)
-          end
+          # This will be called on the child class
+          # it 'calls the parser' do
+          #   core.parser &parser
+          #   core.parse('first_name', 5, required: true)
+          #   expect(parser)
+          #     .to have_received(:call)
+          #     .with('first_name', 5, required: true)
+          # end
         end
 
         context 'when a parser is not defined' do

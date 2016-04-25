@@ -1,9 +1,9 @@
 module Decanter
   module Parser
-    class JoinParser < Base
+    class JoinParser < ValueParser
       DELIM = ','
 
-      parser do |name, val, options|
+      parser do |val, options|
         delimiter = options.fetch(:delimiter, ITEM_DELIM)
         val.join(DELIM)
       end

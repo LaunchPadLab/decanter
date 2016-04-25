@@ -1,10 +1,10 @@
 module Decanter
   module Parser
-    class StringParser < Base
+    class StringParser < ValueParser
 
       allow String
 
-      parser do |name, val, options|
+      parser do |val, options|
         val.to_s
       end
     end

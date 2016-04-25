@@ -22,4 +22,6 @@ end
 
 require "#{File.dirname(__FILE__)}/parser/core.rb"
 require "#{File.dirname(__FILE__)}/parser/base.rb"
+require "#{File.dirname(__FILE__)}/parser/value_parser.rb"
+require "#{File.dirname(__FILE__)}/parser/hash_parser.rb"
 Dir["#{File.dirname(__FILE__)}/parser/*_parser.rb"].each { |f| require f }
