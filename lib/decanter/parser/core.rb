@@ -29,6 +29,8 @@ module Decanter
           unless @parser
             raise ArgumentError.new("No parser for argument: #{name} with types: #{value_ary.map(&:class).join(', ')}")
           end
+
+          _parse(name, values, options)
         end
 
         def parser(&block)

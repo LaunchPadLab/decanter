@@ -3,8 +3,8 @@ require_relative 'core'
 module Decanter
   module Parser
     class HashParser < Base
-      def self.parse(name, values, options={})
-        super || validate_hash(@parser.call(name, values, options))
+      def self._parse(name, values, options={})
+        validate_hash(@parser.call(name, values, options))
       end
 
       private

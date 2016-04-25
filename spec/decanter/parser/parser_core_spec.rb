@@ -55,9 +55,10 @@ describe 'Core' do
         end
 
         it 'does not call the parser' do
+          allow(core).to receive(:_parse)
           core.parser &parser
           core.parse('first_name', ['foo'])
-          expect(parser).to_not have_received(:call)
+          expect(core).to_not have_received(:_parse)
         end
       end
 
@@ -65,14 +66,14 @@ describe 'Core' do
 
         context 'when a parser is defined' do
 
-          # This will be called on the child class
-          # it 'calls the parser' do
-          #   core.parser &parser
-          #   core.parse('first_name', 5, required: true)
-          #   expect(parser)
-          #     .to have_received(:call)
-          #     .with('first_name', 5, required: true)
-          # end
+          it 'calls the parser' do
+            allow(core).to receive(:_parse)
+            core.parser &parser
+            core.parse('first_name', 5, required: true)
+            expect(core)
+              .to have_received(:_parse)
+              .with('first_name', 5, required: true)
+          end
         end
 
         context 'when a parser is not defined' do
