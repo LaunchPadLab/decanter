@@ -156,7 +156,7 @@ module Decanter
 
       def parse(key, parser, values, options)
         parser ?
-          ValueParser.parser_for(parser)
+          Parser.parser_for(parser)
                      .parse(key, values, options)
           :
           { key => values }

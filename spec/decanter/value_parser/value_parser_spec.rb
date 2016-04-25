@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Decanter::ValueParser do
+describe Decanter::Parser do
 
   before(:all) do
     Object.const_set('FooParser',
-      Class.new(Decanter::ValueParser::Base) do
+      Class.new(Decanter::Parser::Base) do
         def self.name
           'FooParser'
         end
@@ -19,7 +19,7 @@ describe Decanter::ValueParser do
       let(:foo) { 'Foo' }
 
       it 'raises an argument error' do
-        expect { Decanter::ValueParser::parser_for(foo) }
+        expect { Decanter::Parser::parser_for(foo) }
           .to raise_error(ArgumentError, "cannot lookup parser for #{foo} with class #{foo.class}")
       end
     end
@@ -37,7 +37,7 @@ describe Decanter::ValueParser do
         end
 
         it 'raises a name error' do
-          expect { Decanter::ValueParser::parser_for(foo) }
+          expect { Decanter::Parser::parser_for(foo) }
             .to raise_error(NameError, "cannot find parser #{foo.name.concat('Parser')}")
         end
       end
@@ -53,7 +53,7 @@ describe Decanter::ValueParser do
         end
 
         it 'returns the parser' do
-          expect(Decanter::ValueParser::parser_for(foo)).to eq FooParser
+          expect(Decanter::Parser::parser_for(foo)).to eq FooParser
         end
       end
     end
@@ -64,7 +64,7 @@ describe Decanter::ValueParser do
 
       context 'when a corresponding parser does not exist' do
         it 'raises a name error' do
-          expect { Decanter::ValueParser::parser_for(foo) }
+          expect { Decanter::Parser::parser_for(foo) }
             .to raise_error(NameError, "cannot find parser #{foo.to_s.capitalize.concat('Parser')}")
         end
       end
@@ -74,7 +74,7 @@ describe Decanter::ValueParser do
         let(:foo) { :foo }
 
         it 'returns the parser' do
-          expect(Decanter::ValueParser::parser_for(foo)).to eq FooParser
+          expect(Decanter::Parser::parser_for(foo)).to eq FooParser
         end
       end
     end

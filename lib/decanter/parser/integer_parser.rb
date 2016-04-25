@@ -1,5 +1,5 @@
 module Decanter
-  module ValueParser
+  module Parser
     class IntegerParser < Base
       REGEX = /(\d|[.])/
 

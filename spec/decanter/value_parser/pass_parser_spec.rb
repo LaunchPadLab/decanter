@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'PassParser' do
 
-  let(:parser) { Decanter::ValueParser::PassParser }
+  let(:parser) { Decanter::Parser::PassParser }
 
   describe '#parse' do
     it 'lets anything through' do

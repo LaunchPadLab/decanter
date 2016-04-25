@@ -1,5 +1,5 @@
 module Decanter
-  module ValueParser
+  module Parser
     class StringParser < Base
 
       allow String

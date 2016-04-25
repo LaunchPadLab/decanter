@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'Core' do
 
-  let(:core) { Class.new { include Decanter::ValueParser::Core } }
+  let(:core) { Class.new { include Decanter::Parser::Core } }
 
   describe '#parser' do
     it 'sets class variable @parser to equal the block' do

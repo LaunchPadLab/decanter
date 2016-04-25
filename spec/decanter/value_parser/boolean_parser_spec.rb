@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'BooleanParser' do
 
-  let(:parser) { Decanter::ValueParser::BooleanParser }
+  let(:parser) { Decanter::Parser::BooleanParser }
 
   describe '#parse' do
 

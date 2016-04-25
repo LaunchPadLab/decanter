@@ -1,5 +1,5 @@
 module Decanter
-  module ValueParser
+  module Parser
     module Core
 
       def self.included(base)

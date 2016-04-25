@@ -4,7 +4,7 @@ describe 'DateParser' do
 
   let(:name) { :foo }
 
-  let(:parser) { Decanter::ValueParser::DateParser }
+  let(:parser) { Decanter::Parser::DateParser }
 
   describe '#parse' do
     context 'with a valid date string of default form ' do

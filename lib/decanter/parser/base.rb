@@ -1,7 +1,7 @@
 require_relative 'core'
 
 module Decanter
-  module ValueParser
+  module Parser
     class Base
       include Core
     end

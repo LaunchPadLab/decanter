@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'KeyValueSplitterParser' do
 
-  let(:parser) { Decanter::ValueParser::KeyValueSplitterParser }
+  let(:parser) { Decanter::Parser::KeyValueSplitterParser }
 
   describe '#parse' do
     it 'returns an array with the split pairs' do

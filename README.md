@@ -55,7 +55,7 @@ In your controller:
 
   def update
     @trip = Trip.find(params[:id])
-    
+
     if @trip.decant_update(params[:trip])
       redirect_to trips_path
     else
@@ -139,7 +139,7 @@ end
 You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do ```@trip = Trip.decant_new(params[:trip])```. ```decant_new``` is where the magic happens. It is converting the params from this:
 
 ```ruby
-{ 
+{
   name: "My Trip",
   start_date: "01/15/2015",
   end_date: "01/20/2015"
@@ -149,7 +149,7 @@ You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do `
 to this:
 
 ```ruby
-{ 
+{
   name: "My Trip",
   start_date: Mon, 15 Jan 2015,
   end_date: Mon, 20 Jan 2015
@@ -164,7 +164,7 @@ Adding Custom Parsers
 In the above example, start_date and end_date are ran through a DateParser that lives in Decanter. Let's take a look at the DateParser:
 
 ```ruby
-class DateParser < Decanter::ValueParser::Base
+class DateParser < Decanter::Parser::Base
 
   allow Date
 
@@ -198,8 +198,8 @@ rails g parser Date
 **lib/decanter/parsers/date_parser**
 
 ```ruby
-class DateParser < Decanter::ValueParser::Base
-  parser do |name, value, options|    
+class DateParser < Decanter::Parser::Base
+  parser do |name, value, options|
     # your parsing logic here
   end
 end
@@ -273,7 +273,7 @@ Each of the destinations in our params[:trip] are automatically parsed according
 Non Database-Backed Objects
 ---
 
-Decanter will work for your non database-backed objects as well. We just need to call ```decant``` to parse our params according to our decanter logic. 
+Decanter will work for your non database-backed objects as well. We just need to call ```decant``` to parse our params according to our decanter logic.
 
 Let's say we have a search filtering object called ```SearchFilter```. We start by generating our decanter:
 
@@ -322,11 +322,11 @@ rails g parser Zip
 Squashing Inputs
 ---
 
-Sometimes, you may want to take several inputs and combine them into one finished input prior to sending to your model. For example, if day, month, and year come in as separate parameters, but your database really only cares about start_date. 
+Sometimes, you may want to take several inputs and combine them into one finished input prior to sending to your model. For example, if day, month, and year come in as separate parameters, but your database really only cares about start_date.
 
 ```ruby
 class TripDecanter < Decanter::Base
-  input [:day, :month, :year], :squash_date, key: :start_date  
+  input [:day, :month, :year], :squash_date, key: :start_date
 end
 ```
 

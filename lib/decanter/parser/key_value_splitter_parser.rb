@@ -1,5 +1,5 @@
 module Decanter
-  module ValueParser
+  module Parser
     class KeyValueSplitterParser < Base
       ITEM_DELIM = ','
       PAIR_DELIM = ':'
