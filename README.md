@@ -55,7 +55,7 @@ In your controller:
 
   def update
     @trip = Trip.find(params[:id])
-    
+
     if @trip.decant_update(params[:trip])
       redirect_to trips_path
     else
@@ -139,7 +139,7 @@ end
 You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do ```@trip = Trip.decant_new(params[:trip])```. ```decant_new``` is where the magic happens. It is converting the params from this:
 
 ```ruby
-{ 
+{
   name: "My Trip",
   start_date: "01/15/2015",
   end_date: "01/20/2015"
@@ -149,7 +149,7 @@ You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do `
 to this:
 
 ```ruby
-{ 
+{
   name: "My Trip",
   start_date: Mon, 15 Jan 2015,
   end_date: Mon, 20 Jan 2015
@@ -199,7 +199,7 @@ rails g parser Date
 
 ```ruby
 class DateParser < Decanter::ValueParser::Base
-  parser do |name, value, options|    
+  parser do |name, value, options|
     # your parsing logic here
   end
 end
@@ -273,7 +273,7 @@ Each of the destinations in our params[:trip] are automatically parsed according
 Non Database-Backed Objects
 ---
 
-Decanter will work for your non database-backed objects as well. We just need to call ```decant``` to parse our params according to our decanter logic. 
+Decanter will work for your non database-backed objects as well. We just need to call ```decant``` to parse our params according to our decanter logic.
 
 Let's say we have a search filtering object called ```SearchFilter```. We start by generating our decanter:
 
@@ -322,11 +322,11 @@ rails g parser Zip
 Squashing Inputs
 ---
 
-Sometimes, you may want to take several inputs and combine them into one finished input prior to sending to your model. For example, if day, month, and year come in as separate parameters, but your database really only cares about start_date. 
+Sometimes, you may want to take several inputs and combine them into one finished input prior to sending to your model. For example, if day, month, and year come in as separate parameters, but your database really only cares about start_date.
 
 ```ruby
 class TripDecanter < Decanter::Base
-  input [:day, :month, :year], :squash_date, key: :start_date  
+  input [:day, :month, :year], :squash_date, key: :start_date
 end
 ```
 
@@ -348,7 +348,7 @@ end
 No Need for Strong Params
 ---
 
-Since you are already defining your expected inputs in Decanter, you really don't need strong_params anymore.
+Since you are already defining your expected inputs in Decanter, you really don't need strong params anymore.
 
 In order to tell Decanter to ignore the params not defined in your Decanter, just add the ```strict``` flag to your Decanters:
 
@@ -369,3 +369,25 @@ class TripDecanter <  Decanter::Base
   input :name
 end
 ```
+
+Configuration
+---
+
+You can generate a local copy of the default configuration with ```rails generate decanter:install```. This will create the initializer ```../config/initializers/decanter.rb```.
+
+Starting with version 0.7.2, the default strict mode is ```:with_exception```. If this is what you prefer, you no longer have to set it in every decanter. You can still set this on individual decanters or you can configure it globally in the initializer:
+
+```ruby
+# ../config/initializers/decanter.rb
+
+Decanter.config do |config|
+  config.strict = true
+end
+
+# Or
+
+Decanter.configuration.strict = true
+```
+
+Likewise, you can put the above code in a specific environment configuration.
+

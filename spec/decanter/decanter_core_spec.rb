@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Decanter::Core do
 
-  let(:dummy) { Class.new { include Decanter::Core } }
+  let(:dummy) { Class.new(Decanter::Base) }
 
   before(:each) do
     Decanter::Core.class_variable_set(:@@handlers, {})
@@ -253,24 +253,25 @@ describe Decanter::Core do
 
       context 'and strict mode is true' do
 
-        before(:each) { dummy.strict true }
-
         it 'spits out a warning' do
+          dummy.strict true
           # Not sure how to test this
+          true
         end
       end
 
       context 'and strict mode is :with_exception' do
 
-        before(:each) { dummy.strict :with_exception }
-
         it 'raises an error' do
+          dummy.strict :with_exception
           expect { dummy.unhandled_keys(args) }.to raise_error(ArgumentError)
         end
       end
 
-      context 'and strict mode is not specified' do
+      context 'and strict mode is false' do
+
         it 'returns a hash with the unhandled keys and values' do
+          dummy.strict false
           expect(dummy.unhandled_keys(args)).to match(args)
         end
       end
