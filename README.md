@@ -216,9 +216,19 @@ class KeyValueSplitterParser < Decanter::Parser::HashParser
   PAIR_DELIM = ':'
 
   parser do |name, val, options|
+    # val = 'color:blue,price:45.31'
+
     item_delimiter = options.fetch(:item_delimiter, ITEM_DELIM)
     pair_delimiter = options.fetch(:pair_delimiter, PAIR_DELIM)
-    val.split(item_delimiter).reduce({}) { |memo, pair| memo.merge( Hash[ *pair.split(pair_delimiter) ] ) }
+
+    pairs = val.split(item_delimiter) # ['color:blue', 'price:45.31']
+
+    hash = {}
+    pairs.each do |pair|
+      key, value = pair.split(pair_delimiter) # 'color', 'blue'
+      hash[key] = value
+    end
+    return hash
   end
 end
 ```
