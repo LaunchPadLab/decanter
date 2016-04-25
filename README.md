@@ -163,12 +163,14 @@ Adding Custom Parsers
 
 In the above example, start_date and end_date are ran through a DateParser that lives in Decanter. Let's take a look at the DateParser:
 
+** Note this changed in version 0.7.2. Now parser must inherit from Decanter::Parser::ValueParser or Decanter::Parser::HashParser instead of Decanter::Parser::Base **
+
 ```ruby
-class DateParser < Decanter::Parser::Base
+class DateParser < Decanter::Parser::ValueParser
 
   allow Date
 
-  parser do |name, value, options|
+  parser do |value, options|
     parse_format = options.fetch(:parse_format, '%m/%d/%Y')
     ::Date.strptime(value, parse_format)
   end
@@ -182,7 +184,7 @@ You'll notice that the above ```parser do``` block takes a ```:parse_format``` o
 ```ruby
 # app/decanters/trip_decanter.rb
 
-class TripDecanter < Decanter::Base
+class TripDecanter < Decanter::ValueParser
   input :name, :string
   input :start_date, :date, parse_format: '%Y-%m-%d'
   input :end_date, :date, parse_format: '%Y-%m-%d'
@@ -198,12 +200,30 @@ rails g parser Date
 **lib/decanter/parsers/date_parser**
 
 ```ruby
-class DateParser < Decanter::Parser::Base
-  parser do |name, value, options|
+class DateParser < Decanter::Parser::ValueParser
+  parser do |value, options|
     # your parsing logic here
   end
 end
 ```
+
+
+By inheriting from Decanter::Parser::ValueParser, the assumption is that the value returned from the parser will be the value associated with the provided key. If you need more control over the result, for example, you want a parser that returns multiple key value pairs, you should instead inherit from Decanter::Parser::HashParser. This required that the value returned is a hash. For example:
+
+```ruby
+class KeyValueSplitterParser < Decanter::Parser::HashParser
+  ITEM_DELIM = ','
+  PAIR_DELIM = ':'
+
+  parser do |name, val, options|
+    item_delimiter = options.fetch(:item_delimiter, ITEM_DELIM)
+    pair_delimiter = options.fetch(:pair_delimiter, PAIR_DELIM)
+    val.split(item_delimiter).reduce({}) { |memo, pair| memo.merge( Hash[ *pair.split(pair_delimiter) ] ) }
+  end
+end
+```
+
+The ```parser``` block takes the 'name' as an additional argument and must return a hash.
 
 Nested Example
 ---
@@ -337,8 +357,8 @@ rails g parser SquashDate
 ```ruby
 # lib/decanter/parsers/squash_date_parser.rb
 
-class SquashDateParser < Decanter::Parser::Base
-  parser do |name, values, options|
+class SquashDateParser < Decanter::Parser::ValueParser
+  parser do |values, options|
     day, month, year = values.map(&:to_i)
     Date.new(year, month, day)
   end
