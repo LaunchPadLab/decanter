@@ -1,5 +1,5 @@
 module Decanter
-  module ValueParser
+  module Parser
 
     class << self
       def parser_for(klass_or_sym)
@@ -12,7 +12,7 @@ module Decanter
           raise ArgumentError.new("cannot lookup parser for #{klass_or_sym} with class #{klass_or_sym.class}")
         end.concat('Parser')
 
-        parser = parser_str.safe_constantize || "Decanter::ValueParser::".concat(parser_str).safe_constantize
+        parser = parser_str.safe_constantize || "Decanter::Parser::".concat(parser_str).safe_constantize
         raise NameError.new("cannot find parser #{parser_str}") unless parser
         parser
       end
@@ -20,6 +20,8 @@ module Decanter
   end
 end
 
-require "#{File.dirname(__FILE__)}/value_parser/core.rb"
-require "#{File.dirname(__FILE__)}/value_parser/base.rb"
-Dir["#{File.dirname(__FILE__)}/value_parser/*_parser.rb"].each { |f| require f }
+require "#{File.dirname(__FILE__)}/parser/core.rb"
+require "#{File.dirname(__FILE__)}/parser/base.rb"
+require "#{File.dirname(__FILE__)}/parser/value_parser.rb"
+require "#{File.dirname(__FILE__)}/parser/hash_parser.rb"
+Dir["#{File.dirname(__FILE__)}/parser/*_parser.rb"].each { |f| require f }

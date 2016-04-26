@@ -9,7 +9,7 @@ class Decanter::Railtie < Rails::Railtie
     end
   end
 
-  initializer 'decanter.value_parser.autoload', :before => :set_autoload_paths do |app|
+  initializer 'decanter.parser.autoload', :before => :set_autoload_paths do |app|
     app.config.autoload_paths << Rails.root.join("lib/decanter/parsers")
   end
 

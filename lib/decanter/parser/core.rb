@@ -1,5 +1,5 @@
 module Decanter
-  module ValueParser
+  module Parser
     module Core
 
       def self.included(base)
@@ -8,6 +8,7 @@ module Decanter
 
       module ClassMethods
 
+        # Meant to be overriden and called by child parser
         def parse(name, values, options={})
 
           value_ary = values.is_a?(Array) ? values : [values]
@@ -29,17 +30,7 @@ module Decanter
             raise ArgumentError.new("No parser for argument: #{name} with types: #{value_ary.map(&:class).join(', ')}")
           end
 
-          case @result
-          when :raw
-            # Parser result must be a hash
-            parsed = @parser.call(name, values, options)
-            parsed.is_a?(Hash) ?
-              parsed :
-              raise(ArgumentError.new("Result of parser #{self.name} with values #{values} was #{parsed} when it must be a hash."))
-          else
-            # Parser result will be treated as a single value belonging to the name
-            { name => @parser.call(name, values, options) }
-          end
+          _parse(name, values, options)
         end
 
         def parser(&block)
@@ -48,10 +39,6 @@ module Decanter
 
         def allow(*args)
           @allowed = args
-        end
-
-        def result(opt)
-          @result = opt
         end
       end
     end

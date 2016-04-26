@@ -1,10 +1,10 @@
 module Decanter
-  module ValueParser
-    class BooleanParser < Base
+  module Parser
+    class BooleanParser < ValueParser
 
       allow TrueClass, FalseClass
 
-      parser do |name, val, options|
+      parser do |val, options|
         [1, '1'].include?(val) || !!/true/i.match(val.to_s)
       end
     end

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'Core' do
 
-  let(:core) { Class.new { include Decanter::ValueParser::Core } }
+  let(:core) { Class.new { include Decanter::Parser::Core } }
 
   describe '#parser' do
     it 'sets class variable @parser to equal the block' do
@@ -55,9 +55,10 @@ describe 'Core' do
         end
 
         it 'does not call the parser' do
+          allow(core).to receive(:_parse)
           core.parser &parser
           core.parse('first_name', ['foo'])
-          expect(parser).to_not have_received(:call)
+          expect(core).to_not have_received(:_parse)
         end
       end
 
@@ -66,10 +67,11 @@ describe 'Core' do
         context 'when a parser is defined' do
 
           it 'calls the parser' do
+            allow(core).to receive(:_parse)
             core.parser &parser
             core.parse('first_name', 5, required: true)
-            expect(parser)
-              .to have_received(:call)
+            expect(core)
+              .to have_received(:_parse)
               .with('first_name', 5, required: true)
           end
         end

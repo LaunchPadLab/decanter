@@ -1,10 +1,8 @@
 module Decanter
-  module ValueParser
-    class KeyValueSplitterParser < Base
+  module Parser
+    class KeyValueSplitterParser < HashParser
       ITEM_DELIM = ','
       PAIR_DELIM = ':'
-
-      result :raw
 
       parser do |name, val, options|
         item_delimiter = options.fetch(:item_delimiter, ITEM_DELIM)

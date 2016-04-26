@@ -13,7 +13,7 @@ module Rails
       private
 
       def parent_class_name
-        'Decanter::ValueParser::Base'
+        'Decanter::Parser::Base'
       end
     end
   end

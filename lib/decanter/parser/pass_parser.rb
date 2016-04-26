@@ -1,6 +1,6 @@
 module Decanter
-  module ValueParser
-    class PassParser < Base
+  module Parser
+    class PassParser < ValueParser
 
       allow Object
     end
