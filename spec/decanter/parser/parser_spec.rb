@@ -12,14 +12,14 @@ describe Decanter::Parser do
     )
   end
 
-  describe '#parser_for' do
+  describe '#parsers_for' do
 
     context 'for a string' do
 
       let(:foo) { 'Foo' }
 
       it 'raises an argument error' do
-        expect { Decanter::Parser::parser_for(foo) }
+        expect { Decanter::Parser::parsers_for(foo) }
           .to raise_error(ArgumentError, "cannot lookup parser for #{foo} with class #{foo.class}")
       end
     end
@@ -37,7 +37,7 @@ describe Decanter::Parser do
         end
 
         it 'raises a name error' do
-          expect { Decanter::Parser::parser_for(foo) }
+          expect { Decanter::Parser::parsers_for(foo) }
             .to raise_error(NameError, "cannot find parser #{foo.name.concat('Parser')}")
         end
       end
@@ -53,7 +53,7 @@ describe Decanter::Parser do
         end
 
         it 'returns the parser' do
-          expect(Decanter::Parser::parser_for(foo)).to eq FooParser
+          expect(Decanter::Parser::parsers_for(foo)).to eq [FooParser]
         end
       end
     end
@@ -64,7 +64,7 @@ describe Decanter::Parser do
 
       context 'when a corresponding parser does not exist' do
         it 'raises a name error' do
-          expect { Decanter::Parser::parser_for(foo) }
+          expect { Decanter::Parser::parsers_for(foo) }
             .to raise_error(NameError, "cannot find parser #{foo.to_s.capitalize.concat('Parser')}")
         end
       end
@@ -74,7 +74,7 @@ describe Decanter::Parser do
         let(:foo) { :foo }
 
         it 'returns the parser' do
-          expect(Decanter::Parser::parser_for(foo)).to eq FooParser
+          expect(Decanter::Parser::parsers_for(foo)).to eq [FooParser]
         end
       end
     end

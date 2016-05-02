@@ -56,7 +56,7 @@ describe Decanter::Core do
     end
 
     it 'the handler has parser of provided parser' do
-      expect(dummy.handlers[name][:parser]).to eq parser
+      expect(dummy.handlers[name][:parsers]).to eq parser
     end
 
     context 'with key specified in options' do
@@ -175,8 +175,8 @@ describe Decanter::Core do
 
     before(:each) do
       allow(Decanter::Parser)
-        .to receive(:parser_for)
-        .and_return(parser)
+        .to receive(:parsers_for)
+        .and_return(Array.wrap(parser))
     end
 
     context 'when a parser is not specified' do
@@ -185,17 +185,17 @@ describe Decanter::Core do
         expect(dummy.parse(:first_name, nil, 'bar', {})).to eq({:first_name => 'bar'})
       end
 
-      it 'does not sall Parser.parser_for' do
+      it 'does not sall Parser.parsers_for' do
         dummy.parse(:first_name, nil, 'bar', {})
-        expect(Decanter::Parser).to_not have_received(:parser_for)
+        expect(Decanter::Parser).to_not have_received(:parsers_for)
       end
     end
 
     context 'when a parser is specified' do
 
-      it 'calls Parser.parser_for with the parser' do
+      it 'calls Parser.parsers_for with the parser' do
         dummy.parse(:first_name, :foo, 'bar', {})
-        expect(Decanter::Parser).to have_received(:parser_for).with(:foo)
+        expect(Decanter::Parser).to have_received(:parsers_for).with([:required, :foo])
       end
 
       it 'calls parse on the returned parser with the key, values and options' do
@@ -308,7 +308,7 @@ describe Decanter::Core do
     let(:options) { double('options') }
     let(:args)    { { name => 'Hi', foo: 'bar' } }
     let(:values)  { args[name] }
-    let(:handler) { { key: name, name: name, parser: parser, options: options } }
+    let(:handler) { { key: name, name: name, parsers: parser, options: options } }
 
     before(:each) do
       allow(dummy).to receive(:parse)
