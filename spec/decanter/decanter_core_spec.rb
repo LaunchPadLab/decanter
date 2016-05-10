@@ -195,7 +195,7 @@ describe Decanter::Core do
 
       it 'calls Parser.parsers_for with the parser' do
         dummy.parse(:first_name, :foo, 'bar', {})
-        expect(Decanter::Parser).to have_received(:parsers_for).with([:required, :foo])
+        expect(Decanter::Parser).to have_received(:parsers_for).with(:foo)
       end
 
       it 'calls parse on the returned parser with the key, values and options' do

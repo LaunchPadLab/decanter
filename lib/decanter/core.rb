@@ -155,11 +155,14 @@ module Decanter
       end
 
       def parse(key, parsers, values, options)
-        if parsers
-          Parser.parsers_for(([:required] << parsers).flatten)
-            .reduce(values) { |acc, parser| parser.parse(key, acc, options) }
-        else
+        case
+        when !parsers
           { key => values }
+        when options[:required] == true && Array.wrap(values).all? { |value| value.nil? || value == "" }
+          raise ArgumentError.new("No value for required argument: #{key}")
+        else
+          Parser.parsers_for(parsers)
+                .reduce(values) { |acc, parser| parser.parse(key, acc, options) }
         end
       end
 
