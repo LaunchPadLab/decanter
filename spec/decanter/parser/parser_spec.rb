@@ -3,11 +3,22 @@ require 'spec_helper'
 describe Decanter::Parser do
 
   before(:all) do
+
     Object.const_set('FooParser',
       Class.new(Decanter::Parser::Base) do
         def self.name
           'FooParser'
         end
+      end
+    )
+
+    Object.const_set('BarParser',
+      Class.new(Decanter::Parser::Base) do
+        def self.name
+          'BarParser'
+        end
+      end.tap do |parser|
+        parser.pre :date, :float
       end
     )
   end
@@ -103,8 +114,18 @@ describe Decanter::Parser do
   end
 
 
-  # describe '#parsers_for' do
+  describe '#parsers_for' do
 
+    subject { Decanter::Parser.parsers_for(:bar) }
+
+    it 'returns a flattened array of parsers' do
+      expect(subject).to eq [
+        Decanter::Parser::DateParser,
+        Decanter::Parser::FloatParser,
+        BarParser
+      ]
+    end
+  end
   #   context 'for a class' do
 
   #     context 'when a corresponding parser does not exist' do
