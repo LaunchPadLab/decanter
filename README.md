@@ -381,20 +381,20 @@ end
 Chaining Parsers
 ---
 
-Parsers are composable! Suppose you want a parser that converts a value from 0 to 100 to a percent. You could implement this with:
+Parsers are composable! Suppose you want a parser that takes an incoming percentage like "50.3%" and converts it into a float for your database like .503. You could implement this with:
 
 ```ruby
 class PercentParser < ValueParser
   REGEX = /(\d|[.])/
 
   parser do |val, options|
-    fl = val.scan(REGEX).join.try(:to_f)
-    fl ? fl / 100 : fl
+    my_float = val.scan(REGEX).join.try(:to_f)
+    my_float / 100 if my_float
   end
 end
 ```
 
-This works, but it duplicates logic that already exists in `FloatParser`. Instead, you can specify a preparser, to always be run before your parsing logic, then you can assume that your parser receives a float:
+This works, but it duplicates logic that already exists in `FloatParser`. Instead, you can specify a parser that should always run before your parsing logic, then you can assume that your parser receives a float:
 
 ```ruby
 class SmartPercentParser < ValueParser
