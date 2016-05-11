@@ -171,39 +171,83 @@ describe Decanter::Core do
 
   describe '#parse' do
 
-    let(:parser) { double("parser", parse: nil) }
-
-    before(:each) do
-      allow(Decanter::Parser)
-        .to receive(:parsers_for)
-        .and_return(Array.wrap(parser))
-    end
-
     context 'when a parser is not specified' do
 
-      it 'returns an array with the key and value' do
+      let(:parser) { double("parser", parse: nil) }
+
+      before(:each) do
+        allow(Decanter::Parser)
+          .to receive(:parsers_for)
+          .and_return(Array.wrap(parser))
+      end
+
+      it 'returns the provided key and value' do
         expect(dummy.parse(:first_name, nil, 'bar', {})).to eq({:first_name => 'bar'})
       end
 
-      it 'does not sall Parser.parsers_for' do
+      it 'does not call Parser.parsers_for' do
         dummy.parse(:first_name, nil, 'bar', {})
         expect(Decanter::Parser).to_not have_received(:parsers_for)
       end
     end
 
-    context 'when a parser is specified' do
-
-      it 'calls Parser.parsers_for with the parser' do
-        dummy.parse(:first_name, :foo, 'bar', {})
-        expect(Decanter::Parser).to have_received(:parsers_for).with(:foo)
+    context 'when a parser is specified but a required value is not present' do
+      it 'raises an argument error specifying the key' do
+        expect { dummy.parse(:first_name, :foo, nil, {required: true}) }
+          .to raise_error(ArgumentError, "No value for required argument: first_name")
       end
+    end
 
-      it 'calls parse on the returned parser with the key, values and options' do
-        options = {}
-        dummy.parse(:first_name, :foo, 'bar', options)
-        expect(parser).to have_received(:parse).with(:first_name, 'bar', options)
+    context 'when one parser is specified' do
+      let(:key) { :afloat }
+      let(:val) { 8.0 }
+
+      it 'returns the a key-value pair with the parsed value' do
+        expect(dummy.parse(key, :float, val.to_s, {})).to eq({key => val})
       end
+    end
 
+    context 'when several parsers are specified' do
+      let(:key) { :afloat }
+      let(:val) { 8.0 }
+
+      it 'returns the a key-value pair with the parsed value' do
+        expect(dummy.parse(key, [:string, :float], val, {})).to eq({key => val})
+      end
+    end
+
+    context 'when a parser with a preparser is specified' do
+
+      Object.const_set('PctParser',
+        Class.new(Decanter::Parser::ValueParser) do
+          def self.name
+            'PctParser'
+          end
+        end.tap do |parser|
+          parser.pre :float
+          parser.parser do |val, options|
+            val / 100
+          end
+        end
+      )
+
+      let(:key) { :afloat }
+      let(:val) { 8.0 }
+
+      it 'returns the a key-value pair with the parsed value' do
+        expect(dummy.parse(key, [:string, :pct], val, {})).to eq({key => val/100})
+      end
+    end
+
+    context 'when a hash parser and other parsers are specified' do
+
+      let(:key) { :split_it! }
+      let(:val) { "foo:3.45,baz:91" }
+
+      it 'returns the a key-value pairs with the parsed values' do
+        expect(dummy.parse(key, [:key_value_splitter, :pct], val, {}))
+          .to eq({ 'foo' => 0.0345, 'baz' => 0.91 })
+      end
     end
   end
 

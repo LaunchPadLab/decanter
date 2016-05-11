@@ -5,7 +5,7 @@ describe Decanter::Parser do
   before(:all) do
 
     Object.const_set('FooParser',
-      Class.new(Decanter::Parser::Base) do
+      Class.new(Decanter::Parser::ValueParser) do
         def self.name
           'FooParser'
         end
@@ -13,7 +13,7 @@ describe Decanter::Parser do
     )
 
     Object.const_set('BarParser',
-      Class.new(Decanter::Parser::Base) do
+      Class.new(Decanter::Parser::ValueParser) do
         def self.name
           'BarParser'
         end

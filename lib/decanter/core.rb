@@ -162,7 +162,9 @@ module Decanter
           raise ArgumentError.new("No value for required argument: #{key}")
         else
           Parser.parsers_for(parsers)
-                .reduce(values) { |acc, parser| parser.parse(key, acc, options) }
+                .reduce({key => values}) do |vals_hash, parser|
+                  vals_hash.keys.reduce({}) { |acc, k| acc.merge(parser.parse(k, vals_hash[k], options)) }
+                end
         end
       end
 
