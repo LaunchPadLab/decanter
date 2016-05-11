@@ -21,23 +21,23 @@ describe 'Core' do
 
   describe '#parse' do
 
-    context 'for blank value' do
+    # context 'for blank value' do
 
-      context 'when required' do
+    #   context 'when required' do
 
-        it 'raises an argument error' do
-          expect { core.parse('first_name', nil, required: true) }
-            .to raise_error(ArgumentError, 'No value for required argument: first_name')
-        end
-      end
+    #     it 'raises an argument error' do
+    #       expect { core.parse('first_name', nil, required: true) }
+    #         .to raise_error(ArgumentError, 'No value for required argument: first_name')
+    #     end
+    #   end
 
-      context 'when not required' do
+    #   context 'when not required' do
 
-        it 'returns the value' do
-          expect(core.parse('first_name', nil, required: false)).to match({'first_name' => nil})
-        end
-      end
-    end
+    #     it 'returns the value' do
+    #       expect(core.parse('first_name', nil, required: false)).to match({'first_name' => nil})
+    #     end
+    #   end
+    # end
 
     context 'for non-blank value' do
 
@@ -73,13 +73,6 @@ describe 'Core' do
             expect(core)
               .to have_received(:_parse)
               .with('first_name', 5, required: true)
-          end
-        end
-
-        context 'when a parser is not defined' do
-          it 'raises an ArgmentError' do
-            expect { core.parse('first_name', 5, required: true) }
-              .to raise_error(ArgumentError, "No parser for argument: first_name with types: #{5.class}")
           end
         end
       end

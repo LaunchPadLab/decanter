@@ -8,37 +8,41 @@ module Decanter
 
       module ClassMethods
 
-        # Meant to be overriden and called by child parser
+        # Check if allowed, parse if not
         def parse(name, values, options={})
-
-          value_ary = values.is_a?(Array) ? values : [values]
-
-          # want to treat 'false' as an actual value
-          if value_ary.all? { |value| value.nil? || value == "" }
-            if options[:required]
-              raise ArgumentError.new("No value for required argument: #{name}")
-            else
-              return { name => nil }
-            end
+          case
+          when allowed?(values)
+            { name => values }
+          else
+            _parse(name, values, options)
           end
-
-          if @allowed && value_ary.all? { |value| @allowed.any? { |allowed| value.is_a? allowed } }
-            return { name => values }
-          end
-
-          unless @parser
-            raise ArgumentError.new("No parser for argument: #{name} with types: #{value_ary.map(&:class).join(', ')}")
-          end
-
-          _parse(name, values, options)
         end
 
+        # Define parser
         def parser(&block)
           @parser = block
         end
 
+        # Set allowed classes
         def allow(*args)
           @allowed = args
+        end
+
+        # Set preparsers
+        def pre(*parsers)
+          @pre = parsers
+        end
+
+        # Get prepareer
+        def preparsers
+          @pre || []
+        end
+
+        # Check for allowed classes
+        def allowed?(values)
+          @allowed && Array.wrap(values).all? do |value|
+            @allowed.any? { |allowed| value.is_a? allowed }
+          end
         end
       end
     end

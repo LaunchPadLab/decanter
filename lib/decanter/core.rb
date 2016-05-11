@@ -7,11 +7,11 @@ module Decanter
 
     module ClassMethods
 
-      def input(name, parser=nil, **options)
+      def input(name, parsers=nil, **options)
 
         _name = [name].flatten
 
-        if _name.length > 1 && parser.blank?
+        if _name.length > 1 && parsers.blank?
           raise ArgumentError.new("#{self.name} no parser specified for input with multiple values.")
         end
 
@@ -19,7 +19,7 @@ module Decanter
           key:     options.fetch(:key, _name.first),
           name:    _name,
           options: options,
-          parser:  parser,
+          parsers:  parsers,
           type:    :input
         }
       end
@@ -102,7 +102,7 @@ module Decanter
       def handle_input(handler, args)
          values = args.values_at(*handler[:name])
          values = values.length == 1 ? values.first : values
-         parse(handler[:key], handler[:parser], values, handler[:options])
+         parse(handler[:key], handler[:parsers], values, handler[:options])
       end
 
       def handle_association(handler, args)
@@ -154,12 +154,18 @@ module Decanter
         end
       end
 
-      def parse(key, parser, values, options)
-        parser ?
-          Parser.parser_for(parser)
-                     .parse(key, values, options)
-          :
+      def parse(key, parsers, values, options)
+        case
+        when !parsers
           { key => values }
+        when options[:required] == true && Array.wrap(values).all? { |value| value.nil? || value == "" }
+          raise ArgumentError.new("No value for required argument: #{key}")
+        else
+          Parser.parsers_for(parsers)
+                .reduce({key => values}) do |vals_hash, parser|
+                  vals_hash.keys.reduce({}) { |acc, k| acc.merge(parser.parse(k, vals_hash[k], options)) }
+                end
+        end
       end
 
       def handlers

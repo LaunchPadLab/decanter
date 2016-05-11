@@ -378,6 +378,45 @@ class SquashDateParser < Decanter::Parser::ValueParser
 end
 ```
 
+Chaining Parsers
+---
+
+Parsers are composable! Suppose you want a parser that takes an incoming percentage like "50.3%" and converts it into a float for your database like .503. You could implement this with:
+
+```ruby
+class PercentParser < ValueParser
+  REGEX = /(\d|[.])/
+
+  parser do |val, options|
+    my_float = val.scan(REGEX).join.try(:to_f)
+    my_float / 100 if my_float
+  end
+end
+```
+
+This works, but it duplicates logic that already exists in `FloatParser`. Instead, you can specify a parser that should always run before your parsing logic, then you can assume that your parser receives a float:
+
+```ruby
+class SmartPercentParser < ValueParser
+
+  pre :float
+
+  parser do |val, options|
+    val / 100
+  end
+end
+```
+
+If a preparser returns nil or an empty string, subsequent parsers will not be called, just like normal!
+
+This can also be achieved by providing multiple parsers in your decanter:
+
+```ruby
+class SomeDecanter < Decanter::Base
+  input :some_percent, [:float, :percent]
+end
+```
+
 No Need for Strong Params
 ---
 
@@ -402,6 +441,8 @@ class TripDecanter <  Decanter::Base
   input :name
 end
 ```
+
+In addition, if you provide the option `:required` for an input in your decanter, an exception will be thrown if the parameters is nil or an empty string.
 
 Configuration
 ---
