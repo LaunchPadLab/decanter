@@ -184,7 +184,7 @@ You'll notice that the above ```parser do``` block takes a ```:parse_format``` o
 ```ruby
 # app/decanters/trip_decanter.rb
 
-class TripDecanter < Decanter::ValueParser
+class TripDecanter < Decanter::Base
   input :name, :string
   input :start_date, :date, parse_format: '%Y-%m-%d'
   input :end_date, :date, parse_format: '%Y-%m-%d'
