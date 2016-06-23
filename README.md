@@ -384,7 +384,7 @@ Chaining Parsers
 Parsers are composable! Suppose you want a parser that takes an incoming percentage like "50.3%" and converts it into a float for your database like .503. You could implement this with:
 
 ```ruby
-class PercentParser < ValueParser
+class PercentParser < Decanter::Parser::ValueParser
   REGEX = /(\d|[.])/
 
   parser do |val, options|
@@ -397,7 +397,7 @@ end
 This works, but it duplicates logic that already exists in `FloatParser`. Instead, you can specify a parser that should always run before your parsing logic, then you can assume that your parser receives a float:
 
 ```ruby
-class SmartPercentParser < ValueParser
+class SmartPercentParser < Decanter::Parser::ValueParser
 
   pre :float
 
