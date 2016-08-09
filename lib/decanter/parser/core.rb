@@ -11,7 +11,7 @@ module Decanter
         # Check if allowed, parse if not
         def parse(name, values, options={})
           case
-          when allowed?(values)
+          when allowed?(values) || empty_values?(values)
             { name => values }
           else
             _parse(name, values, options)
@@ -43,6 +43,10 @@ module Decanter
           @allowed && Array.wrap(values).all? do |value|
             @allowed.any? { |allowed| value.is_a? allowed }
           end
+        end
+
+        def empty_values?(values)
+          return true if Array.wrap(values).all? { |value| value.nil? || value == "" }
         end
       end
     end

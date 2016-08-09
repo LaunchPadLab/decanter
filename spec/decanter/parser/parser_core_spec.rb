@@ -21,23 +21,17 @@ describe 'Core' do
 
   describe '#parse' do
 
-    # context 'for blank value' do
+    context 'for blank value' do
+      it 'returns the value' do
+        expect(core.parse('first_name', nil)).to match({'first_name' => nil})
+      end
+    end
 
-    #   context 'when required' do
-
-    #     it 'raises an argument error' do
-    #       expect { core.parse('first_name', nil, required: true) }
-    #         .to raise_error(ArgumentError, 'No value for required argument: first_name')
-    #     end
-    #   end
-
-    #   context 'when not required' do
-
-    #     it 'returns the value' do
-    #       expect(core.parse('first_name', nil, required: false)).to match({'first_name' => nil})
-    #     end
-    #   end
-    # end
+    context 'for empty string' do
+      it 'returns the value' do
+        expect(core.parse('first_name', '')).to match({'first_name' => ''})
+      end
+    end
 
     context 'for non-blank value' do
 

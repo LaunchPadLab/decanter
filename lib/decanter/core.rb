@@ -50,6 +50,7 @@ module Decanter
       end
 
       def decant(args)
+        return {} unless args.present?
         args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
         {}.merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
