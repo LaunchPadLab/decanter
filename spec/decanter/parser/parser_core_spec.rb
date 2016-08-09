@@ -23,7 +23,13 @@ describe 'Core' do
 
     context 'for blank value' do
       it 'returns the value' do
-        expect(core.parse('first_name', nil, required: false)).to match({'first_name' => nil})
+        expect(core.parse('first_name', nil)).to match({'first_name' => nil})
+      end
+    end
+
+    context 'for empty string' do
+      it 'returns the value' do
+        expect(core.parse('first_name', '')).to match({'first_name' => ''})
       end
     end
 
