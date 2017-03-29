@@ -422,6 +422,22 @@ No Need for Strong Params
 
 Since you are already defining your expected inputs in Decanter, you really don't need strong params anymore.
 
+Note: starting with version 0.7.2, the default strict mode is ```:with_exception```. You can modify your default strict mode in your configuration file (see the "Configuration" section below).
+
+#### Mode: with_exception (default mode)
+
+To raise exceptions when parameters arrive in your Decanter that you didn't expect:
+
+```ruby
+class TripDecanter <  Decanter::Base
+  strict :with_exception
+
+  input :name
+end
+```
+
+#### Mode: strict
+
 In order to tell Decanter to ignore the params not defined in your Decanter, just add the ```strict``` flag to your Decanters:
 
 ```ruby
@@ -432,17 +448,27 @@ class TripDecanter <  Decanter::Base
 end
 ```
 
-Or to raise exceptions when parameters arrive in your Decanter that you didn't expect:
+#### Requiring Params
+
+If you provide the option `:required` for an input in your decanter, an exception will be thrown if the parameters is nil or an empty string.
 
 ```ruby
 class TripDecanter <  Decanter::Base
-  strict :with_exception
-
-  input :name
+  input :name, :string, required: true
 end
 ```
 
-In addition, if you provide the option `:required` for an input in your decanter, an exception will be thrown if the parameters is nil or an empty string.
+#### Ignoring Params
+
+If you anticipate your decanter will receive certain params that you simply want to ignore and therefore do not want Decanter to raise an exception, you can do so by calling the `ignore` method:
+
+```ruby
+class TripDecanter <  Decanter::Base
+  ignore :created_at, :updated_at
+
+  input :name, :string
+end
+```
 
 Configuration
 ---
