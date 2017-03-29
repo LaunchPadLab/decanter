@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    decanter (0.8.1)
+    decanter (0.8.2)
       activesupport
 
 GEM
@@ -97,4 +97,4 @@ DEPENDENCIES
   rspec-rails
 
 BUNDLED WITH
-   1.10.6
+   1.14.4
