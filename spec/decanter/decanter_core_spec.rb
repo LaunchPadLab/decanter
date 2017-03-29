@@ -304,7 +304,7 @@ describe Decanter::Core do
         end
       end
 
-      context 'and strict mode is :with_exception', current: true do
+      context 'and strict mode is :with_exception' do
         before(:each) { dummy.strict :with_exception }
 
         context 'when there are no ignored keys' do
