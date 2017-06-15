@@ -305,10 +305,19 @@ describe Decanter::Core do
       end
 
       context 'and strict mode is :with_exception' do
+        before(:each) { dummy.strict :with_exception }
 
-        it 'raises an error' do
-          dummy.strict :with_exception
-          expect { dummy.unhandled_keys(args) }.to raise_error(ArgumentError)
+        context 'when there are no ignored keys' do
+          it 'raises an error' do
+            expect { dummy.unhandled_keys(args) }.to raise_error(ArgumentError)
+          end
+        end
+
+        context 'when the unhandled keys are ignored' do          
+          it 'does not raise an error' do
+            dummy.ignore :foo
+            expect { dummy.unhandled_keys(args) }.to_not raise_error(ArgumentError)
+          end          
         end
       end
 
