@@ -3,7 +3,7 @@ module Decanter
     class FloatParser < ValueParser
       REGEX = /(\d|[.])/
 
-      allow Float, Fixnum
+      allow Float, Integer
 
       parser do |val, options|
         val.scan(REGEX).join.try(:to_f)

@@ -3,7 +3,7 @@ module Decanter
     class PhoneParser < ValueParser
       REGEX = /\d/
 
-      allow Fixnum
+      allow Integer
 
       parser do |val, options|
         val.scan(REGEX).join.to_s

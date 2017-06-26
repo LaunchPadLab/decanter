@@ -3,7 +3,7 @@ module Decanter
     class IntegerParser < ValueParser
       REGEX = /(\d|[.])/
 
-      allow Fixnum
+      allow Integer
 
       parser do |val, options|
         val.is_a?(Float) ?
