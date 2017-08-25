@@ -5,7 +5,7 @@ class Decanter::Railtie < Rails::Railtie
   initializer 'decanter.active_record' do
     ActiveSupport.on_load :active_record do
       require 'decanter/extensions'
-      Decanter::Extensions::ActiveRecord.enable!
+      Decanter::Extensions::ActiveRecordExtensions.enable!
     end
   end
 

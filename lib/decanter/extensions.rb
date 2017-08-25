@@ -44,7 +44,7 @@ module Decanter
       end
     end
 
-    module ActiveRecord
+    module ActiveRecordExtensions
       def self.enable!
         ::ActiveRecord::Base.include(Decanter::Extensions)
       end
