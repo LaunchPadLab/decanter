@@ -11,7 +11,9 @@ module Decanter
         # Check if allowed, parse if not
         def parse(name, values, options={})
           case
-          when allowed?(values) || empty_values?(values)
+          when empty_values?(values)
+            { name => nil }
+          when allowed?(values)
             { name => values }
           else
             _parse(name, values, options)

@@ -28,8 +28,8 @@ describe 'Core' do
     end
 
     context 'for empty string' do
-      it 'returns the value' do
-        expect(core.parse('first_name', '')).to match({'first_name' => ''})
+      it 'returns nil' do
+        expect(core.parse('first_name', '')).to match({'first_name' => nil})
       end
     end
 
