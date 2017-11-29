@@ -1,8 +1,8 @@
 require 'dotenv'
 Dotenv.load
 # Report Coverage to Code Climate
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
+require 'simplecov'
+SimpleCov.start
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'decanter'
