@@ -21,6 +21,15 @@ describe Decanter::Parser do
         parser.pre :date, :float
       end
     )
+    Object.const_set('CheckInFieldDataParser',
+      Class.new(Decanter::Parser::ValueParser) do
+        def self.name
+          'BarParser'
+        end
+      end.tap do |parser|
+        parser.pre :date, :float
+      end
+    )
   end
 
   describe '#klass_or_sym_to_str' do
@@ -54,10 +63,25 @@ describe Decanter::Parser do
 
     context 'for a symbol' do
 
-      let(:klass_or_sym) { :hot_dogs }
+      let(:klass_or_sym) { :hot_dog }
 
-      it 'returns the singularized, camelized string + Parser' do
+      it 'returns the camelized string + Parser' do
         expect(subject).to eq 'HotDogParser'
+      end
+      # it 'returns the singularized, camelized string + Parser' do
+      #   expect(subject).to eq 'HotDogParser'
+      # end
+    end
+
+    context 'for a symbol with _data' do
+
+      let(:klass_or_sym) { :check_in_field_data }
+
+      it 'does not change _data to _datum' do
+        expect(subject).to eq 'CheckInFieldDataParser'
+        # expect { subject }
+        #   .to raise_error(NameError, "cannot find parser 
+        #     #{klass_or_sym.to_s.singularize.camelize.concat('Parser')}")
       end
     end
   end
@@ -118,11 +142,21 @@ describe Decanter::Parser do
 
     subject { Decanter::Parser.parsers_for(:bar) }
 
+    let(:_data) { Decanter::Parser.parsers_for(:check_in_field_data) }
+
     it 'returns a flattened array of parsers' do
       expect(subject).to eq [
         Decanter::Parser::DateParser,
         Decanter::Parser::FloatParser,
         BarParser
+      ]
+    end
+
+    it 'returns Data instead of Datum' do
+      expect(_data).to eq [
+        Decanter::Parser::DateParser,
+        Decanter::Parser::FloatParser,
+        CheckInFieldDataParser
       ]
     end
   end

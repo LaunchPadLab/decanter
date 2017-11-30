@@ -1,6 +1,5 @@
 module Decanter
   module Parser
-
     class << self
       def parsers_for(klass_or_syms)
         Array.wrap(klass_or_syms)
@@ -16,7 +15,7 @@ module Decanter
         when Class
           klass_or_sym.name
         when Symbol
-          klass_or_sym.to_s.singularize.camelize
+          symbol_to_string(klass_or_sym)
         else
           raise ArgumentError.new("cannot lookup parser for #{klass_or_sym} with class #{klass_or_sym.class}")
         end.concat('Parser')
@@ -24,9 +23,36 @@ module Decanter
 
       # convert from a string to a constant
       def parser_constantize(parser_str)
+        # safe_constantize returns nil if match not found
         parser_str.safe_constantize ||
-        "Decanter::Parser::".concat(parser_str).safe_constantize ||
-        raise(NameError.new("cannot find parser #{parser_str}"))
+          concat_str(parser_str).safe_constantize ||
+          raise(NameError.new("cannot find parser #{parser_str}"))
+      end
+
+      # extract string transformation strategies
+      def symbol_to_string(klass_or_sym)
+        if singular_class_present?(klass_or_sym)
+          singularize_and_camelize_str(klass_or_sym)
+        else
+          camelize_str(klass_or_sym)
+        end
+      end
+
+      def singular_class_present?(klass_or_sym)
+        parser_str = singularize_and_camelize_str(klass_or_sym)
+        concat_str(parser_str).safe_constantize.present?
+      end
+
+      def singularize_and_camelize_str(klass_or_sym)
+        klass_or_sym.to_s.singularize.camelize
+      end
+
+      def camelize_str(klass_or_sym)
+        klass_or_sym.to_s.camelize
+      end
+
+      def concat_str(parser_str)
+        "Decanter::Parser::".concat(parser_str)
       end
 
       # expand to include preparsers
