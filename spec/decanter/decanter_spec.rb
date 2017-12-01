@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Decanter do
 
   before(:all) do
-    Object.const_set('FooDecanter',
+    object = Object.const_set('FooDecanter',
       Class.new(Decanter::Base) do
         def self.name
           'FooDecanter'
