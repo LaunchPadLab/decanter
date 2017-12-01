@@ -37,33 +37,33 @@ module Decanter
             .save!(context: options[:context])
       end
         
-      def decant(args, options={})
-        if specified_decanter = options[:decanter]
-          decanter = Decanter.decanter_from(specified_decanter)
-          raise_inputs_required if has_required_inputs?(decanter)
-          decanter
-        else
-          decanter = Decanter.decanter_for(self)
-          raise_inputs_required if has_required_inputs?(decanter)
-          decanter          
-        end.decant(args)
-      end
       # def decant(args, options={})
-      #   if options[:decanter].present?
-      #     decanter = decanter_from_options(options)
+      #   if specified_decanter = options[:decanter]
+      #     decanter = Decanter.decanter_from(specified_decanter)
       #     raise_inputs_required if has_required_inputs?(decanter)
       #     decanter
       #   else
-      #     decanter = decanter_for_self(self)
+      #     decanter = Decanter.decanter_for(self)
       #     raise_inputs_required if has_required_inputs?(decanter)
-      #     decanter
+      #     decanter          
       #   end.decant(args)
       # end
+
+      def decant(args, options={})
+        if options[:decanter].present?
+          decanter = decanter_from_options(options)
+          raise_inputs_required if has_required_inputs?(decanter)
+          decanter
+        else
+          decanter = decanter_for_self(self)
+          raise_inputs_required if has_required_inputs?(decanter)
+          decanter
+        end.decant(args)
+      end
 
       private 
       # returns true or false
       def has_required_inputs?(decanter_klass)
-        binding.pry
         return false if decanter_klass.handlers.blank?
         decanter_klass
           .collect_handler_options
