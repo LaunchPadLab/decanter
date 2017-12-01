@@ -49,6 +49,7 @@ module Decanter
       #   end.decant(args)
       # end
 
+      # TODO: refactor decant
       def decant(args, options={})
         if options[:decanter].present?
           decanter = decanter_from_options(options)
