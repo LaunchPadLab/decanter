@@ -36,12 +36,31 @@ module Decanter
       end
 
       def decant(args, options={})
+        # raise ArgumentError if args.blank? && has_required_inputs?()
+        # nil and {}.present == false
+        # raise ArgumentError.new("#{self.}")
         if specified_decanter = options[:decanter]
-          Decanter.decanter_from(specified_decanter)
+          get_decanter_from(specified_decanter)
         else
-          Decanter.decanter_for(self)
+          get_decanter_for(self)
         end.decant(args)
       end
+    end
+    #drill down in handlers:
+    # array_of_hashes = SummitDecanter.handlers.collect{|n| n[1][:options]}
+    # reduce to single hash:
+    # hash = array_of_hashes.reduce{|f, s| f.merge(s)}
+    # check for :required key
+    # hash[:required].present?
+    def return_decanter_from(specified_decanter)
+      Decanter.decanter_from(specified_decanter)
+    end
+    def return_decanter_for(self)
+      Decanter.decanter_for(self)
+    end
+
+    def required_handlers?(klass)
+      Decanter.decanter_for
     end
 
     module ActiveRecordExtensions

@@ -4,7 +4,7 @@ describe Decanter::Extensions do
 
   describe '#decant' do
 
-    let(:args) { { } }
+    let(:args) { {  } }
 
     let(:decanter) { class_double('Decanter::Base', decant: true) }
 
