@@ -1,3 +1,5 @@
+require 'pry'
+
 module Decanter
   module Core
 
@@ -49,15 +51,29 @@ module Decanter
       end
 
       def strict(mode)
-        raise( ArgumentError.new("#{self.name}: Unknown strict value #{mode}")) unless [:with_exception, true, false].include? mode
+        raise(ArgumentError, "#{self.name}: Unknown strict value #{mode}") unless [:with_exception, true, false].include? mode
         @strict_mode = mode
       end
 
       def decant(args)
-        return {} unless args.present?
+        return handle_empty_args if args.blank?        
         args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
         {}.merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
+      end
+
+      def handle_empty_args    
+        any_inputs_required? ? empty_args_error : {}
+      end
+
+      def any_inputs_required?
+        handlers.any? do |handler|          
+          handler[1].try(:[], :options).try(:[], :required)
+        end
+      end
+
+      def empty_args_error
+        raise(ArgumentError, 'Decanter has required inputs but no values were passed')
       end
 
       # protected
@@ -174,7 +190,7 @@ module Decanter
         end
       end
 
-      def handlers
+      def handlers        
         @handlers ||= {}
       end
 

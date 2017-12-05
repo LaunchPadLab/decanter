@@ -378,7 +378,7 @@ describe Decanter::Core do
   describe '#handle_has_one' do
 
     let(:output)   { { foo: 'bar' } }
-    let(:handler)  { { key: 'key', options: {} } }
+    let(:handler)  { {  key: 'key', options: {}} }
     let(:values)   { { baz: 'foo' } }
     let(:decanter) { double('decanter') }
 
@@ -519,26 +519,78 @@ describe Decanter::Core do
   end
 
   describe '#decant' do
-
-    let(:args) { { foo: 'bar', baz: 'foo'} }
+    let(:args) { { foo: 'bar', baz: 'foo'} }  
+    subject { dummy.decant(args) }
 
     before(:each) do
       allow(dummy).to receive(:unhandled_keys).and_return(args)
       allow(dummy).to receive(:handled_keys).and_return(args)
     end
 
-    it 'passes the args to unhandled keys' do
-      dummy.decant(args)
-      expect(dummy).to have_received(:unhandled_keys).with(args)
+    context 'with args' do      
+      it 'passes the args to unhandled keys' do
+        subject
+        expect(dummy).to have_received(:unhandled_keys).with(args)
+      end
+
+      it 'passes the args to handled keys' do
+        subject
+        expect(dummy).to have_received(:handled_keys).with(args)
+      end
+
+      it 'returns the merged result' do
+        expect(subject).to eq args.merge(args)
+      end
     end
 
-    it 'passes the args to handled keys' do
-      dummy.decant(args)
-      expect(dummy).to have_received(:handled_keys).with(args)
+    context 'without args' do
+      let(:args) { nil }
+      let(:inputs_required) { true }
+      before(:each) do
+        allow(dummy).to receive(:any_inputs_required?).and_return(inputs_required)
+      end
+
+      context 'when at least one input is required' do
+        it 'should raise an exception' do
+          expect{ subject }.to raise_error(ArgumentError)
+        end
+      end
+
+      context 'when no inputs are required' do
+        let(:inputs_required) { false }
+
+        it 'should return an empty hash' do
+          expect(subject).to eq({})
+        end
+      end
+    end
+  end
+
+  describe 'any_inputs_required?' do
+    let(:is_required) { true }
+    let(:input_hash) do
+      {
+        key: 'foo',
+        options: {
+          required: is_required
+        }
+      }      
+    end
+    let(:handler) { [[:title], input_hash] }    
+    let(:handlers) { [handler] }    
+    before(:each) { allow(dummy).to receive(:handlers).and_return(handlers) }    
+
+    context 'when required' do
+      it 'should return true' do
+        expect(dummy.any_inputs_required?).to be true
+      end
     end
 
-    it 'returns the merged result' do
-      expect(dummy.decant(args)).to eq args.merge(args)
+    context 'when not required' do
+      let(:is_required) { false }
+      it 'should return false' do
+        expect(dummy.any_inputs_required?).to be false
+      end
     end
   end
 end
