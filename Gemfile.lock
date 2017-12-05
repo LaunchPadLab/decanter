@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    decanter (1.0.0)
-      actionpack (~> 4.2.10)
+    decanter (1.0.2)
+      actionpack (>= 4.2.10)
       activesupport
 
 GEM
