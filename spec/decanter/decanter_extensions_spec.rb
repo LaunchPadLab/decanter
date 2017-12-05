@@ -4,13 +4,27 @@ describe Decanter::Extensions do
 
   describe '#decant' do
 
-    let(:args) { { } }
+    let(:args) { {  } }
 
-    let(:decanter) { class_double('Decanter::Base', decant: true) }
-
+    let(:decanter) { 
+      class_double(
+        'Decanter::Base', 
+        decant: true,
+        handlers: {}
+      )
+    }
+    # let(:decanter) do
+    #   Object.const_set('FooDecanter',
+    #     Class.new(Decanter::Base) do
+    #       def self.name
+    #         'FooDecanter'
+    #       end
+    #     end
+    #   )
+    # end
     context 'when a decanter is specified' do
 
-      let(:options) { { decanter: 'FooDecanter' } }
+      let(:options) { { decanter: 'BarDecanter' } }
 
       before(:each) do
         allow(Decanter).to receive(:decanter_from).and_return(decanter)
