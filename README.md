@@ -503,3 +503,14 @@ Decanter.configuration.strict = true
 
 Likewise, you can put the above code in a specific environment configuration.
 
+Decanter Exceptions
+---
+
+ - MissingRequiredInputValue
+
+  Raised when required inputs have been enabled, but provided arguments to `decant()` do not contain values for those required inputs.
+
+ - UnhandledKeysError
+
+  Raised when there are unhandled keys.
+
