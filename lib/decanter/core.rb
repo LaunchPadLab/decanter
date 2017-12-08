@@ -56,7 +56,9 @@ module Decanter
       end
 
       def decant(args)
-        return handle_empty_args if args.blank?        
+        return handle_empty_args if args.blank?
+        return empty_required_input_error unless 
+          required_input_values_present?(args)
         args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
         {}.merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
@@ -67,9 +69,28 @@ module Decanter
       end
 
       def any_inputs_required?
-        handlers.any? do |handler|          
-          handler[1].try(:[], :options).try(:[], :required)
+        handlers.any? do |handler|     
+          return false unless handler.last && handler.last[:options]
+          handler.last[:options][:required]
         end
+      end
+
+      def required_inputs
+        handlers.map do |h|
+          options = h.last[:options]
+          return nil unless options && options[:required]
+          h.first.first
+        end  
+      end
+
+      def required_input_values_present?(args={})
+        required_inputs.all? do |input|
+          args.keys.include?(input)
+        end
+      end
+
+      def empty_required_input_error
+        raise(MissingRequiredInputValue, 'Required inputs have been declared, but no values for those inputs were passed.')
       end
 
       def empty_args_error

@@ -519,15 +519,37 @@ describe Decanter::Core do
   end
 
   describe '#decant' do
-    let(:args) { { foo: 'bar', baz: 'foo'} }  
-    subject { dummy.decant(args) }
+    let(:args) { { foo: 'bar', baz: 'foo'} }
+    let(:subject) { dummy.decant(args) }
+    let(:is_required) { true }
+    
+    let(:input_hash) do
+      {
+        key: 'sky',
+        options: {
+          required: is_required
+        }
+      }      
+    end
+    let(:handler) { [[:title], input_hash] }    
+    let(:handlers) { [handler] }   
 
     before(:each) do
       allow(dummy).to receive(:unhandled_keys).and_return(args)
       allow(dummy).to receive(:handled_keys).and_return(args)
     end
+    
+    context 'with args' do  
+      context 'when inputs are required' do
+        it 'should raise an exception if no required values' do
+          allow(dummy).to receive(:handlers).and_return(handlers)
 
-    context 'with args' do      
+          expect{subject}.to raise_error(
+            Decanter::Core::MissingRequiredInputValue
+          )
+        end
+      end
+
       it 'passes the args to unhandled keys' do
         subject
         expect(dummy).to have_received(:unhandled_keys).with(args)
@@ -578,7 +600,9 @@ describe Decanter::Core do
     end
     let(:handler) { [[:title], input_hash] }    
     let(:handlers) { [handler] }    
-    before(:each) { allow(dummy).to receive(:handlers).and_return(handlers) }    
+    before(:each) { 
+      allow(dummy).to receive(:handlers).and_return(handlers)
+    }    
 
     context 'when required' do
       it 'should return true' do
@@ -590,6 +614,36 @@ describe Decanter::Core do
       let(:is_required) { false }
       it 'should return false' do
         expect(dummy.any_inputs_required?).to be false
+      end
+    end
+  end
+
+  describe 'required_input_values_present?' do
+    let(:is_required) { true }
+    let(:args) { { title: 'RubyConf' } }
+    let(:input_hash) do
+      {
+        key: 'foo',
+        options: {
+          required: is_required
+        }
+      }      
+    end
+    let(:handler) { [[:title], input_hash] }    
+    let(:handlers) { [handler] }    
+    before(:each) { allow(dummy).to receive(:handlers).and_return(handlers) } 
+
+    context 'when required args are present' do
+      it 'should return true' do
+        result = dummy.required_input_values_present?(args)
+        expect(result).to be true
+      end
+    end
+    context 'when required args are not present' do
+      let(:args) { {name: 'Bob'} }
+      it 'should return false' do
+        result = dummy.required_input_values_present?(args)
+        expect(result).to be false
       end
     end
   end
