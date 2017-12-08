@@ -40,6 +40,18 @@ class TripDecanter < Decanter::Base
 end
 ```
 
+By default, Decanter will use the [default parser](https://github.com/LaunchPadLab/decanter#default-parsers) that matches your input data type.
+
+```ruby
+  input :name, :string #=> StringParser
+```
+
+To reference a custom or modified parser,
+
+```ruby
+  input :name, :string, :custom_string_parser
+```
+
 In your controller:
 
 ```ruby
