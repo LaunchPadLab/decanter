@@ -60,5 +60,6 @@ require 'decanter/configuration'
 require 'decanter/core'
 require 'decanter/base'
 require 'decanter/extensions'
+require 'decanter/exceptions'
 require 'decanter/parser'
 require 'decanter/railtie' if defined?(::Rails)

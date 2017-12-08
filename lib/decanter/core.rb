@@ -2,13 +2,13 @@ require 'pry'
 
 module Decanter
   module Core
-
+    
     def self.included(base)
       base.extend(ClassMethods)
     end
 
     module ClassMethods
-
+      
       def input(name, parsers=nil, **options)
 
         _name = [name].flatten
@@ -92,7 +92,7 @@ module Decanter
             p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
             {}
           when :with_exception            
-            raise ArgumentError.new("#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
+            raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
           else
             args.select { |key| unhandled_keys.include? key }
           end
