@@ -69,17 +69,13 @@ module Decanter
       end
 
       def any_inputs_required?
-        handlers.any? do |handler|     
-          return false unless handler.last && handler.last[:options]
-          handler.last[:options][:required]
-        end
+        required_inputs.any?
       end
 
       def required_inputs
         handlers.map do |h|
           options = h.last[:options]
-          return nil unless options && options[:required]
-          h.first.first
+          h.first.first if options && options[:required]
         end  
       end
 
