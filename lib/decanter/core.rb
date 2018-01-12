@@ -1,5 +1,3 @@
-require 'pry'
-
 module Decanter
   module Core
     
