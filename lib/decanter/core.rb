@@ -55,7 +55,7 @@ module Decanter
 
       def decant(args)
         return handle_empty_args if args.blank?
-        return empty_required_input_error unless required_input_values_present?(args)
+        return empty_required_input_error unless required_input_keys_present?(args)
         args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
         {}.merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
@@ -76,10 +76,11 @@ module Decanter
         end  
       end
 
-      def required_input_values_present?(args={})
+      def required_input_keys_present?(args={})
         return true unless any_inputs_required?
-        required_inputs.all? do |input|
-          args.keys.include?(input)
+        compact_inputs = required_inputs.compact
+        compact_inputs.all? do |input|
+          args.keys.map(&:to_sym).include?(input)
         end
       end
 

@@ -618,9 +618,9 @@ describe Decanter::Core do
     end
   end
 
-  describe 'required_input_values_present?' do
+  describe 'required_input_keys_present?' do
     let(:is_required) { true }
-    let(:args) { { title: 'RubyConf' } }
+    let(:args) { { "title": "RubyConf" } }
     let(:input_hash) do
       {
         key: 'foo',
@@ -635,14 +635,14 @@ describe Decanter::Core do
 
     context 'when required args are present' do
       it 'should return true' do
-        result = dummy.required_input_values_present?(args)
+        result = dummy.required_input_keys_present?(args)
         expect(result).to be true
       end
     end
     context 'when required args are not present' do
       let(:args) { {name: 'Bob'} }
       it 'should return false' do
-        result = dummy.required_input_values_present?(args)
+        result = dummy.required_input_keys_present?(args)
         expect(result).to be false
       end
     end
