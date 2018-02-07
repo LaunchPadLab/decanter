@@ -80,7 +80,7 @@ module Decanter
         return true unless any_inputs_required?
         compact_inputs = required_inputs.compact
         compact_inputs.all? do |input|
-          args.keys.map(&:to_sym).include?(input)
+          args.keys.map(&:to_sym).include?(input) && !args[input].nil?
         end
       end
 

@@ -640,7 +640,7 @@ describe Decanter::Core do
       end
     end
     context 'when required args are not present' do
-      let(:args) { {name: 'Bob'} }
+      let(:args) { { name: 'Bob' } }
       it 'should return false' do
         result = dummy.required_input_keys_present?(args)
         expect(result).to be false
