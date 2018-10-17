@@ -8,9 +8,11 @@ module Decanter
       allow Integer
 
       parser do |val, _options|
-        val.is_a?(Float) ?
-          val.to_i :
+        if val.is_a?(Float)
+          val.to_i
+        else
           val.scan(REGEX).join.try(:to_i)
+        end
       end
     end
   end

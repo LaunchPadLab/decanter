@@ -185,7 +185,7 @@ module Decanter
       end
 
       def decanter_for_handler(handler)
-        if specified_decanter = handler[:options][:decanter]
+        if (specified_decanter = handler[:options][:decanter])
           Decanter.decanter_from(specified_decanter)
         else
           Decanter.decanter_for(handler[:assoc])
