@@ -2,34 +2,29 @@
 
 require 'spec_helper'
 
-describe 'IntegerParser' do
+describe Decanter::Parser::IntegerParser do
+  subject { described_class.parse(name, arg) }
   let(:name) { :foo }
-
-  let(:parser) { Decanter::Parser::IntegerParser }
 
   describe '#parse' do
     context 'with an integer-like string ' do
-      it do
-        expect(parser.parse(name, '1')).to match(name => 1)
-      end
+      let(:arg) { '1' }
+      it { is_expected.to match(name => 1) }
     end
 
     context 'with an float-like string ' do
-      it do
-        expect { parser.parse(name, '1.1') }.to raise_error(ArgumentError)
-      end
+      let(:arg) { '1.1' }
+      it { expect { subject }.to raise_error(ArgumentError) }
     end
 
     context 'with nil' do
-      it do
-        expect(parser.parse(name, nil)).to match(name => nil)
-      end
+      let(:arg) { nil }
+      it { is_expected.to match(name => nil) }
     end
 
     context 'with a duff string' do
-      it do
-        expect { parser.parse(name, 'abc') }.to raise_error(ArgumentError)
-      end
+      let(:arg) { 'abc' }
+      it { expect { subject }.to raise_error(ArgumentError) }
     end
   end
 end
