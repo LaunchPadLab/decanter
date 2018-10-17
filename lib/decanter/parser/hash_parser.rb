@@ -9,12 +9,13 @@ module Decanter
         validate_hash(@parser.call(name, values, options))
       end
 
-      private
-
       def self.validate_hash(parsed)
-        parsed.is_a?(Hash) ? parsed :
-          raise(ArgumentError, "Result of HashParser #{name} was #{parsed} when it must be a hash.")
+        return parsed if parsed.is_a?(Hash)
+
+        raise(ArgumentError, "Result of HashParser #{name} was #{parsed} when it must be a hash.")
       end
+
+      private_class_method :validate_hash
     end
   end
 end

@@ -44,7 +44,7 @@ module Decanter
     end
 
     def configuration
-      @config ||= Decanter::Configuration.new
+      @configuration ||= Decanter::Configuration.new
     end
 
     def config
