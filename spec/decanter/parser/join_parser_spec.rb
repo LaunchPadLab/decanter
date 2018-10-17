@@ -2,21 +2,19 @@
 
 require 'spec_helper'
 
-describe 'JoinParser' do
-  let(:parser) { Decanter::Parser::JoinParser }
+describe Decanter::Parser::JoinParser do
+  subject { described_class.parse(name, arg, opts) }
+  let(:name) { 'foo' }
+  let(:opts) { {} }
 
   describe '#parse' do
-    let(:args) { ['foo', %w(foo bar)] }
-    it 'returns a string joined with commas' do
-      expect(parser.parse(*args)).to match('foo' => 'foo,bar')
-    end
+    let(:arg) { %w(foo bar) }
+    it { is_expected.to match(name => 'foo,bar') }
 
     context 'with the delimter option specified' do
-      let(:delimiter) { ':' }
+      let(:opts) { { delimiter: ':' } }
 
-      it 'returns a string joined with colons' do
-        expect(parser.parse(*args, delimiter: delimiter)).to match('foo' => 'foo:bar')
-      end
+      it { is_expected.to match(name => 'foo:bar') }
     end
   end
 end

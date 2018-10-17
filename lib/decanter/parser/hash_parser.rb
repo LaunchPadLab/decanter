@@ -6,7 +6,7 @@ module Decanter
   module Parser
     class HashParser < Base
       def self._parse(name, values, options = {})
-        validate_hash(@parser.call(name, values, options))
+        { name => validate_hash(@parser.call(name, values, options)) }
       end
 
       def self.validate_hash(parsed)

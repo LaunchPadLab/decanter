@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-describe 'ValueParser' do
-  let(:value_parser) { Class.new(Decanter::Parser::ValueParser) }
+describe Decanter::Parser::ValueParser do
+  let(:value_parser) { Class.new(described_class) }
 
   it 'calls the parser' do
     parser = ->(_a, _b, _c) { { a: 'b' } }
