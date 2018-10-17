@@ -1,9 +1,7 @@
 require 'active_support/all'
 
 module Decanter
-
   class << self
-
     def decanter_for(klass_or_sym)
       decanter_name =
         case klass_or_sym
@@ -12,12 +10,12 @@ module Decanter
         when Symbol
           klass_or_sym.to_s.singularize.camelize
         else
-          raise ArgumentError.new("cannot lookup decanter for #{klass_or_sym} with class #{klass_or_sym.class}")
+          raise ArgumentError, "cannot lookup decanter for #{klass_or_sym} with class #{klass_or_sym.class}"
         end.concat('Decanter')
       begin
         decanter_name.constantize
-      rescue
-        raise NameError.new("uninitialized constant #{decanter_name}")
+      rescue StandardError
+        raise NameError, "uninitialized constant #{decanter_name}"
       end
     end
 
@@ -29,15 +27,15 @@ module Decanter
         when String
           begin
             klass_or_string.constantize
-          rescue
-            raise NameError.new("uninitialized constant #{klass_or_string}")
+          rescue StandardError
+            raise NameError, "uninitialized constant #{klass_or_string}"
           end
         else
-          raise ArgumentError.new("cannot find decanter from #{klass_or_string} with class #{klass_or_string.class}")
+          raise ArgumentError, "cannot find decanter from #{klass_or_string} with class #{klass_or_string.class}"
         end
 
       unless constant.ancestors.include? Decanter::Base
-        raise ArgumentError.new("#{constant.name} is not a decanter")
+        raise ArgumentError, "#{constant.name} is not a decanter"
       end
 
       constant

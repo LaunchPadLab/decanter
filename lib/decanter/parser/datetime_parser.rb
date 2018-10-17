@@ -1,7 +1,6 @@
 module Decanter
   module Parser
     class DateTimeParser < ValueParser
-
       allow DateTime
 
       parser do |val, options|

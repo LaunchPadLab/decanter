@@ -5,7 +5,7 @@ module Decanter
 
       allow Integer
 
-      parser do |val, options|
+      parser do |val, _options|
         val.scan(REGEX).join.to_s
       end
     end
