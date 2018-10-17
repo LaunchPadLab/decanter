@@ -3,8 +3,7 @@
 require 'spec_helper'
 
 describe Decanter::Parser::BooleanParser do
-  subject { described_class.parse(name, arg) }
-  let(:name) { 'foo' }
+  subject { described_class.parse(arg) }
 
   describe '#parse' do
     trues = [
@@ -25,19 +24,17 @@ describe Decanter::Parser::BooleanParser do
       %w(string false)
     ]
 
-    let(:name) { :foo }
-
     trues.each do |kls, val|
       context "with a #{kls} of #{val.inspect}" do
         let(:arg) { val }
-        it { is_expected.to match(name => true) }
+        it { is_expected.to be true }
       end
     end
 
     falses.each do |kls, val|
       context "with a #{kls} of #{val.inspect}" do
         let(:arg) { val }
-        it { is_expected.to match(name => false) }
+        it { is_expected.to be false }
       end
     end
   end

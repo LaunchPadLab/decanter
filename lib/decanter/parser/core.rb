@@ -9,13 +9,13 @@ module Decanter
 
       module ClassMethods
         # Check if allowed, parse if not
-        def parse(name, values, options = {})
+        def parse(values, options = {})
           if empty_values?(values)
-            { name => nil }
+            nil
           elsif allowed?(values)
-            { name => values }
+            values
           else
-            _parse(name, values, options)
+            _parse(values, options)
           end
         end
 

@@ -3,13 +3,10 @@
 require 'spec_helper'
 
 describe Decanter::Parser::PhoneParser do
-  subject { described_class.parse(name, arg) }
-  let(:name) { 'foo' }
+  subject { described_class.parse(arg) }
   let(:arg) { '(12)2-21/19.90' }
 
   describe '#parse' do
-    it 'strips out all non-numeric bits' do
-      is_expected.to match(name => '122211990')
-    end
+    it { is_expected.to eq '122211990' }
   end
 end

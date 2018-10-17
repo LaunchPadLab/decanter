@@ -8,8 +8,8 @@ describe Decanter::Parser::ValueParser do
   it 'calls the parser' do
     parser = ->(_a, _b, _c) { { a: 'b' } }
     allow(parser).to receive(:call).and_return({})
-    value_parser.parser &parser
-    value_parser._parse(:first_name, nil)
+    value_parser.parser(&parser)
+    value_parser._parse(nil)
     expect(parser).to have_received(:call).with(nil, {})
   end
 end

@@ -200,6 +200,15 @@ describe Decanter::Core do
       end
     end
 
+    context 'when one parser is specified' do
+      let(:key) { :hash_me_hearties }
+      let(:val) { 'a:b,c:d' }
+
+      it 'returns the a key-value pair with the parsed value' do
+        expect(dummy.parse(key, :key_value_splitter, val, {})).to eq(key => { 'a' => 'b', 'c' => 'd' })
+      end
+    end
+
     context 'when several parsers are specified' do
       let(:key) { :afloat }
       let(:val) { 8.0 }
@@ -210,17 +219,17 @@ describe Decanter::Core do
     end
 
     context 'when a parser with a preparser is specified' do
-      Object.const_set('PctParser',
-                       Class.new(Decanter::Parser::ValueParser) do
-                         def self.name
-                           'PctParser'
-                         end
-                       end.tap do |parser|
-                         parser.pre :float
-                         parser.parser do |val, _options|
-                           val / 100
-                         end
-                       end)
+      PctParser = Class.new(Decanter::Parser::ValueParser) do
+        def self.name
+          'PctParser'
+        end
+      end.tap do |parser|
+        parser.pre :float
+
+        parser.parser do |val, _options|
+          val / 100
+        end
+      end
 
       let(:key) { :afloat }
       let(:val) { 8.0 }
@@ -236,7 +245,7 @@ describe Decanter::Core do
 
       it 'returns the a key-value pairs with the parsed values' do
         expect(dummy.parse(key, %i(key_value_splitter pct), val, {}))
-          .to eq('foo' => 0.0345, 'baz' => 0.91)
+          .to eq(split_it!: { 'foo' => 0.0345, 'baz' => 0.91 })
       end
     end
   end
@@ -351,7 +360,7 @@ describe Decanter::Core do
       dummy.handle_input(handler, args)
       expect(dummy)
         .to have_received(:parse)
-        .with(name, parser, values, options)
+        .with(parser, values, options)
     end
   end
 
