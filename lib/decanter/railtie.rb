@@ -1,7 +1,6 @@
 require 'decanter'
 
 class Decanter::Railtie < Rails::Railtie
-
   initializer 'decanter.active_record' do
     ActiveSupport.on_load :active_record do
       require 'decanter/extensions'
@@ -9,8 +8,8 @@ class Decanter::Railtie < Rails::Railtie
     end
   end
 
-  initializer 'decanter.parser.autoload', :before => :set_autoload_paths do |app|
-    app.config.autoload_paths << Rails.root.join("lib/decanter/parsers")
+  initializer 'decanter.parser.autoload', before: :set_autoload_paths do |app|
+    app.config.autoload_paths << Rails.root.join('lib/decanter/parsers')
   end
 
   generators do |app|

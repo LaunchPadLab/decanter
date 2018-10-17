@@ -5,7 +5,7 @@ module Decanter
 
       allow Integer
 
-      parser do |val, options|
+      parser do |val, _options|
         val.is_a?(Float) ?
           val.to_i :
           val.scan(REGEX).join.try(:to_i)

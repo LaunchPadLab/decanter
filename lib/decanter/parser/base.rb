@@ -7,4 +7,3 @@ module Decanter
     end
   end
 end
-
