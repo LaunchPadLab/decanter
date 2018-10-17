@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Decanter do
@@ -99,7 +101,7 @@ describe Decanter do
 
         it 'raises a name error' do
           expect { Decanter.decanter_for(foo) }
-            .to raise_error(NameError, "uninitialized constant #{foo.name.concat('Decanter')}")
+            .to raise_error(NameError, "uninitialized constant #{foo.name}Decanter")
         end
       end
 

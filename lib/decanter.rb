@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/all'
 
 module Decanter
@@ -11,7 +13,7 @@ module Decanter
           klass_or_sym.to_s.singularize.camelize
         else
           raise ArgumentError, "cannot lookup decanter for #{klass_or_sym} with class #{klass_or_sym.class}"
-        end.concat('Decanter')
+        end + 'Decanter'
       begin
         decanter_name.constantize
       rescue StandardError
@@ -42,7 +44,7 @@ module Decanter
     end
 
     def configuration
-      @config ||= Decanter::Configuration.new
+      @configuration ||= Decanter::Configuration.new
     end
 
     def config

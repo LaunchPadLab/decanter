@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Decanter
   module Parser
     class StringParser < ValueParser
