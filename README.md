@@ -55,6 +55,8 @@ To reference a custom or modified parser,
 In your controller:
 
 ```ruby
+  include Decanter::Decant
+
   def create
     @trip = Trip.new(decant(:trip, params[:trip]))
 
@@ -74,17 +76,6 @@ In your controller:
       render "new"
     end
   end
-```
-
-Or, if you would prefer to get the parsed hash and then do your own logic, you can do the following:
-
-```ruby
-def create
-  parsed_params = decant(:trip, params[:trip])
-  @trip = Trip.new(parsed_params)
-
-  # save logic here
-end
 ```
 
 Basic Example
@@ -118,6 +109,9 @@ With Decanter installed, here is what the same controller action would look like
 
 ```ruby
 class TripsController < ApplicationController
+
+  include Decanter::Decant
+
   def create
     @trip = Trip.new(decant(:trip, params[:trip]))
 
