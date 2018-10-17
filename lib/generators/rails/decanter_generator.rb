@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Rails
   module Generators
     class DecanterGenerator < NamedBase
       source_root File.expand_path('templates', __dir__)
       check_class_collision suffix: 'Decanter'
-      ASSOCIATION_TYPES = %i[has_many has_one belongs_to].freeze
+      ASSOCIATION_TYPES = %i(has_many has_one belongs_to).freeze
 
       argument :attributes, type: :array, default: [], banner: 'field:type field:type'
 

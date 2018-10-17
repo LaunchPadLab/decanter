@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'decanter'
 
 class Decanter::Railtie < Rails::Railtie
