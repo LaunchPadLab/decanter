@@ -1,38 +1,40 @@
-engines:
-  rubocop:
-    enabled: true
-    checks:
-      Rubocop/Style/Documentation:
-        enabled: false
-      Rubocop/Metrics/LineLength:
-        enabled: false
-      Rubocop/Rails/Validation:
-        enabled: false
-      Rubocop/Style/IndentationConsistency:
-        enabled: false
-      Rubocop/Style/EmptyLines:
-        enabled: false
-      Rubocop/Style/ClassAndModuleChildren:
-        enabled: false
-      Rubocop/Style/AccessorMethodName:
-        enabled: false
-  golint:
-    enabled: true
-  gofmt:
-    enabled: true
-  eslint:
-    enabled: true
-  csslint:
-    enabled: true
-  brakeman:
-    enabled: false
+version: "2"
+prepare:
+  fetch:
+    - url: http://engineering.pages.bytemark.co.uk/dev-utilities/.rubocop.yml
+      path: .rubocop-http---engineering-pages-bytemark-co-uk-dev-utilities--rubocop-yml
+    - url: http://engineering.pages.bytemark.co.uk/dev-utilities/.rubocop-rails.yml
+      path: .rubocop-http---engineering-pages-bytemark-co-uk-dev-utilities--rubocop-rails-yml
+plugins:
+  #brakeman: # brakeman doesn't work outside of rails apps.
+    #enabled: true
   bundler-audit:
     enabled: true
-ratings:
-   paths:
-   - lib/**
-   - "**.rb"
-exclude_paths:
-- bin/**/*
-- spec/**/*
-- coverage/**/*
+  coffeelint:
+    enabled: true
+  csslint: 
+    enabled: true
+  eslint: 
+    enabled: true
+  gofmt: 
+    enabled: true
+  golint: 
+    enabled: true
+  govet: 
+    enabled: true
+  nodesecurity: 
+    enabled: true
+  pep8: 
+    enabled: true
+  phpcodesniffer: 
+    enabled: true
+  phpmd: 
+    enabled: true
+  rubocop:
+    enabled: true
+  shellcheck:
+    enabled: true
+
+exclude_patterns:
+  - .bundle/
+  - vendor/
