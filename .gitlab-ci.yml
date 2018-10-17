@@ -15,9 +15,9 @@ codeclimate:
   artifacts:
     paths: [codeclimate.json]
 
-.test-template: &test-template
+test:
   stage: test
-  image: $CI_REGISTRY/docker-images/layers:$DISTRO-ruby
+  image: $CI_REGISTRY/docker-images/layers:stretch-ruby
   coverage: '/\(\d+.\d+\%\) covered/'
   before_script:
     - apt install -y zlib1g-dev
