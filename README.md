@@ -56,7 +56,7 @@ In your controller:
 
 ```ruby
   def create
-    @trip = Trip.decant_new(params[:trip])
+    @trip = Trip.new(decant(:trip, params[:trip]))
 
     if @trip.save
       redirect_to trips_path
@@ -68,7 +68,7 @@ In your controller:
   def update
     @trip = Trip.find(params[:id])
 
-    if @trip.decant_update(params[:trip])
+    if @trip.update(decant(:trip, params[:trip]))
       redirect_to trips_path
     else
       render "new"
@@ -80,7 +80,7 @@ Or, if you would prefer to get the parsed hash and then do your own logic, you c
 
 ```ruby
 def create
-  parsed_params = Trip.decant(params[:trip])
+  parsed_params = decant(:trip, params[:trip])
   @trip = Trip.new(parsed_params)
 
   # save logic here
@@ -119,7 +119,7 @@ With Decanter installed, here is what the same controller action would look like
 ```ruby
 class TripsController < ApplicationController
   def create
-    @trip = Trip.decant_new(params[:trip])
+    @trip = Trip.new(decant(:trip, params[:trip]))
 
     if @trip.save
       redirect_to trips_path
@@ -148,7 +148,7 @@ class TripDecanter < Decanter::Base
 end
 ```
 
-You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do ```@trip = Trip.decant_new(params[:trip])```. ```decant_new``` is where the magic happens. It is converting the params from this:
+You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do ```@trip = Trip.new(decant(:trip, params[:trip]))```. ```decant``` is where the magic happens. It is converting the params from this:
 
 ```ruby
 {
@@ -299,7 +299,7 @@ With that, we can use the same vanilla create action syntax you saw in the basic
 ```ruby
 class TripsController < ApplicationController
   def create
-    @trip = Trip.decant_new(params[:trip])
+    @trip = Trip.new(decant(:trip, params[:trip]))
 
     if @trip.save
       redirect_to trips_path
