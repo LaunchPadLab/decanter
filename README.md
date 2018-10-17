@@ -512,3 +512,19 @@ Decanter Exceptions
 
   Raised when there are unhandled keys.
 
+Changes from 1.1.x
+------------------
+
+Previously it was possible to call `Trip.decant_new(params[:trip])`.  This has been removed by default, but it is possible to include it by adding the following to the classes where you want them.
+
+```
+class Trip < ActiveRecord::Base
+  include Decanter::Extensions
+
+  # ... rest of class goes here ... #
+end
+```
+
+This adds '#decanter_new', '#decanter_create', '#decanter_create!', '#decanter_update', '#decanter_update!', and `#decant` to your model, allowing you to use the gem in the existing style.
+
+
