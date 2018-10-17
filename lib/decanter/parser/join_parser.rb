@@ -3,11 +3,11 @@
 module Decanter
   module Parser
     class JoinParser < ValueParser
-      ITEM_DELIM = ','
+      DELIM = ','
 
       parser do |val, options|
         delimiter = options.fetch(:delimiter, ITEM_DELIM)
-        val.join(delimiter)
+        val.join(DELIM)
       end
     end
   end
