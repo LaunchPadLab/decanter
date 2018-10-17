@@ -8,14 +8,14 @@ describe 'DateParser' do
   describe '#parse' do
     context 'with a valid date string of default form ' do
       it 'returns the date' do
-        expect(parser.parse(name, '2/21/1990')).to match(name => Date.new(1990, 2, 21))
+        expect(parser.parse(name, '21/2/1990')).to match(name => Date.new(1990, 2, 21))
       end
     end
 
     context 'with an invalid date string' do
       it 'raises an Argument Error' do
         expect { parser.parse(name, '2-21-1990') }
-          .to raise_error(ArgumentError, 'invalid date')
+          .to raise_error(ArgumentError)
       end
     end
 

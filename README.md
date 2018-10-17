@@ -183,15 +183,18 @@ class DateParser < Decanter::Parser::ValueParser
   allow Date
 
   parser do |value, options|
-    parse_format = options.fetch(:parse_format, '%m/%d/%Y')
-    ::Date.strptime(value, parse_format)
+    if (parse_format = options[:parse_format])
+      ::Date.strptime(value, parse_format)
+    else
+      ::Date.parse(value)
+    end
   end
 end
 ```
 
-```allow Date``` basically tells Decanter that if the value comes in as a Date object, we don't need to parse it at all. Other than that, the parser is really just doing ```Date.strptime("01/15/2015", '%m/%d/%Y')```, which is just a vanilla date parse.
+```allow Date``` basically tells Decanter that if the value comes in as a Date object, we don't need to parse it at all. Other than that, the parser is really just doing ```Date.parse('15/01/2015')```, which is just a vanilla date parse.
 
-You'll notice that the above ```parser do``` block takes a ```:parse_format``` option. This allows you to specify the format your date string will come in. For example, if you expect "2016-01-15" instead of "01/15/2016", you can adjust the TripDecanter like so:
+You'll notice that the above ```parser do``` block takes a ```:parse_format``` option. This allows you to specify the format your date string will come in. For example, if you expect "2016-01-15" instead of "15/01/2016", you can adjust the TripDecanter like so:
 
 ```ruby
 # app/decanters/trip_decanter.rb
@@ -355,6 +358,7 @@ Decanter comes with the following parsers:
 - pass
 - phone
 - string
+- time
 
 As an example as to how these parsers differ, let's consider ```float```. The float parser will perform a regex to find only characters that are digits or decimals. By doing that, your users can enter in commas and currency symbols without your backend throwing a hissy fit.
 

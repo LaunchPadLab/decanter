@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+# rubocop:disable Style/DateTime
 describe 'DateTimeParser' do
   let(:name) { :foo }
 
@@ -8,14 +9,14 @@ describe 'DateTimeParser' do
   describe '#parse' do
     context 'with a valid datetime string of default form ' do
       it 'returns the datetime' do
-        expect(parser.parse(name, '2/21/1990 04:15:16 PM')).to match(name => DateTime.new(1990, 2, 21, 16, 15, 16))
+        expect(parser.parse(name, '21/2/1990 04:15:16 PM')).to match(name => DateTime.new(1990, 2, 21, 16, 15, 16))
       end
     end
 
     context 'with an invalid date string' do
       it 'raises an Argument Error' do
         expect { parser.parse(name, '2-21-1990') }
-          .to raise_error(ArgumentError, 'invalid date')
+          .to raise_error(ArgumentError)
       end
     end
 
@@ -38,3 +39,4 @@ describe 'DateTimeParser' do
     end
   end
 end
+# rubocop:enable Style/DateTime
