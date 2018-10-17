@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Decanter
   module Parser
     class JoinParser < ValueParser
-      DELIM = ','.freeze
+      DELIM = ','
 
       parser do |val, options|
         delimiter = options.fetch(:delimiter, ITEM_DELIM)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'BooleanParser' do
@@ -8,9 +10,9 @@ describe 'BooleanParser' do
       ['number', 1],
       ['string', 1],
       ['boolean', true],
-      %w[string true],
-      %w[string True],
-      %w[string truE]
+      %w(string true),
+      %w(string True),
+      %w(string truE)
     ]
 
     falses = [
@@ -18,7 +20,7 @@ describe 'BooleanParser' do
       ['number', 2],
       ['string', 2],
       ['boolean', false],
-      %w[string tru]
+      %w(string tru)
     ]
 
     let(:name) { :foo }

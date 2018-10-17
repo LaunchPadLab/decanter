@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'core'
 
 module Decanter
@@ -11,7 +13,7 @@ module Decanter
 
       def self.validate_hash(parsed)
         parsed.is_a?(Hash) ? parsed :
-          raise(ArgumentError, "Result of HashParser #{self.name} was #{parsed} when it must be a hash.")
+          raise(ArgumentError, "Result of HashParser #{name} was #{parsed} when it must be a hash.")
       end
     end
   end

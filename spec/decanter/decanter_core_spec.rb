@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Decanter::Core do
@@ -25,7 +27,7 @@ describe Decanter::Core do
     end
 
     context 'for multiple values' do
-      let(:name) { %i[first_name last_name] }
+      let(:name) { %i(first_name last_name) }
 
       it 'adds a handler for the provided name' do
         expect(dummy.handlers.key?(name)).to be true
@@ -203,7 +205,7 @@ describe Decanter::Core do
       let(:val) { 8.0 }
 
       it 'returns the a key-value pair with the parsed value' do
-        expect(dummy.parse(key, %i[string float], val, {})).to eq(key => val)
+        expect(dummy.parse(key, %i(string float), val, {})).to eq(key => val)
       end
     end
 
@@ -224,7 +226,7 @@ describe Decanter::Core do
       let(:val) { 8.0 }
 
       it 'returns the a key-value pair with the parsed value' do
-        expect(dummy.parse(key, %i[string pct], val, {})).to eq(key => val / 100)
+        expect(dummy.parse(key, %i(string pct), val, {})).to eq(key => val / 100)
       end
     end
 
@@ -233,7 +235,7 @@ describe Decanter::Core do
       let(:val) { 'foo:3.45,baz:91' }
 
       it 'returns the a key-value pairs with the parsed values' do
-        expect(dummy.parse(key, %i[key_value_splitter pct], val, {}))
+        expect(dummy.parse(key, %i(key_value_splitter pct), val, {}))
           .to eq('foo' => 0.0345, 'baz' => 0.91)
       end
     end
@@ -313,7 +315,7 @@ describe Decanter::Core do
 
   describe '#handle' do
     let(:args)    { { foo: 'hi', bar: 'bye' } }
-    let(:name)    { %i[foo bar] }
+    let(:name)    { %i(foo bar) }
     let(:values)  { args.values_at(*name) }
     let(:handler) { { type: :input, name: name } }
 

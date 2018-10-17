@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'parser/utils'
 
 module Decanter
@@ -22,7 +24,7 @@ module Decanter
           symbol_to_string(klass_or_sym)
         else
           raise ArgumentError, "cannot lookup parser for #{klass_or_sym} with class #{klass_or_sym.class}"
-        end.concat('Parser')
+        end + 'Parser'
       end
 
       # convert from a string to a constant

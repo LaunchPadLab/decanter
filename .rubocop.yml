@@ -1,0 +1,3 @@
+inherit_from:
+  - http://engineering.pages.bytemark.co.uk/dev-utilities/.rubocop.yml
+  - http://engineering.pages.bytemark.co.uk/dev-utilities/.rubocop-rails.yml
