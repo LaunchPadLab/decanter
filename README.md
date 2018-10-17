@@ -8,7 +8,7 @@ Decanter
 What is Decanter?
 ---
 
-Decanter is a Rails gem that makes it easy to transform incoming data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A user selects January 15th, 2015 as the date, but this is going to come into our controller as a string like "01/15/2015", so we need to convert this string to a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
+Decanter is a Rails gem that makes it easy to transform incoming data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A user selects January 15th, 2015 as the date, but this is going to come into our controller as a string like "15/01/2015", so we need to convert this string to a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
 
 You can think of Decanter as the opposite of Active Model Serializer. Whereas AMS transforms your outbound data into a format that your frontend consumes, Decanter transforms your incoming data into a format that your backend consumes.
 
@@ -89,8 +89,8 @@ Without Decanter, here is what our create action may look like:
 class TripsController < ApplicationController
   def create
     @trip = Trip.new(params[:trip])
-    start_date = Date.strptime(params[:trip][:start_date], '%m/%d/%Y')
-    end_date = Date.strptime(params[:trip][:end_date], '%m/%d/%Y')
+    start_date = Date.strptime(params[:trip][:start_date], '%d/%m/%Y')
+    end_date = Date.strptime(params[:trip][:end_date], '%d/%m/%Y')
     @trip.start_date = start_date
     @trip.end_date = end_date
 
@@ -147,8 +147,8 @@ You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do `
 ```ruby
 {
   name: "My Trip",
-  start_date: "01/15/2015",
-  end_date: "01/20/2015"
+  start_date: "15/01/2015",
+  end_date: "20/01/2015"
 }
 ```
 
@@ -188,7 +188,7 @@ end
 
 ```allow Date``` basically tells Decanter that if the value comes in as a Date object, we don't need to parse it at all. Other than that, the parser is really just doing ```Date.parse('15/01/2015')```, which is just a vanilla date parse.
 
-You'll notice that the above ```parser do``` block takes a ```:parse_format``` option. This allows you to specify the format your date string will come in. For example, if you expect "2016-01-15" instead of "15/01/2016", you can adjust the TripDecanter like so:
+You'll notice that the above ```parser do``` block takes a ```:parse_format``` option. This allows you to specify the format your date string will come in. For example, if you expect "2015-01-15" instead of "15/01/2015", you can adjust the TripDecanter like so:
 
 ```ruby
 # app/decanters/trip_decanter.rb
