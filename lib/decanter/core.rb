@@ -6,21 +6,22 @@ module Decanter
 
     module ClassMethods
       def input(name, parsers = nil, **options)
-        _name = [name].flatten
+        name = [name].flatten
 
-        if _name.length > 1 && parsers.blank?
+        if name.length > 1 && parsers.blank?
           raise ArgumentError, "#{self.name} no parser specified for input with multiple values."
         end
 
-        handlers[_name] = {
-          key:     options.fetch(:key, _name.first),
-          name:    _name,
+        handlers[name] = {
+          key:     options.fetch(:key, name.first),
+          name:    name,
           options: options,
           parsers:  parsers,
           type:    :input
         }
       end
 
+      # rubocop:disable Naming/PredicateName
       def has_many(assoc, **options)
         handlers[assoc] = {
           assoc:   assoc,
@@ -40,6 +41,7 @@ module Decanter
           type:    :has_one
         }
       end
+      # rubocop:enable Naming/PredicateName
 
       def ignore(*args)
         keys_to_ignore.push(*args)
@@ -102,7 +104,6 @@ module Decanter
         if unhandled_keys.any?
           case strict_mode
           when true
-            p "#{name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
             {}
           when :with_exception
             raise(UnhandledKeysError, "#{name} received unhandled keys: #{unhandled_keys.join(', ')}.")
@@ -149,14 +150,14 @@ module Decanter
           )
         ]
 
-        assoc_handler_names = assoc_handlers.map { |_handler| _handler[:name] }
+        assoc_handler_names = assoc_handlers.map { |h| h[:name] }
 
         case args.values_at(*assoc_handler_names).compact.length
         when 0
           {}
         when 1
-          _handler = assoc_handlers.detect { |_handler| args.key?(_handler[:name]) }
-          send("handle_#{_handler[:type]}", _handler, args[_handler[:name]])
+          handler = assoc_handlers.detect { |h| args.key?(h[:name]) }
+          send("handle_#{handler[:type]}", handler, args[handler[:name]])
         else
           raise ArgumentError, "Handler #{handler[:name]} matches multiple keys: #{assoc_handler_names}."
         end
