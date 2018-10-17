@@ -4,23 +4,17 @@ require 'rails_helper'
 require 'decanter/decant'
 
 RSpec.describe Decanter::Decant, type: :controller do
-  before(:all) do
-    FooDecanter = Class.new(Decanter::Base) do
-      def self.name
-        'FooDecanter'
-      end
+  DecantSpecDecanter = Class.new(Decanter::Base) do
+    def self.name
+      'DecantSpecDecanter'
     end
-  end
-
-  after(:all) do
-    Object.send(:remove_const, 'FooDecanter')
   end
 
   controller(ActionController::Base) do
     include Decanter::Decant
 
     def show
-      decant(:foo, params)
+      decant(:decant_spec, params)
       head :no_content
     end
   end
@@ -35,7 +29,7 @@ RSpec.describe Decanter::Decant, type: :controller do
 
   it do
     # stub call to #decant
-    expect(FooDecanter).to receive(:decant).once
+    expect(DecantSpecDecanter).to receive(:decant).once
     get :show, params: params
     expect(response.status).to eq 204
   end
