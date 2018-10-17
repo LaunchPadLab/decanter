@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Decanter
   module Parser
     class KeyValueSplitterParser < HashParser
-      ITEM_DELIM = ','.freeze
-      PAIR_DELIM = ':'.freeze
+      ITEM_DELIM = ','
+      PAIR_DELIM = ':'
 
       parser do |_name, val, options|
         item_delimiter = options.fetch(:item_delimiter, ITEM_DELIM)
