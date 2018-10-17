@@ -2,15 +2,15 @@
 
 require 'spec_helper'
 
-describe 'DateParser' do
+describe 'TimeParser' do
   let(:name) { :foo }
 
-  let(:parser) { Decanter::Parser::DateParser }
+  let(:parser) { Decanter::Parser::TimeParser }
 
   describe '#parse' do
-    context 'with a valid date string of default form ' do
-      it 'returns the date' do
-        expect(parser.parse(name, '21/2/1990')).to match(name => Date.new(1990, 2, 21))
+    context 'with a valid datetime string of default form ' do
+      it 'returns the datetime' do
+        expect(parser.parse(name, '21/2/1990 04:15:16 PM')).to match(name => Time.new(1990, 2, 21, 16, 15, 16))
       end
     end
 
@@ -27,15 +27,15 @@ describe 'DateParser' do
       end
     end
 
-    context 'with a date' do
-      it 'returns the date' do
-        expect(parser.parse(name, Date.new(1990, 2, 21))).to match(name => Date.new(1990, 2, 21))
+    context 'with a datetime' do
+      it 'returns the datetime' do
+        expect(parser.parse(name, Time.new(1990, 2, 21))).to match(name => Time.new(1990, 2, 21))
       end
     end
 
     context 'with a valid date string and custom format' do
       it 'returns the date' do
-        expect(parser.parse(name, '2-21-1990', parse_format: '%m-%d-%Y')).to match(name => Date.new(1990, 2, 21))
+        expect(parser.parse(name, '2-21-1990', parse_format: '%m-%d-%Y')).to match(name => Time.new(1990, 2, 21))
       end
     end
   end
