@@ -26,7 +26,7 @@ module Decanter
       end
 
       def concat_str(parser_str)
-        'Decanter::Parser::'.concat(parser_str)
+        'Decanter::Parser::' + parser_str
       end
     end
   end

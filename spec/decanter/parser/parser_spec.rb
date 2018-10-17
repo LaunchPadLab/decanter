@@ -86,7 +86,7 @@ describe Decanter::Parser do
 
       it 'raises a name error' do
         expect { subject }
-          .to raise_error(NameError, "cannot find parser #{parser_str.concat('Parser')}")
+          .to raise_error(NameError, "cannot find parser #{parser_str}")
       end
     end
 
