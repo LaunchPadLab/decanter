@@ -4,12 +4,15 @@ require 'spec_helper'
 
 describe Decanter do
   before(:all) do
-    Object.const_set('FooDecanter',
-                     Class.new(Decanter::Base) do
-                       def self.name
-                         'FooDecanter'
-                       end
-                     end)
+    FooDecanter = Class.new(Decanter::Base) do
+      def self.name
+        'FooDecanter'
+      end
+    end
+  end
+
+  after(:all) do
+    Object.send(:remove_const, 'FooDecanter')
   end
 
   describe '#decanter_from' do

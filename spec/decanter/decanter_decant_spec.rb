@@ -4,10 +4,16 @@ require 'rails_helper'
 require 'decanter/decant'
 
 RSpec.describe Decanter::Decant, type: :controller do
-  FooDecanter = Class.new(Decanter::Base) do
-    def self.name
-      'FooDecanter'
+  before(:all) do
+    FooDecanter = Class.new(Decanter::Base) do
+      def self.name
+        'FooDecanter'
+      end
     end
+  end
+
+  after(:all) do
+    Object.send(:remove_const, 'FooDecanter')
   end
 
   controller(ActionController::Base) do
