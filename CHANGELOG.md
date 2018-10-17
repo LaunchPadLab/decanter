@@ -2,6 +2,8 @@
 
 ## 1.2.0 (17 October 2018)
   * Added TimeParser, clarified DateParser, DateTimeParser (!5)
+  * Altered `FloatParser` and `IntegerParser` to use `Float()` and `Integer()`
+    respectively (#1,!7)
   * Fixed JoinParser to obey delimiter parameter (!6)
   * Applied Bytemark house-style Rubocop (!2, !3)
   * Gem bumps: decanter (1.1.8 to 1.2.0),
