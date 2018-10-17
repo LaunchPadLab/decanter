@@ -525,6 +525,6 @@ class Trip < ActiveRecord::Base
 end
 ```
 
-This adds '#decanter_new', '#decanter_create', '#decanter_create!', '#decanter_update', '#decanter_update!', and `#decant` to your model, allowing you to use the gem in the existing style.
+This adds `#decanter_new`, `#decanter_create`, `#decanter_create!`, `#decanter_update`, `#decanter_update!`, and `#decant` to your model, allowing you to use the gem in the existing style.
 
 
