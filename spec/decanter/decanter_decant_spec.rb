@@ -4,7 +4,6 @@ require 'rails_helper'
 require 'decanter/decant'
 
 RSpec.describe Decanter::Decant, type: :controller do
-
   Object.const_set('FooDecanter',
                    Class.new(Decanter::Base) do
                      def self.name

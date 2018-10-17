@@ -15,4 +15,3 @@ class RailsApp < Rails::Application
 end
 
 RailsApp.initialize!
-
