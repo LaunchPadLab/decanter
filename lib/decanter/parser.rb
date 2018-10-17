@@ -30,7 +30,7 @@ module Decanter
         # safe_constantize returns nil if match not found
         parser_str.safe_constantize ||
           concat_str(parser_str).safe_constantize ||
-          raise NameError, "cannot find parser #{parser_str}"
+          raise(NameError, "cannot find parser #{parser_str}")
       end
 
       # expand to include preparsers
