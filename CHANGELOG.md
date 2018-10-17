@@ -1,6 +1,8 @@
 # Decanter Gem Changelog
 
 ## 1.2.0 (17 October 2018)
+  * Refactored Parser#parse not to require the name option (!9)
+  * Refactored Decanter::Core#parse (!9)
   * Added TimeParser, clarified DateParser, DateTimeParser (!5)
   * Altered `FloatParser` and `IntegerParser` to use `Float()` and `Integer()`
     respectively (#1,!7)
