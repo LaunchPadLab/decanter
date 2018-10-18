@@ -3,13 +3,12 @@
 require 'spec_helper'
 
 describe Decanter::Parser::IntegerParser do
-  subject { described_class.parse(name, arg) }
-  let(:name) { :foo }
+  subject { described_class.parse(arg) }
 
   describe '#parse' do
     context 'with an integer-like string ' do
       let(:arg) { '1' }
-      it { is_expected.to match(name => 1) }
+      it { is_expected.to eq 1 }
     end
 
     context 'with an float-like string ' do
@@ -19,7 +18,7 @@ describe Decanter::Parser::IntegerParser do
 
     context 'with nil' do
       let(:arg) { nil }
-      it { is_expected.to match(name => nil) }
+      it { is_expected.to be_nil }
     end
 
     context 'with a duff string' do

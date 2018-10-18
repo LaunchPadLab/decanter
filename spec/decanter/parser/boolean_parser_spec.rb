@@ -2,42 +2,39 @@
 
 require 'spec_helper'
 
-describe 'BooleanParser' do
-  let(:parser) { Decanter::Parser::BooleanParser }
+describe Decanter::Parser::BooleanParser do
+  subject { described_class.parse(arg) }
 
   describe '#parse' do
     trues = [
-      ['number', 1],
-      ['string', 1],
+      ['integer', 1],
       ['boolean', true],
+      %w(string 1),
       %w(string true),
       %w(string True),
       %w(string truE)
     ]
 
     falses = [
-      ['number', 0],
-      ['number', 2],
-      ['string', 2],
+      ['integer', 0],
+      ['integer', 2],
       ['boolean', false],
-      %w(string tru)
+      %w(string 2),
+      %w(string tru),
+      %w(string false)
     ]
 
-    let(:name) { :foo }
-
-    context 'returns true for' do
-      trues.each do |cond|
-        it "#{cond[0]}: #{cond[1]}" do
-          expect(parser.parse(name, cond[1])).to match(name => true)
-        end
+    trues.each do |kls, val|
+      context "with a #{kls} of #{val.inspect}" do
+        let(:arg) { val }
+        it { is_expected.to be true }
       end
     end
 
-    context 'returns false for' do
-      falses.each do |cond|
-        it "#{cond[0]}: #{cond[1]}" do
-          expect(parser.parse(name, cond[1])).to match(name => false)
-        end
+    falses.each do |kls, val|
+      context "with a #{kls} of #{val.inspect}" do
+        let(:arg) { val }
+        it { is_expected.to be false }
       end
     end
   end
