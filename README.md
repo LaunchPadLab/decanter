@@ -8,7 +8,7 @@ Decanter
 What is Decanter?
 ---
 
-Decanter is a Rails gem that makes it easy to transform incoming data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A user selects January 15th, 2015 as the date, but this is going to come into our controller as a string like "01/15/2015", so we need to convert this string to a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
+Decanter is a Rails gem that makes it easy to transform incoming data before it hits the model. The basic idea is that form data entered by a user often needs to be processed before it is stored into the database. A typical example of this is a datepicker. A user selects January 15th, 2015 as the date, but this is going to come into our controller as a string like "15/01/2015", so we need to convert this string to a Ruby Date object before it is stored in our database. Many developers perform this conversion right in the controller, which results in errors and unnecessary complexity, especially as the application grows.
 
 You can think of Decanter as the opposite of Active Model Serializer. Whereas AMS transforms your outbound data into a format that your frontend consumes, Decanter transforms your incoming data into a format that your backend consumes.
 
@@ -55,8 +55,10 @@ To reference a custom or modified parser,
 In your controller:
 
 ```ruby
+  include Decanter::Decant
+
   def create
-    @trip = Trip.decant_new(params[:trip])
+    @trip = Trip.new(decant(:trip, params[:trip]))
 
     if @trip.save
       redirect_to trips_path
@@ -68,23 +70,12 @@ In your controller:
   def update
     @trip = Trip.find(params[:id])
 
-    if @trip.decant_update(params[:trip])
+    if @trip.update(decant(:trip, params[:trip]))
       redirect_to trips_path
     else
       render "new"
     end
   end
-```
-
-Or, if you would prefer to get the parsed hash and then do your own logic, you can do the following:
-
-```ruby
-def create
-  parsed_params = Trip.decant(params[:trip])
-  @trip = Trip.new(parsed_params)
-
-  # save logic here
-end
 ```
 
 Basic Example
@@ -98,8 +89,8 @@ Without Decanter, here is what our create action may look like:
 class TripsController < ApplicationController
   def create
     @trip = Trip.new(params[:trip])
-    start_date = Date.strptime(params[:trip][:start_date], '%m/%d/%Y')
-    end_date = Date.strptime(params[:trip][:end_date], '%m/%d/%Y')
+    start_date = Date.strptime(params[:trip][:start_date], '%d/%m/%Y')
+    end_date = Date.strptime(params[:trip][:end_date], '%d/%m/%Y')
     @trip.start_date = start_date
     @trip.end_date = end_date
 
@@ -118,8 +109,11 @@ With Decanter installed, here is what the same controller action would look like
 
 ```ruby
 class TripsController < ApplicationController
+
+  include Decanter::Decant
+
   def create
-    @trip = Trip.decant_new(params[:trip])
+    @trip = Trip.new(decant(:trip, params[:trip]))
 
     if @trip.save
       redirect_to trips_path
@@ -148,13 +142,13 @@ class TripDecanter < Decanter::Base
 end
 ```
 
-You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do ```@trip = Trip.decant_new(params[:trip])```. ```decant_new``` is where the magic happens. It is converting the params from this:
+You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do ```@trip = Trip.new(decant(:trip, params[:trip]))```. ```decant``` is where the magic happens. It is converting the params from this:
 
 ```ruby
 {
   name: "My Trip",
-  start_date: "01/15/2015",
-  end_date: "01/20/2015"
+  start_date: "15/01/2015",
+  end_date: "20/01/2015"
 }
 ```
 
@@ -194,7 +188,7 @@ end
 
 ```allow Date``` basically tells Decanter that if the value comes in as a Date object, we don't need to parse it at all. Other than that, the parser is really just doing ```Date.parse('15/01/2015')```, which is just a vanilla date parse.
 
-You'll notice that the above ```parser do``` block takes a ```:parse_format``` option. This allows you to specify the format your date string will come in. For example, if you expect "2016-01-15" instead of "15/01/2016", you can adjust the TripDecanter like so:
+You'll notice that the above ```parser do``` block takes a ```:parse_format``` option. This allows you to specify the format your date string will come in. For example, if you expect "2015-01-15" instead of "15/01/2015", you can adjust the TripDecanter like so:
 
 ```ruby
 # app/decanters/trip_decanter.rb
@@ -302,7 +296,7 @@ With that, we can use the same vanilla create action syntax you saw in the basic
 ```ruby
 class TripsController < ApplicationController
   def create
-    @trip = Trip.decant_new(params[:trip])
+    @trip = Trip.new(decant(:trip, params[:trip]))
 
     if @trip.save
       redirect_to trips_path
@@ -517,4 +511,20 @@ Decanter Exceptions
  - UnhandledKeysError
 
   Raised when there are unhandled keys.
+
+Changes from 1.1.x
+------------------
+
+Previously it was possible to call `Trip.decant_new(params[:trip])`.  This has been removed by default, but it is possible to include it by adding the following to the classes where you want them.
+
+```
+class Trip < ActiveRecord::Base
+  include Decanter::Extensions
+
+  # ... rest of class goes here ... #
+end
+```
+
+This adds `#decanter_new`, `#decanter_create`, `#decanter_create!`, `#decanter_update`, `#decanter_update!`, and `#decant` to your model, allowing you to use the gem in the existing style.
+
 
