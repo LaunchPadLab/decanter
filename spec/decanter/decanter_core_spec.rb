@@ -16,7 +16,7 @@ describe Decanter::Core do
   end
 
   describe '#input' do
-    let(:name) { [:profile] }
+    let(:name) { :profile }
     let(:parser) { :string }
     let(:options) { {} }
 
@@ -26,7 +26,7 @@ describe Decanter::Core do
       expect(dummy.handlers.key?(name)).to be true
     end
 
-    context 'for multiple values' do
+    context 'for multiple name values' do
       let(:name) { %i(first_name last_name) }
 
       it 'adds a handler for the provided name' do
@@ -43,7 +43,7 @@ describe Decanter::Core do
     end
 
     it 'the handler has default key equal to the name' do
-      expect(dummy.handlers[name][:key]).to eq name.first
+      expect(dummy.handlers[name][:key]).to eq name
     end
 
     it 'the handler has name = provided name' do
@@ -174,78 +174,69 @@ describe Decanter::Core do
           .and_return(Array.wrap(parser))
       end
 
-      it 'returns the provided key and value' do
-        expect(dummy.parse(:first_name, nil, 'bar', {})).to eq(first_name: 'bar')
+      it 'returns the provided value' do
+        expect(dummy.parse(nil, 'bar', {})).to eq('bar')
       end
 
       it 'does not call Parser.parsers_for' do
-        dummy.parse(:first_name, nil, 'bar', {})
+        dummy.parse(nil, 'bar', {})
         expect(Decanter::Parser).to_not have_received(:parsers_for)
       end
     end
 
     context 'when a parser is specified but a required value is not present' do
-      it 'raises an argument error specifying the key' do
-        expect { dummy.parse(:first_name, :foo, nil, required: true) }
-          .to raise_error(ArgumentError, 'No value for required argument: first_name')
+      it 'raises a missing required input value error' do
+        expect { dummy.parse(:foo, nil, required: true) }
+          .to raise_error(Decanter::Core::MissingRequiredInputValue)
       end
     end
 
     context 'when one parser is specified' do
-      let(:key) { :afloat }
       let(:val) { 8.0 }
 
       it 'returns the a key-value pair with the parsed value' do
-        expect(dummy.parse(key, :float, val.to_s, {})).to eq(key => val)
+        expect(dummy.parse(:float, val.to_s, {})).to eq(val)
       end
     end
 
     context 'when one parser is specified' do
-      let(:key) { :hash_me_hearties }
       let(:val) { 'a:b,c:d' }
 
       it 'returns the a key-value pair with the parsed value' do
-        expect(dummy.parse(key, :key_value_splitter, val, {})).to eq(key => { 'a' => 'b', 'c' => 'd' })
+        expect(dummy.parse(:key_value_splitter, val, {})).to eq('a' => 'b', 'c' => 'd')
       end
     end
 
     context 'when several parsers are specified' do
-      let(:key) { :afloat }
       let(:val) { 8.0 }
 
       it 'returns the a key-value pair with the parsed value' do
-        expect(dummy.parse(key, %i(string float), val, {})).to eq(key => val)
+        expect(dummy.parse(%i(string float), val, {})).to eq(val)
       end
     end
 
     context 'when a parser with a preparser is specified' do
       PctParser = Class.new(Decanter::Parser::ValueParser) do
-        def self.name
-          'PctParser'
-        end
-      end.tap do |parser|
-        parser.pre :float
+        pre :float
 
-        parser.parser do |val, _options|
+        parser do |val, _options|
           val / 100
         end
       end
 
-      let(:key) { :afloat }
       let(:val) { 8.0 }
 
       it 'returns the a key-value pair with the parsed value' do
-        expect(dummy.parse(key, %i(string pct), val, {})).to eq(key => val / 100)
+        expect(dummy.parse(%i(string pct), val, {})).to eq(val / 100)
       end
     end
 
     context 'when a hash parser and other parsers are specified' do
-      let(:key) { :split_it! }
       let(:val) { 'foo:3.45,baz:91' }
 
       it 'returns the a key-value pairs with the parsed values' do
-        expect(dummy.parse(key, %i(key_value_splitter pct), val, {}))
-          .to eq(split_it!: { 'foo' => 0.0345, 'baz' => 0.91 })
+        expect(dummy.parse(%i(key_value_splitter pct), val, {}))
+          .to eq('foo' => 0.0345, 'baz' => 0.91)
       end
     end
   end
@@ -308,7 +299,7 @@ describe Decanter::Core do
         context 'when the unhandled keys are ignored' do
           it 'does not raise an error' do
             dummy.ignore :foo
-            expect { dummy.unhandled_keys(args) }.to_not raise_error(Decanter::Core::UnhandledKeysError)
+            expect { dummy.unhandled_keys(args) }.not_to raise_error
           end
         end
       end
@@ -513,7 +504,7 @@ describe Decanter::Core do
         }
       }
     end
-    let(:handler) { [[:title], input_hash] }
+    let(:handler) { [:title, input_hash] }
     let(:handlers) { [handler] }
 
     before(:each) do
@@ -580,7 +571,7 @@ describe Decanter::Core do
         }
       }
     end
-    let(:handler) { [[:title], input_hash] }
+    let(:handler) { [:title, input_hash] }
     let(:handlers) { [handler] }
     before(:each) do
       allow(dummy).to receive(:handlers).and_return(handlers)
@@ -611,7 +602,7 @@ describe Decanter::Core do
         }
       }
     end
-    let(:handler) { [[:title], input_hash] }
+    let(:handler) { [:title, input_hash] }
     let(:handlers) { [handler] }
     before(:each) { allow(dummy).to receive(:handlers).and_return(handlers) }
 
@@ -621,6 +612,7 @@ describe Decanter::Core do
         expect(result).to be true
       end
     end
+
     context 'when required args are not present' do
       let(:args) { { name: 'Bob' } }
       it 'should return false' do

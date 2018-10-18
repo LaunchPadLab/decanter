@@ -192,11 +192,11 @@ module Decanter
         end
       end
 
-      def parse(key, parsers, values, options)
-        return { key => values } unless parsers
+      def parse(parsers, values, options)
+        return values if parsers.nil?
 
-        if options[:required] == true && Array(values).all? { |v| v.to_s.nil? }
-          raise ArgumentError, "No value for required argument: #{key}"
+        if options[:required] && Array(values).all?(&:blank?)
+          raise MissingRequiredInputValue, 'No value for required argument'
         end
 
         Parser.parsers_for(parsers).each do |parser|
@@ -211,7 +211,7 @@ module Decanter
           end
         end
 
-        { key => values }
+        values
       end
 
       def handlers
