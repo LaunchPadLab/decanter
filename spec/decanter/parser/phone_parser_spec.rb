@@ -2,12 +2,11 @@
 
 require 'spec_helper'
 
-describe 'PhoneParser' do
-  let(:parser) { Decanter::Parser::PhoneParser }
+describe Decanter::Parser::PhoneParser do
+  subject { described_class.parse(arg) }
+  let(:arg) { '(12)2-21/19.90' }
 
   describe '#parse' do
-    it 'strips all non-numbers from value and returns a string' do
-      expect(parser.parse(:foo, '(12)2-21/19.90')).to match(foo: '122211990')
-    end
+    it { is_expected.to eq '122211990' }
   end
 end

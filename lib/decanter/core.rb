@@ -140,7 +140,7 @@ module Decanter
       def handle_input(handler, args)
         values = args.values_at(*handler[:name])
         values = values.length == 1 ? values.first : values
-        parse(handler[:key], handler[:parsers], values, handler[:options])
+        { handler[:key] => parse(handler[:parsers], values, handler[:options]) }
       end
 
       def handle_association(handler, args)
@@ -193,16 +193,25 @@ module Decanter
       end
 
       def parse(key, parsers, values, options)
-        if !parsers
-          { key => values }
-        elsif options[:required] == true && Array.wrap(values).all? { |value| value.nil? || value == '' }
+        return { key => values } unless parsers
+
+        if options[:required] == true && Array(values).all? { |v| v.to_s.nil? }
           raise ArgumentError, "No value for required argument: #{key}"
-        else
-          Parser.parsers_for(parsers)
-                .reduce(key => values) do |vals_hash, parser|
-                  vals_hash.keys.reduce({}) { |acc, k| acc.merge(parser.parse(k, vals_hash[k], options)) }
-                end
         end
+
+        Parser.parsers_for(parsers).each do |parser|
+          unless values.is_a?(Hash)
+            values = parser.parse(values, options)
+            next
+          end
+
+          # For hashes, we operate the parser on each member
+          values.each do |k, v|
+            values[k] = parser.parse(v, options)
+          end
+        end
+
+        { key => values }
       end
 
       def handlers

@@ -1,6 +1,8 @@
 # Decanter Gem Changelog
 
 ## 1.2.0 (17 October 2018)
+  * Refactored Parser#parse not to require the name option (!9)
+  * Refactored Decanter::Core#parse (!9)
   * Removed `_new`, `_update` etc calls from models, replacing them with a
     `decant` method which can be called from with a controller, if
     `Decanter::Decant` is included. (!1)

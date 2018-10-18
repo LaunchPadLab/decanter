@@ -3,41 +3,40 @@
 require 'spec_helper'
 
 # rubocop:disable Style/DateTime
-describe 'DateTimeParser' do
-  let(:name) { :foo }
-
-  let(:parser) { Decanter::Parser::DateTimeParser }
+describe Decanter::Parser::DateTimeParser do
+  subject { described_class.parse(arg, opts) }
+  let(:opts) { {} }
 
   describe '#parse' do
-    context 'with a valid datetime string of default form ' do
-      it 'returns the datetime' do
-        expect(parser.parse(name, '21/2/1990 04:15:16 PM')).to match(name => DateTime.new(1990, 2, 21, 16, 15, 16))
-      end
+    context 'with a parseable date-time string' do
+      let(:arg) { '21/2/1990 04:15:16 PM' }
+      it { is_expected.to eq DateTime.new(1990, 2, 21, 16, 15, 16) }
     end
 
-    context 'with an invalid date string' do
-      it 'raises an Argument Error' do
-        expect { parser.parse(name, '2-21-1990') }
-          .to raise_error(ArgumentError)
-      end
+    context 'with an invalid string' do
+      let(:arg) { 'this is not a date' }
+      it { expect { subject }.to raise_error(ArgumentError) }
     end
 
     context 'with nil' do
-      it 'returns nil' do
-        expect(parser.parse(name, nil)).to match(name => nil)
-      end
+      let(:arg) { nil }
+      it { is_expected.to be_nil }
     end
 
-    context 'with a datetime' do
-      it 'returns the datetime' do
-        expect(parser.parse(name, DateTime.new(1990, 2, 21))).to match(name => DateTime.new(1990, 2, 21))
-      end
+    context 'with a Time' do
+      let(:arg) { Time.new(1990, 2, 21) }
+      it { is_expected.to eq DateTime.new(1990, 2, 21) }
+    end
+
+    context 'with a DateTime' do
+      let(:arg) { DateTime.new(1990, 2, 21) }
+      it { is_expected.to eq DateTime.new(1990, 2, 21) }
     end
 
     context 'with a valid date string and custom format' do
-      it 'returns the date' do
-        expect(parser.parse(name, '2-21-1990', parse_format: '%m-%d-%Y')).to match(name => DateTime.new(1990, 2, 21))
-      end
+      let(:arg) { '2-21-1990' }
+      let(:opts) { { parse_format: '%m-%d-%Y' } }
+      it { is_expected.to eq DateTime.new(1990, 2, 21) }
     end
   end
 end

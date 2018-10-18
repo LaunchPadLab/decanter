@@ -7,7 +7,9 @@ module Decanter
       allow DateTime
 
       parser do |val, options|
-        if (parse_format = options[:parse_format])
+        if val.is_a?(Time)
+          val.to_datetime
+        elsif (parse_format = options[:parse_format])
           ::DateTime.strptime(val, parse_format)
         else
           ::DateTime.parse(val)
