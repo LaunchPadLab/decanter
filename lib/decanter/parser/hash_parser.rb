@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'core'
-require 'pp'
 
 module Decanter
   module Parser
