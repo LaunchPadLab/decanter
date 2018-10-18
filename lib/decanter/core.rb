@@ -8,14 +8,12 @@ module Decanter
 
     module ClassMethods
       def input(name, parsers = nil, **options)
-        name = [name].flatten
-
-        if name.length > 1 && parsers.blank?
+        if Array(name).length > 1 && parsers.blank?
           raise ArgumentError, "#{self.name} no parser specified for input with multiple values."
         end
 
         handlers[name] = {
-          key:     options.fetch(:key, name.first),
+          key:     options.fetch(:key, Array(name).first),
           name:    name,
           options: options,
           parsers:  parsers,
@@ -73,7 +71,7 @@ module Decanter
       def required_inputs
         handlers.map do |h|
           options = h.last[:options]
-          h.first.first if options && options[:required]
+          h.first if options && options[:required]
         end
       end
 
@@ -118,17 +116,13 @@ module Decanter
       end
 
       def handled_keys(args)
-        arg_keys = args.keys.map(&:to_sym)
-        inputs, assocs = handlers.values.partition { |handler| handler[:type] == :input }
+        inputs, assocs = handlers.values.partition { |h| h[:type] == :input }
 
-        {}.merge(
-          # Inputs
-          inputs.select     { |handler| (arg_keys & handler[:name]).any? }
-                .reduce({}) { |memo, handler| memo.merge handle_input(handler, args) }
-        ).merge(
-          # Associations
-          assocs.reduce({}) { |memo, handler| memo.merge handle_association(handler, args) }
-        )
+        # Inputs
+        is = inputs.reduce({}) { |m, i| m.merge handle_input(i, args) }
+        # Associations
+        as = assocs.reduce({}) { |m, a| m.merge handle_association(a, args) }
+        is.merge(as)
       end
 
       def handle(handler, args)
