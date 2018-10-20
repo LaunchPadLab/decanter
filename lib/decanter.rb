@@ -14,11 +14,7 @@ module Decanter
         else
           raise ArgumentError, "cannot lookup decanter for #{klass_or_sym} with class #{klass_or_sym.class}"
         end + 'Decanter'
-      begin
-        decanter_name.constantize
-      rescue StandardError
-        raise NameError, "uninitialized constant #{decanter_name}"
-      end
+      decanter_name.constantize
     end
 
     def decanter_from(klass_or_string)
