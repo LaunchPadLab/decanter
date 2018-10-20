@@ -17,7 +17,7 @@
                activesupport (5.1.4 to 5.2.1),
                crass (1.0.3 to 1.0.4),
                docile (1.1.5 to 1.3.1),
-               dotenv (2.2.1 to 2.5.0),
+               dotenv (removed 2.2.1),
                erubi (1.7.0 to 1.7.1),
                i18n (0.9.3 to 1.1.1),
                loofah (2.1.1 to 2.2.2),
