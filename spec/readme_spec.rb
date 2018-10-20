@@ -5,11 +5,15 @@ require 'spec_helper'
 describe 'examples from the readme' do
   let(:trip) { Class.new(Decanter::Base) }
 
+  DestinationDecanter = Class.new(Decanter::Base)
+  let(:destination) { DestinationDecanter }
+
   subject { trip.decant(params) }
 
   before(:each) do
-    Decanter::Core.class_variable_set(:@@handlers, {})
-    Decanter::Core.class_variable_set(:@@strict_mode, {})
+    trip.instance_variable_set(:@handlers, nil)
+    destination.instance_variable_set(:@handlers, nil)
+
     trip_inputs.each do |args|
       trip.input(*args)
     end
@@ -29,9 +33,9 @@ describe 'examples from the readme' do
   describe 'example 1' do
     let(:params) do
       {
-        name: 'My Trip',
-        start_date: '15/01/2015',
-        end_date: '20/01/2015'
+        'name' => 'My Trip',
+        'start_date' => '15/01/2015',
+        'end_date' => '20/01/2015'
       }
     end
 
@@ -49,9 +53,9 @@ describe 'examples from the readme' do
 
     let(:params) do
       {
-        name: 'My Trip',
-        start_date: '2015-01-15',
-        end_date: '2015-01-20'
+        'name' => 'My Trip',
+        'start_date' => '2015-01-15',
+        'end_date' => '2015-01-20'
       }
     end
 
@@ -59,8 +63,6 @@ describe 'examples from the readme' do
   end
 
   describe 'example 3' do
-    let(:destination) { DestinationDecanter = Class.new(Decanter::Base) }
-
     let(:trip_has_many) { [[:destinations]] }
 
     let(:destination_inputs) do
@@ -72,14 +74,14 @@ describe 'examples from the readme' do
 
     let(:params) do
       {
-        name: 'My Trip',
-        start_date: '15/01/2015',
-        end_date: '20/01/2015',
-        destinations: [{
-          city: 'Foo',
-          state: 'Bar',
-          arrival_date: '16/01/2015',
-          departure_date: '18/01/2015'
+        'name' => 'My Trip',
+        'start_date' => '15/01/2015',
+        'end_date' => '20/01/2015',
+        'destinations' => [{
+          'city' => 'Foo',
+          'state' => 'Bar',
+          'arrival_date' => '16/01/2015',
+          'departure_date' => '18/01/2015'
         }]
       }
     end
@@ -94,7 +96,7 @@ describe 'examples from the readme' do
       end
     end
 
-    it {
+    it do
       is_expected.to match(
         name: 'My Trip',
         start_date: Date.new(2015, 1, 15),
@@ -103,7 +105,109 @@ describe 'examples from the readme' do
           { city: 'Foo', state: 'Bar', arrival_date: Date.new(2015, 1, 16), departure_date: Date.new(2015, 1, 18) }
         ]
       )
-    }
+    end
+
+    describe 'when params has a Hash instead of an array' do
+      let(:params) do
+        {
+          'name' => 'My Trip',
+          'start_date' => '15/01/2015',
+          'end_date' => '20/01/2015',
+          'destinations' => {
+            '0' => {
+              'city' => 'Foo',
+              'state' => 'Bar',
+              'arrival_date' => '16/01/2015',
+              'departure_date' => '18/01/2015'
+            }
+          }
+        }
+      end
+
+      it do
+        is_expected.to match(
+          name: 'My Trip',
+          start_date: Date.new(2015, 1, 15),
+          end_date: Date.new(2015, 1, 20),
+          destinations: [
+            { city: 'Foo', state: 'Bar', arrival_date: Date.new(2015, 1, 16), departure_date: Date.new(2015, 1, 18) }
+          ]
+        )
+      end
+    end
+
+    describe 'Rails nested parameters' do
+      let(:trip_has_many) { [[:destinations, as: :destinations_attributes]] }
+      let(:params) do
+        {
+          'name' => 'My Trip',
+          'start_date' => '15/01/2015',
+          'end_date' => '20/01/2015',
+          'destinations_attributes' => [{
+            'city' => 'Foo',
+            'state' => 'Bar',
+            'arrival_date' => '16/01/2015',
+            'departure_date' => '18/01/2015'
+          }]
+        }
+      end
+
+      it do
+        is_expected.to match(
+          name: 'My Trip',
+          start_date: Date.new(2015, 1, 15),
+          end_date: Date.new(2015, 1, 20),
+          destinations_attributes: [
+            { city: 'Foo', state: 'Bar', arrival_date: Date.new(2015, 1, 16), departure_date: Date.new(2015, 1, 18) }
+          ]
+        )
+      end
+    end
+  end
+
+  describe 'has one' do
+    let(:trip_has_one) { [:destination] }
+
+    let(:destination_inputs) do
+      [%i(city string),
+       %i(state string),
+       %i(arrival_date date),
+       %i(departure_date date)]
+    end
+
+    let(:params) do
+      {
+        'name' => 'My Trip',
+        'start_date' => '15/01/2015',
+        'end_date' => '20/01/2015',
+        'destination' => {
+          'city' => 'Foo',
+          'state' => 'Bar',
+          'arrival_date' => '16/01/2015',
+          'departure_date' => '18/01/2015'
+        }
+      }
+    end
+
+    before do
+      destination_inputs.each do |args|
+        destination.input(*args)
+      end
+
+      trip_has_one.each do |args|
+        trip.has_one(*args)
+      end
+    end
+
+    it do
+      is_expected.to match(
+        name: 'My Trip',
+        start_date: Date.new(2015, 1, 15),
+        end_date: Date.new(2015, 1, 20),
+        destination:
+          { city: 'Foo', state: 'Bar', arrival_date: Date.new(2015, 1, 16), departure_date: Date.new(2015, 1, 18) }
+      )
+    end
   end
 
   describe 'Squashing inputs' do
@@ -115,7 +219,7 @@ describe 'examples from the readme' do
     end
 
     let(:trip_inputs) { [[%i(day month year), :squash_date, key: :start_date]] }
-    let(:params) { { day: 15, month: 1, year: 2015 } }
+    let(:params) { { 'day' => 15, 'month' => 1, 'year' => 2015 } }
 
     it { is_expected.to match(start_date: Date.new(2015, 1, 15)) }
   end
@@ -123,7 +227,7 @@ describe 'examples from the readme' do
   # chaining parsers done in decanter_core_spec
 
   describe 'No need for strong params' do
-    let(:params) { { foo: 'bar', name: 'quux' } }
+    let(:params) { { 'foo' => 'bar', 'name' => 'quux' } }
     let(:trip_inputs) { [:name] }
 
     before(:each) do
@@ -153,19 +257,18 @@ describe 'examples from the readme' do
     let(:trip_inputs) { [[:name, :string, required: true]] }
 
     describe 'with an empty param' do
-      let(:params) { { name: '' } }
+      let(:params) { { 'name' => '' } }
       it { expect { subject }.to raise_error(Decanter::Core::MissingRequiredInputValue) }
     end
 
     describe 'with a nil param' do
-      let(:params) { { name: nil } }
+      let(:params) { { 'name' => nil } }
       it { expect { subject }.to raise_error(Decanter::Core::MissingRequiredInputValue) }
     end
 
     describe 'with has_many' do
-      let(:destination) { DestinationDecanter = Class.new(Decanter::Base) }
       let(:trip_inputs) { [%i(name)] }
-      let(:params) { {name: 'foo'} }
+      let(:params) { { 'name' => 'foo' } }
 
       before do
         destination.input(:name, :string, required: true)
@@ -173,7 +276,6 @@ describe 'examples from the readme' do
       end
 
       it { expect { subject }.to raise_error(Decanter::Core::MissingRequiredInputValue) }
-
     end
   end
 end

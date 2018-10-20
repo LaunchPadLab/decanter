@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'rails_helper'
 
 describe Decanter::Core do
   let(:dummy) { Class.new(Decanter::Base) }
@@ -46,10 +47,6 @@ describe Decanter::Core do
       expect(dummy.handlers[name][:key]).to eq name
     end
 
-    it 'the handler has name = provided name' do
-      expect(dummy.handlers[name][:name]).to eq name
-    end
-
     it 'the handler passes through the options' do
       expect(dummy.handlers[name][:options]).to eq options
     end
@@ -86,10 +83,6 @@ describe Decanter::Core do
       expect(dummy.handlers[assoc][:key]).to eq assoc
     end
 
-    it 'the handler has name = assoc' do
-      expect(dummy.handlers[assoc][:name]).to eq assoc
-    end
-
     it 'the handler passes through the options' do
       expect(dummy.handlers[assoc][:options]).to eq options
     end
@@ -124,10 +117,6 @@ describe Decanter::Core do
 
     it 'the handler has default key :profile' do
       expect(dummy.handlers[assoc][:key]).to eq assoc
-    end
-
-    it 'the handler has name = assoc' do
-      expect(dummy.handlers[assoc][:name]).to eq assoc
     end
 
     it 'the handler has assoc = provided assoc' do
@@ -181,13 +170,6 @@ describe Decanter::Core do
       it 'does not call Parser.parsers_for' do
         dummy.parse(nil, 'bar', {})
         expect(Decanter::Parser).to_not have_received(:parsers_for)
-      end
-    end
-
-    context 'when a parser is specified but a required value is not present' do
-      it 'raises a missing required input value error' do
-        expect { dummy.parse(:foo, nil, required: true) }
-          .to raise_error(Decanter::Core::MissingRequiredInputValue)
       end
     end
 
@@ -314,41 +296,18 @@ describe Decanter::Core do
   end
 
   describe '#handle' do
-    let(:args)    { { foo: 'hi', bar: 'bye' } }
-    let(:name)    { %i(foo bar) }
-    let(:values)  { args.values_at(*name) }
-    let(:handler) { { type: :input, name: name } }
-
-    before(:each) { allow(dummy).to receive(:handle_input).and_return(:foobar) }
-
-    context 'for an input' do
-      it 'calls the handle_input with the handler and extracted values' do
-        dummy.handle(handler, args)
-        expect(dummy)
-          .to have_received(:handle_input)
-          .with(handler, values)
-      end
-
-      it 'returns the results form handle_input' do
-        expect(dummy.handle(handler, args)).to eq :foobar
-      end
-    end
-  end
-
-  describe '#handle_input' do
     let(:name)    { :name }
     let(:parser)  { double('parser') }
     let(:options) { double('options') }
-    let(:args)    { { name => 'Hi', foo: 'bar' } }
-    let(:values)  { args[name] }
-    let(:handler) { { key: name, name: name, parsers: parser, options: options } }
+    let(:values)  { 'Hi' }
+    let(:handler) { { key: name, name: name, parsers: parser, options: options, type: :input } }
 
     before(:each) do
       allow(dummy).to receive(:parse)
     end
 
     it 'calls parse with the handler key, handler parser, values and options' do
-      dummy.handle_input(handler, args)
+      dummy.handle(handler, values)
       expect(dummy)
         .to have_received(:parse)
         .with(parser, values, options)
@@ -426,74 +385,14 @@ describe Decanter::Core do
 
     it 'returns an array containing the key, and an array of decanted values' do
       expect(dummy.handle_has_many(handler, values))
-        .to match ({ handler[:key] => output })
-    end
-  end
-
-  describe '#handle_association' do
-    let(:assoc) { :profile }
-    let(:handler) do
-      {
-        assoc: assoc,
-        key:   assoc,
-        name:  assoc,
-        type:  :has_one,
-        options: {}
-      }
-    end
-
-    before(:each) do
-      allow(dummy).to receive(:handle_has_one)
-    end
-
-    context 'when there is a verbatim matching key' do
-      let(:args) { { assoc => 'bar', :baz => 'foo' } }
-
-      it 'calls handler_has_one with the handler and args' do
-        dummy.handle_association(handler, args)
-        expect(dummy)
-          .to have_received(:handle_has_one)
-          .with(handler, args[assoc])
-      end
-    end
-
-    context 'when there is a matching key for _attributes' do
-      let(:args) { { "#{assoc}_attributes".to_sym => 'bar', :baz => 'foo' } }
-
-      it 'calls handler_has_one with the _attributes handler and args' do
-        dummy.handle_association(handler, args)
-        expect(dummy)
-          .to have_received(:handle_has_one)
-          .with(hash_including(name: "#{assoc}_attributes".to_sym), args[:profile_attributes])
-      end
-    end
-
-    context 'when there is no matching key' do
-      let(:args) { { foo: 'bar', baz: 'foo' } }
-
-      it 'does not call handler_has_one' do
-        dummy.handle_association(handler, args)
-        expect(dummy).to_not have_received(:handle_has_one)
-      end
-
-      it 'returns an empty hash' do
-        expect(dummy.handle_association(handler, args)).to eq({})
-      end
-    end
-
-    context 'when there are multiple matching keys' do
-      let(:args) { { "#{assoc}_attributes".to_sym => 'bar', assoc => 'foo' } }
-
-      it 'raises an argument error' do
-        expect { dummy.handle_association(handler, args) }
-          .to raise_error(ArgumentError, "Handler #{handler[:name]} matches multiple keys: [:profile, :profile_attributes].")
-      end
+        .to match(handler[:key] => output)
     end
   end
 
   describe '#decant' do
+    subject { dummy.decant(args) }
+
     let(:args) { { foo: 'bar', baz: 'foo' } }
-    let(:subject) { dummy.decant(args) }
     let(:is_required) { true }
 
     let(:input_hash) do
@@ -536,57 +435,44 @@ describe Decanter::Core do
       it 'returns the merged result' do
         expect(subject).to eq args.merge(args)
       end
+
+      context 'with ActionController::Parameters' do
+        let(:params) { ActionController::Parameters.new(args) }
+        subject { dummy.decant(params) }
+
+        it 'passes the args to unhandled keys' do
+          subject
+          expect(dummy).to have_received(:unhandled_keys).with(args)
+        end
+
+        it 'passes the args to handled keys' do
+          subject
+          expect(dummy).to have_received(:handled_keys).with(args)
+        end
+
+        it 'returns the merged result' do
+          expect(subject).to eq args.merge(args)
+        end
+      end
     end
 
     context 'without args' do
       let(:args) { nil }
-      let(:inputs_required) { true }
-      before(:each) do
-        allow(dummy).to receive(:any_inputs_required?).and_return(inputs_required)
-      end
+      let(:is_required) { true }
 
       context 'when at least one input is required' do
         it 'should raise an exception' do
-          expect { subject }.to raise_error(ArgumentError)
+          allow(dummy).to receive(:handlers).and_return(handlers)
+          expect { subject }.to raise_error(Decanter::Core::MissingRequiredInputValue)
         end
       end
 
       context 'when no inputs are required' do
-        let(:inputs_required) { false }
+        let(:is_required) { false }
 
         it 'should return an empty hash' do
           expect(subject).to eq({})
         end
-      end
-    end
-  end
-
-  describe 'any_inputs_required?' do
-    let(:is_required) { true }
-    let(:input_hash) do
-      {
-        key: 'foo',
-        options: {
-          required: is_required
-        }
-      }
-    end
-    let(:handler) { [:title, input_hash] }
-    let(:handlers) { [handler] }
-    before(:each) do
-      allow(dummy).to receive(:handlers).and_return(handlers)
-    end
-
-    context 'when required' do
-      it 'should return true' do
-        expect(dummy.any_inputs_required?).to be true
-      end
-    end
-
-    context 'when not required' do
-      let(:is_required) { false }
-      it 'should return false' do
-        expect(dummy.any_inputs_required?).to be false
       end
     end
   end

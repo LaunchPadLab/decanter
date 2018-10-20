@@ -31,6 +31,6 @@ RSpec.describe Decanter::Decant, type: :controller do
     # stub call to #decant
     expect(DecantSpecDecanter).to receive(:decant).once
     get :show, params: params
-#    expect(response.status).to eq 204
+    #    expect(response.status).to eq 204
   end
 end
