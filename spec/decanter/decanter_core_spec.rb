@@ -52,7 +52,7 @@ describe Decanter::Core do
     end
 
     it 'the handler has parser of provided parser' do
-      expect(dummy.handlers[name][:parsers]).to eq parser
+      expect(dummy.handlers[name][:parsers]).to eq [parser]
     end
 
     context 'with key specified in options' do
@@ -311,81 +311,6 @@ describe Decanter::Core do
       expect(dummy)
         .to have_received(:parse)
         .with(parser, values, options)
-    end
-  end
-
-  describe '#handle_has_one' do
-    let(:output)   { { foo: 'bar' } }
-    let(:handler)  { { key: 'key', options: {} } }
-    let(:values)   { { baz: 'foo' } }
-    let(:decanter) { double('decanter') }
-
-    before(:each) do
-      allow(decanter)
-        .to receive(:decant)
-        .and_return(output)
-
-      allow(dummy)
-        .to receive(:decanter_for_handler)
-        .and_return(decanter)
-    end
-
-    it 'calls decanter_for_handler with the handler' do
-      dummy.handle_has_one(handler, values)
-      expect(dummy)
-        .to have_received(:decanter_for_handler)
-        .with(handler)
-    end
-
-    it 'calls decant with the values on the found decanter' do
-      dummy.handle_has_one(handler, values)
-      expect(decanter)
-        .to have_received(:decant)
-        .with(values)
-    end
-
-    it 'returns an array containing the key, and the decanted value' do
-      expect(dummy.handle_has_one(handler, values))
-        .to match ({ handler[:key] => output })
-    end
-  end
-
-  describe '#handle_has_many' do
-    let(:output)   { [{ foo: 'bar' }, { bar: 'foo' }] }
-    let(:handler)  { { key: 'key', options: {} } }
-    let(:values)   { [{ baz: 'foo' }, { faz: 'boo' }] }
-    let(:decanter) { double('decanter') }
-
-    before(:each) do
-      allow(decanter)
-        .to receive(:decant)
-        .and_return(*output)
-
-      allow(dummy)
-        .to receive(:decanter_for_handler)
-        .and_return(decanter)
-    end
-
-    it 'calls decanter_for_handler with the handler' do
-      dummy.handle_has_many(handler, values)
-      expect(dummy)
-        .to have_received(:decanter_for_handler)
-        .with(handler)
-    end
-
-    it 'calls decant with the each of the values on the found decanter' do
-      dummy.handle_has_many(handler, values)
-      expect(decanter)
-        .to have_received(:decant)
-        .with(values[0])
-      expect(decanter)
-        .to have_received(:decant)
-        .with(values[1])
-    end
-
-    it 'returns an array containing the key, and an array of decanted values' do
-      expect(dummy.handle_has_many(handler, values))
-        .to match(handler[:key] => output)
     end
   end
 
