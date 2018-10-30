@@ -23,11 +23,7 @@ module Decanter
         when Class
           klass_or_string
         when String
-          begin
-            klass_or_string.constantize
-          rescue StandardError
-            raise NameError, "uninitialized constant #{klass_or_string}"
-          end
+          klass_or_string.constantize
         else
           raise ArgumentError, "cannot find decanter from #{klass_or_string} with class #{klass_or_string.class}"
         end

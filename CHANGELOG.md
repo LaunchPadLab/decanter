@@ -8,6 +8,8 @@
   * Refactored `Core#handle_input`, `Core#handle_association`,
     `Core#handle_has_one`, and `Core#handle_has_many` into one, simple
     `Core#handle` method. (!8)
+  * Removed unecessary rescue for `constantize` in `Decanter#decanter_from` and
+    `Decanter#decanter_for`, as it raises a NameError anyway. (!8)
   * Refactored Parser#parse not to require the name option (!9)
   * Refactored Decanter::Core#parse (!9)
   * Removed `_new`, `_update` etc calls from models, replacing them with a
