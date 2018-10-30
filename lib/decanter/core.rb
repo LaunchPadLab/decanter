@@ -140,7 +140,6 @@ module Decanter
         end
       end
 
-
       def handle(handler, values)
         decanter =  decanter_for_handler(handler) unless handler[:type] == :input
 
