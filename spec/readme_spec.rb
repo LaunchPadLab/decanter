@@ -86,6 +86,17 @@ describe 'examples from the readme' do
       }
     end
 
+    let(:result) do
+      {
+        name: 'My Trip',
+        start_date: Date.new(2015, 1, 15),
+        end_date: Date.new(2015, 1, 20),
+        destinations: [
+          { city: 'Foo', state: 'Bar', arrival_date: Date.new(2015, 1, 16), departure_date: Date.new(2015, 1, 18) }
+        ]
+      }
+    end
+
     before do
       destination_inputs.each do |args|
         destination.input(*args)
@@ -96,16 +107,7 @@ describe 'examples from the readme' do
       end
     end
 
-    it do
-      is_expected.to match(
-        name: 'My Trip',
-        start_date: Date.new(2015, 1, 15),
-        end_date: Date.new(2015, 1, 20),
-        destinations: [
-          { city: 'Foo', state: 'Bar', arrival_date: Date.new(2015, 1, 16), departure_date: Date.new(2015, 1, 18) }
-        ]
-      )
-    end
+    it { is_expected.to match(result) }
 
     describe 'when params has a Hash instead of an array' do
       let(:params) do
@@ -124,16 +126,7 @@ describe 'examples from the readme' do
         }
       end
 
-      it do
-        is_expected.to match(
-          name: 'My Trip',
-          start_date: Date.new(2015, 1, 15),
-          end_date: Date.new(2015, 1, 20),
-          destinations: [
-            { city: 'Foo', state: 'Bar', arrival_date: Date.new(2015, 1, 16), departure_date: Date.new(2015, 1, 18) }
-          ]
-        )
-      end
+      it { is_expected.to match(result) }
     end
 
     describe 'Rails nested parameters' do
