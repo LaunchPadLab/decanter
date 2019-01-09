@@ -3,13 +3,3 @@ Style/Documentation:
   Enabled: false
 Metrics/LineLength:
   Enabled: false
-Rails/Validation:
-  Enabled: false
-Style/IndentationConsistency:
-  Enabled: false
-Style/EmptyLines:
-  Enabled: false
-Style/ClassAndModuleChildren:
-  Enabled: false
-Style/AccessorMethodName:
-  Enabled: false

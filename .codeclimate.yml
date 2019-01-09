@@ -6,16 +6,6 @@ engines:
         enabled: false
       Rubocop/Metrics/LineLength:
         enabled: false
-      Rubocop/Rails/Validation:
-        enabled: false
-      Rubocop/Style/IndentationConsistency:
-        enabled: false
-      Rubocop/Style/EmptyLines:
-        enabled: false
-      Rubocop/Style/ClassAndModuleChildren:
-        enabled: false
-      Rubocop/Style/AccessorMethodName:
-        enabled: false
   golint:
     enabled: true
   gofmt:
