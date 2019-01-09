@@ -1,3 +1,15 @@
-inherit_from:
-  - http://engineering.pages.bytemark.co.uk/dev-utilities/.rubocop.yml
-  - http://engineering.pages.bytemark.co.uk/dev-utilities/.rubocop-rails.yml
+---
+Style/Documentation:
+  Enabled: false
+Metrics/LineLength:
+  Enabled: false
+Rails/Validation:
+  Enabled: false
+Style/IndentationConsistency:
+  Enabled: false
+Style/EmptyLines:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/AccessorMethodName:
+  Enabled: false
