@@ -1,16 +1,15 @@
 # Decanter Gem Changelog
 
 ## 2.0.0 (09 January 2019)
-  * Refactored Parser#parse not to require the name option (!9)
-  * Refactored Decanter::Core#parse (!9)
+  * Refactored Parser#parse not to require the name option
+  * Refactored Decanter::Core#parse
   * Removed `_new`, `_update` etc calls from models, replacing them with a
     `decant` method which can be called from with a controller, if
-    `Decanter::Decant` is included. (!1)
-  * Added TimeParser, clarified DateParser, DateTimeParser (!5)
+    `Decanter::Decant` is included.
+  * Added TimeParser, clarified DateParser, DateTimeParser
   * Altered `FloatParser` and `IntegerParser` to use `Float()` and `Integer()`
-    respectively (#1,!7)
-  * Fixed JoinParser to obey delimiter parameter (!6)
-  * Applied Bytemark house-style Rubocop (!2, !3)
+    respectively
+  * Fixed JoinParser to obey delimiter parameter
   * Gem bumps: decanter (1.1.8 to 1.2.0),
                actionpack (5.1.4 to 5.2.1),
                actionview (5.1.4 to 5.2.1),
