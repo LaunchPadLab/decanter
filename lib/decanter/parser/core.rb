@@ -1,22 +1,21 @@
+# frozen_string_literal: true
+
 module Decanter
   module Parser
     module Core
-
       def self.included(base)
         base.extend(ClassMethods)
       end
 
       module ClassMethods
-
         # Check if allowed, parse if not
-        def parse(name, values, options={})
-          case
-          when empty_values?(values)
-            { name => nil }
-          when allowed?(values)
-            { name => values }
+        def parse(values, options = {})
+          if empty_values?(values)
+            nil
+          elsif allowed?(values)
+            values
           else
-            _parse(name, values, options)
+            _parse(values, options)
           end
         end
 
@@ -48,7 +47,7 @@ module Decanter
         end
 
         def empty_values?(values)
-          return true if Array.wrap(values).all? { |value| value.nil? || value == "" }
+          return true if Array.wrap(values).all? { |value| value.nil? || value == '' }
         end
       end
     end

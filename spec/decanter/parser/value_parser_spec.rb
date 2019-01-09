@@ -1,15 +1,15 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe 'ValueParser' do
-
-  let(:value_parser) { Class.new(Decanter::Parser::ValueParser) }
+describe Decanter::Parser::ValueParser do
+  let(:value_parser) { Class.new(described_class) }
 
   it 'calls the parser' do
-    parser = lambda { |a,b,c| {a: 'b'} }
+    parser = ->(_a, _b, _c) { { a: 'b' } }
     allow(parser).to receive(:call).and_return({})
-    value_parser.parser &parser
-    value_parser._parse(:first_name, nil)
+    value_parser.parser(&parser)
+    value_parser._parse(nil)
     expect(parser).to have_received(:call).with(nil, {})
   end
-
 end

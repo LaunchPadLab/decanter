@@ -1,12 +1,12 @@
+# frozen_string_literal: true
+
 module Decanter
   module Parser
     class FloatParser < ValueParser
-      REGEX = /(\d|[.])/
+      allow Float
 
-      allow Float, Integer
-
-      parser do |val, options|
-        val.scan(REGEX).join.try(:to_f)
+      parser do |val, _options|
+        Float(val)
       end
     end
   end
