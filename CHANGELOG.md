@@ -26,7 +26,7 @@
                rack-test (0.8.2 to 1.1.0),
                rails-html-sanitizer (1.0.3 to 1.0.4),
                railties (5.1.4 to 5.2.1),
-               rake (10.5.0 to 12.3.1),
+               rake (10.5.0 to 12.3.2),
                rspec-core (3.7.1 to 3.8.0),
                rspec-expectations (3.7.0 to 3.8.2),
                rspec-mocks (3.7.0 to 3.8.0),
