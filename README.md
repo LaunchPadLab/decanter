@@ -273,12 +273,12 @@ rails g decanter Trip name destinations:has_many
 rails g decanter Destination city state arrival_date:date departure_date:date
 ```
 
-Which produces app/decanters/trip and app/decanters/destination:
+Which produces app/decanters/trip and app/decanters/destination.  The `TripDecanter` needs an adjustment, as Rails expects nested parameters to be named `model_attributes` rather than just `model`.  So we have to add `as: :destinations_attributes` to the `has_many :destinations` line:
 
 ```ruby
 class TripDecanter < Decanter::Base
   input :name, :string
-  has_many :destinations
+  has_many :destinations, as: :destinations_attributes
 end
 ```
 
@@ -477,6 +477,18 @@ class TripDecanter <  Decanter::Base
   ignore :created_at, :updated_at
 
   input :name, :string
+end
+```
+
+#### Renaming params
+
+Sometimes the API user will send parameters in with the key names that don't correspond to your models.  You can use the `key` option to change the key name.
+
+```ruby
+class TripDecanter <  Decanter::Base
+  ignore :created_at, :updated_at
+
+  has_one :destination, key: :city
 end
 ```
 

@@ -1,6 +1,15 @@
 # Decanter Gem Changelog
 
 ## 2.0.0 (09 January 2019)
+  * Refactored `Core#input`, `Core#has_one`, `Core#has_many` to call a new
+    method `handler` which sets all options, allowing assoiactive handlers to
+    be marked required.
+  * Added tests that reflect the examples in the README.
+  * Refactored `Core#handle_input`, `Core#handle_association`,
+    `Core#handle_has_one`, and `Core#handle_has_many` into one, simple
+    `Core#handle` method.
+  * Removed unecessary rescue for `constantize` in `Decanter#decanter_from` and
+    `Decanter#decanter_for`, as it raises a NameError anyway.
   * Refactored Parser#parse not to require the name option
   * Refactored Decanter::Core#parse
   * Removed `_new`, `_update` etc calls from models, replacing them with a
@@ -16,7 +25,7 @@
                activesupport (5.1.4 to 5.2.1),
                crass (1.0.3 to 1.0.4),
                docile (1.1.5 to 1.3.1),
-               dotenv (2.2.1 to 2.5.0),
+               dotenv (removed 2.2.1),
                erubi (1.7.0 to 1.7.1),
                i18n (0.9.3 to 1.1.1),
                loofah (2.1.1 to 2.2.2),

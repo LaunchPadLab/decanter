@@ -7,181 +7,154 @@ module Decanter
     end
 
     module ClassMethods
+      # Declare an ordinary parameter transformation.
       def input(name, parsers = nil, **options)
-        name = [name].flatten
-
-        if name.length > 1 && parsers.blank?
-          raise ArgumentError, "#{self.name} no parser specified for input with multiple values."
-        end
-
-        handlers[name] = {
-          key:     options.fetch(:key, name.first),
-          name:    name,
-          options: options,
-          parsers:  parsers,
-          type:    :input
-        }
+        options[:type] = :input
+        options[:parsers] = parsers
+        handler(name, options)
       end
 
       # rubocop:disable Naming/PredicateName
-      def has_many(assoc, **options)
-        handlers[assoc] = {
-          assoc:   assoc,
-          key:     options.fetch(:key, assoc),
-          name:    assoc,
-          options: options,
-          type:    :has_many
-        }
+
+      # Declare a _has many_ association for a parameter.
+      def has_many(name, **options)
+        options[:type] = :has_many
+        options[:assoc] = name
+        handler(name, options)
       end
 
-      def has_one(assoc, **options)
-        handlers[assoc] = {
-          assoc:   assoc,
-          key:     options.fetch(:key, assoc),
-          name:    assoc,
-          options: options,
-          type:    :has_one
-        }
+      # Declare a _has one_ association for a parameter.
+      def has_one(name, **options)
+        options[:type] = :has_one
+        options[:assoc] = name
+        handler(name, options)
       end
       # rubocop:enable Naming/PredicateName
 
+      # Add a parameter handler to the class.  Takes a name, and a set of
+      # options.  This is a generic method for any sort of hanlder, e.g.
+      #
+      # handle :foo, type: :input, parsers: [:string], as: :bar
+      def handler(name, options)
+        name = options.fetch(:as, name)
+        parsers = options.delete(:parsers)
+
+        if Array(name).length > 1 && parsers.blank?
+          raise ArgumentError,
+                "#{name} no parser specified for input with multiple values."
+        end
+
+        if handlers.key?(name)
+          raise ArgumentError, "Handler for #{name} already defined"
+        end
+
+        handlers[name] = {
+          key:     options.fetch(:key, Array(name).first),
+          assoc:   options.delete(:assoc),
+          type:    options.delete(:type),
+          options: options,
+          parsers: Array(parsers)
+        }
+      end
+
+      # List of parameters to ignore.
       def ignore(*args)
         keys_to_ignore.push(*args)
       end
 
+      # Set a level of strictness when dealing with parameters that are present
+      # but not expected.
+      #
+      # with_exception:  Raise an execption
+      # true:            Delete the parameter
+      # false:           Allow the parameter through
+      #
       def strict(mode)
         raise(ArgumentError, "#{name}: Unknown strict value #{mode}") unless [:with_exception, true, false].include? mode
         @strict_mode = mode
       end
 
+      # Take a parameter hash, and handle it with the various decanters
+      # defined.
       def decant(args)
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
-        args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
-        {}.merge(unhandled_keys(args))
-          .merge(handled_keys(args))
-      end
 
-      def handle_empty_args
-        any_inputs_required? ? empty_args_error : {}
-      end
+        if args.is_a?(ActionController::Parameters)
+          args.permit!
+          args = args.to_h
+        end
 
-      def any_inputs_required?
-        required_inputs.any?
+        args = args.deep_symbolize_keys
+        handled_keys(args).merge(unhandled_keys(args))
       end
 
       def required_inputs
-        handlers.map do |h|
-          options = h.last[:options]
-          h.first.first if options && options[:required]
+        handlers.map do |name, handler|
+          name if handler[:options][:required]
         end
       end
 
       def required_input_keys_present?(args = {})
-        return true unless any_inputs_required?
+        return true unless required_inputs.any?
         compact_inputs = required_inputs.compact
         compact_inputs.all? do |input|
           args.keys.map(&:to_sym).include?(input) && !args[input].nil?
         end
       end
 
-      def empty_required_input_error
-        raise(MissingRequiredInputValue, 'Required inputs have been declared, but no values for those inputs were passed.')
-      end
-
-      def empty_args_error
-        raise(ArgumentError, 'Decanter has required inputs but no values were passed')
+      def empty_required_input_error(name = nil)
+        raise MissingRequiredInputValue, "No value found for required argument #{name}"
       end
 
       # protected
 
       def unhandled_keys(args)
-        unhandled_keys = args.keys.map(&:to_sym) -
-                         handlers.keys.flatten.uniq -
-                         keys_to_ignore -
-                         handlers.values
-                                 .reject { |handler| handler[:type] == :input }
-                                 .map { |handler| "#{handler[:name]}_attributes".to_sym }
+        unhandled = args.keys
+        unhandled -= keys_to_ignore
+        unhandled -= handlers.keys.flatten
 
-        if unhandled_keys.any?
-          case strict_mode
-          when true
-            {}
-          when :with_exception
-            raise(UnhandledKeysError, "#{name} received unhandled keys: #{unhandled_keys.join(', ')}.")
-          else
-            args.select { |key| unhandled_keys.include? key }
-          end
-        else
+        return {} unless unhandled.any?
+
+        case strict_mode
+        when true
           {}
+        when :with_exception
+          raise(UnhandledKeysError, "#{name} received unhandled keys: #{unhandled.join(', ')}.")
+        else
+          args.select { |key| unhandled.include? key }
         end
       end
 
       def handled_keys(args)
-        arg_keys = args.keys.map(&:to_sym)
-        inputs, assocs = handlers.values.partition { |handler| handler[:type] == :input }
+        handlers.reduce({}) do |m, h|
+          name, handler = *h
+          values = args.values_at(*name)
+          values = values.length == 1 ? values.first : values
 
-        {}.merge(
-          # Inputs
-          inputs.select     { |handler| (arg_keys & handler[:name]).any? }
-                .reduce({}) { |memo, handler| memo.merge handle_input(handler, args) }
-        ).merge(
-          # Associations
-          assocs.reduce({}) { |memo, handler| memo.merge handle_association(handler, args) }
-        )
-      end
-
-      def handle(handler, args)
-        values = args.values_at(*handler[:name])
-        values = values.length == 1 ? values.first : values
-        send("handle_#{handler[:type]}", handler, values)
-      end
-
-      def handle_input(handler, args)
-        values = args.values_at(*handler[:name])
-        values = values.length == 1 ? values.first : values
-        { handler[:key] => parse(handler[:parsers], values, handler[:options]) }
-      end
-
-      def handle_association(handler, args)
-        assoc_handlers = [
-          handler,
-          handler.merge(
-            key:   handler[:options].fetch(:key, "#{handler[:name]}_attributes").to_sym,
-            name:  "#{handler[:name]}_attributes".to_sym
-          )
-        ]
-
-        assoc_handler_names = assoc_handlers.map { |h| h[:name] }
-
-        case args.values_at(*assoc_handler_names).compact.length
-        when 0
-          {}
-        when 1
-          handler = assoc_handlers.detect { |h| args.key?(h[:name]) }
-          send("handle_#{handler[:type]}", handler, args[handler[:name]])
-        else
-          raise ArgumentError, "Handler #{handler[:name]} matches multiple keys: #{assoc_handler_names}."
-        end
-      end
-
-      def handle_has_many(handler, values)
-        decanter = decanter_for_handler(handler)
-        if values.is_a?(Hash)
-          parsed_values = values.map do |_index, input_values|
-            next if input_values.nil?
-            decanter.decant(input_values)
+          if handler[:options][:required] && Array(values).all?(&:blank?)
+            empty_required_input_error(name)
           end
-          return { handler[:key] => parsed_values }
-        else
-          {
-            handler[:key] => values.compact.map { |value| decanter.decant(value) }
-          }
+
+          m.merge handle(handler, values)
         end
       end
 
-      def handle_has_one(handler, values)
-        { handler[:key] => decanter_for_handler(handler).decant(values) }
+      def handle(handler, values)
+        decanter =  decanter_for_handler(handler) unless handler[:type] == :input
+
+        val = case handler[:type]
+              when :input
+                parse(handler[:parsers], values, handler[:options])
+              when :has_one
+                decanter.decant(values)
+              when :has_many
+                # should sort here, really.
+                values = values.values if values.is_a?(Hash)
+                values.compact.map { |v| decanter.decant(v) }
+              end
+
+        { handler[:key] => val }
       end
 
       def decanter_for_handler(handler)
@@ -192,12 +165,12 @@ module Decanter
         end
       end
 
-      def parse(key, parsers, values, options)
-        return { key => values } unless parsers
+      def handle_empty_args
+        required_inputs.any? ? empty_required_input_error : {}
+      end
 
-        if options[:required] == true && Array(values).all? { |v| v.to_s.nil? }
-          raise ArgumentError, "No value for required argument: #{key}"
-        end
+      def parse(parsers, values, options)
+        return values if parsers.nil?
 
         Parser.parsers_for(parsers).each do |parser|
           unless values.is_a?(Hash)
@@ -211,7 +184,7 @@ module Decanter
           end
         end
 
-        { key => values }
+        values
       end
 
       def handlers
