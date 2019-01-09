@@ -1,6 +1,6 @@
 # Decanter Gem Changelog
 
-## 1.2.0 (17 October 2018)
+## 2.0.0 (09 January 2019)
   * Refactored Parser#parse not to require the name option (!9)
   * Refactored Decanter::Core#parse (!9)
   * Removed `_new`, `_update` etc calls from models, replacing them with a
