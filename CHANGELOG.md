@@ -2,23 +2,23 @@
 
 ## 2.0.0 (09 January 2019)
   * Refactored `Core#input`, `Core#has_one`, `Core#has_many` to call a new
-    method `handler` which sets all options, allowing assoiactive handlers to
+    method `handler` which sets all options, allowing associative handlers to
     be marked required.
   * Added tests that reflect the examples in the README.
   * Refactored `Core#handle_input`, `Core#handle_association`,
     `Core#handle_has_one`, and `Core#handle_has_many` into one, simple
     `Core#handle` method.
-  * Removed unecessary rescue for `constantize` in `Decanter#decanter_from` and
+  * Removed unnecessary rescue for `constantize` in `Decanter#decanter_from` and
     `Decanter#decanter_for`, as it raises a NameError anyway.
   * Refactored Parser#parse not to require the name option
   * Refactored Decanter::Core#parse
   * Removed `_new`, `_update` etc calls from models, replacing them with a
     `decant` method which can be called from with a controller, if
     `Decanter::Decant` is included.
-  * Added TimeParser, clarified DateParser, DateTimeParser
+  * Added `TimeParser`, clarified `DateParser`, `DateTimeParser`
   * Altered `FloatParser` and `IntegerParser` to use `Float()` and `Integer()`
     respectively
-  * Fixed JoinParser to obey delimiter parameter
+  * Fixed `JoinParser` to obey delimiter parameter
   * Gem bumps: decanter (1.1.9 to 2.0.0),
                actionpack (5.1.4 to 5.2.1),
                actionview (5.1.4 to 5.2.1),
