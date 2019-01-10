@@ -1,15 +1,14 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Decanter::Extensions do
-
   describe '#decant' do
-
-    let(:args) { { } }
+    let(:args) { {} }
 
     let(:decanter) { class_double('Decanter::Base', decant: true) }
 
     context 'when a decanter is specified' do
-
       let(:options) { { decanter: 'FooDecanter' } }
 
       before(:each) do
@@ -34,8 +33,7 @@ describe Decanter::Extensions do
     end
 
     context 'when the decanter is not specified' do
-
-      let(:options) { { } }
+      let(:options) { {} }
 
       before(:each) do
         allow(Decanter).to receive(:decanter_for).and_return(decanter)
@@ -72,40 +70,39 @@ describe Decanter::Extensions do
     end
 
     shared_examples 'a decanter update' do |strict|
-
       let(:args) { { foo: 'bar' } }
 
-      before(:each) { strict ?
+      before(:each) do
+        strict ?
                         dummy_instance.decant_update!(args) :
                         dummy_instance.decant_update(args)
-      }
+      end
 
       it 'sets the attributes on the model with the results from the decanter' do
         expect(dummy_instance).to have_received(:attributes=).with(args)
       end
 
       it "calls #{strict ? 'save!' : 'save'} on the model" do
-        expect(dummy_instance).to have_received( strict ? :save! : :save )
+        expect(dummy_instance).to have_received(strict ? :save! : :save)
       end
     end
 
     shared_examples 'a decanter create' do |strict|
-
       let(:args) { { foo: 'bar' } }
 
       context 'with no context' do
-
-        before(:each) { strict ?
+        before(:each) do
+          strict ?
                           dummy_class.decant_create!(args) :
                           dummy_class.decant_create(args)
-        }
+        end
 
         it 'sets the attributes on the model with the results from the decanter' do
           expect(dummy_class).to have_received(:new).with(args)
         end
 
         it "calls #{strict ? 'save!' : 'save'} on the model" do
-          expect(dummy_instance).to have_received( strict ? :save! : :save )
+          expect(dummy_instance).to have_received(strict ? :save! : :save)
         end
       end
     end

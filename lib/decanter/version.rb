@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Decanter
-  VERSION = '1.1.9'.freeze
+  VERSION = '2.0.0'.freeze
 end

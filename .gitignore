@@ -1,3 +1,7 @@
 /coverage
 .env
 .DS_Store
+.bundle/
+vendor/
+log/
+.rubocop-http-*

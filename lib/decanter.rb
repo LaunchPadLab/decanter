@@ -1,9 +1,9 @@
+# frozen_string_literal: true
+
 require 'active_support/all'
 
 module Decanter
-
   class << self
-
     def decanter_for(klass_or_sym)
       decanter_name =
         case klass_or_sym
@@ -12,13 +12,9 @@ module Decanter
         when Symbol
           klass_or_sym.to_s.singularize.camelize
         else
-          raise ArgumentError.new("cannot lookup decanter for #{klass_or_sym} with class #{klass_or_sym.class}")
-        end.concat('Decanter')
-      begin
-        decanter_name.constantize
-      rescue
-        raise NameError.new("uninitialized constant #{decanter_name}")
-      end
+          raise ArgumentError, "cannot lookup decanter for #{klass_or_sym} with class #{klass_or_sym.class}"
+        end + 'Decanter'
+      decanter_name.constantize
     end
 
     def decanter_from(klass_or_string)
@@ -27,24 +23,20 @@ module Decanter
         when Class
           klass_or_string
         when String
-          begin
-            klass_or_string.constantize
-          rescue
-            raise NameError.new("uninitialized constant #{klass_or_string}")
-          end
+          klass_or_string.constantize
         else
-          raise ArgumentError.new("cannot find decanter from #{klass_or_string} with class #{klass_or_string.class}")
+          raise ArgumentError, "cannot find decanter from #{klass_or_string} with class #{klass_or_string.class}"
         end
 
       unless constant.ancestors.include? Decanter::Base
-        raise ArgumentError.new("#{constant.name} is not a decanter")
+        raise ArgumentError, "#{constant.name} is not a decanter"
       end
 
       constant
     end
 
     def configuration
-      @config ||= Decanter::Configuration.new
+      @configuration ||= Decanter::Configuration.new
     end
 
     def config
