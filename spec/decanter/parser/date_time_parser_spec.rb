@@ -24,8 +24,8 @@ describe Decanter::Parser::DateTimeParser do
     end
 
     context 'with a Time' do
-      let(:arg) { Time.new(1990, 2, 21) }
-      it { is_expected.to eq DateTime.new(1990, 2, 21) }
+      let(:arg) { Time.new(1990, 2, 21, 0, 0, 0, '+06:00') }
+      it { is_expected.to eq DateTime.new(1990, 2, 21, 0, 0, 0, '+6') }
     end
 
     context 'with a DateTime' do

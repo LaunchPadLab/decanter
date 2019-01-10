@@ -32,7 +32,7 @@ module Decanter
       # rubocop:enable Naming/PredicateName
 
       # Add a parameter handler to the class.  Takes a name, and a set of
-      # options.  This is a generic method for any sort of hanlder, e.g.
+      # options.  This is a generic method for any sort of handler, e.g.
       #
       # handle :foo, type: :input, parsers: [:string], as: :bar
       def handler(name, options)
@@ -65,7 +65,7 @@ module Decanter
       # Set a level of strictness when dealing with parameters that are present
       # but not expected.
       #
-      # with_exception:  Raise an execption
+      # with_exception:  Raise an exception
       # true:            Delete the parameter
       # false:           Allow the parameter through
       #

@@ -29,8 +29,8 @@ describe Decanter::Parser::TimeParser do
 
     # rubocop:disable Style/DateTime
     context 'with a DateTime' do
-      let(:arg) { DateTime.new(1990, 2, 21) }
-      it { is_expected.to eq Time.new(1990, 2, 21) }
+      let(:arg) { DateTime.new(1990, 2, 21, 0, 0, 0, '+6') }
+      it { is_expected.to eq Time.new(1990, 2, 21, 0, 0, 0, '+06:00') }
     end
     # rubocop:enable Style/DateTime
 
