@@ -127,16 +127,19 @@ module Decanter
       end
 
       def handled_keys(args)
-        handlers.reduce({}) do |m, h|
-          name, handler = *h
+        handlers.reduce({}) do |acc, curr|
+          name, handler = *curr
           values = args.values_at(*name)
           values = values.length == 1 ? values.first : values
 
-          if handler[:options][:required] && Array(values).all?(&:blank?)
-            empty_required_input_error(name)
+          is_empty_input = Array(values).all?(&:blank?)
+          if is_empty_input
+            empty_required_input_error(name) if handler[:options][:required]
+            # Skip handling empty inputs
+            return acc
           end
 
-          m.merge handle(handler, values)
+          acc.merge handle(handler, values)
         end
       end
 
