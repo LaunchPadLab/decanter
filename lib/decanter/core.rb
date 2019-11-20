@@ -136,7 +136,7 @@ module Decanter
           if is_empty_input
             empty_required_input_error(name) if handler[:options][:required]
             # Skip handling empty inputs
-            return acc
+            next acc
           end
 
           acc.merge handle(handler, values)

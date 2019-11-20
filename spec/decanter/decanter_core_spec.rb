@@ -388,10 +388,10 @@ describe Decanter::Core do
           input :description, :string
         end
       }
-      let(:params) { { name: 'My Trip' } }
+      let(:params) { { description: 'My Trip Description' } }
       it 'should omit missing values' do
         decanted_params = decanter.decant(params)
-        # :description wasn't sent, so it shouldn't be in the result
+        # :name wasn't sent, so it shouldn't be in the result
         expect(decanted_params).to eq(params)
       end
     end
