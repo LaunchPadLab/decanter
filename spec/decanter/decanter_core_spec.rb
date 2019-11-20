@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require 'rails_helper'
+require 'pry'
 
 describe Decanter::Core do
   let(:dummy) { Class.new(Decanter::Base) }
@@ -395,6 +396,22 @@ describe Decanter::Core do
         expect(decanted_params).to eq(params)
       end
     end
+
+    context 'with present non-required args containing an empty value' do
+      let(:decanter) {
+        Class.new(Decanter::Base) do
+          input :name, :string
+          input :description, :string
+        end
+      }
+      let(:params) { { name: '', description: 'My Trip Description' } }
+      let(:desired_result) { { name: nil, description: 'My Trip Description' } }
+      it 'should omit missing values' do
+        decanted_params = decanter.decant(params)
+        # :name wasn't sent, so it shouldn't be in the result
+        expect(decanted_params).to eq(desired_result)
+      end
+    end    
 
     context 'without args' do
       let(:args) { nil }

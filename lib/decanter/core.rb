@@ -49,6 +49,7 @@ module Decanter
         end
 
         handlers[name] = {
+          in_key:  name,
           key:     options.fetch(:key, Array(name).first),
           assoc:   options.delete(:assoc),
           type:    options.delete(:type),
@@ -129,18 +130,22 @@ module Decanter
       def handled_keys(args)
         handlers.reduce({}) do |acc, curr|
           name, handler = *curr
-          values = args.values_at(*name)
-          values = values.length == 1 ? values.first : values
 
-          is_empty_input = Array(values).all?(&:blank?)
-          if is_empty_input
+          values = args.values_at(*name)
+          values = values.length == 1 ? values.first : values                    
+
+          if key_is_missing?(handler, args)
             empty_required_input_error(name) if handler[:options][:required]
-            # Skip handling empty inputs
-            next acc
+            next acc # Skip handling empty inputs
           end
 
           acc.merge handle(handler, values)
         end
+      end
+
+      def key_is_missing?(handler, args)
+        in_keys = Array(handler[:in_key]) # squash parser has multiple in_key keys
+        (in_keys - args.keys).any?
       end
 
       def handle(handler, values)

@@ -203,7 +203,7 @@ describe 'examples from the readme' do
     end
   end
 
-  describe 'Squashing inputs' do
+  describe 'Squashing inputs', current: true do
     SquashDateParser = Class.new(Decanter::Parser::ValueParser) do
       parser do |values, _options|
         day, month, year = values.map(&:to_i)

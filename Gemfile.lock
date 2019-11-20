@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    decanter (2.1.0)
+    decanter (2.1.1)
       actionpack (>= 4.2.10)
       activesupport
       rails-html-sanitizer (>= 1.0.4)
@@ -27,9 +27,13 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    binding_of_caller (0.8.0)
+      debug_inspector (>= 0.0.1)
     builder (3.2.3)
+    coderay (1.1.2)
     concurrent-ruby (1.0.5)
     crass (1.0.4)
+    debug_inspector (0.0.3)
     diff-lcs (1.3)
     docile (1.3.1)
     erubi (1.7.1)
@@ -44,6 +48,16 @@ GEM
     minitest (5.11.3)
     nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
+    pry (0.12.2)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
+    pry-nav (0.3.0)
+      pry (>= 0.9.10, < 0.13.0)
+    pry-stack_explorer (0.4.9.3)
+      binding_of_caller (>= 0.7)
+      pry (>= 0.9.11)
+    pry-theme (1.3.0)
+      coderay (~> 1.1)
     rack (2.0.5)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -92,9 +106,12 @@ PLATFORMS
 DEPENDENCIES
   bundler
   decanter!
+  pry-nav
+  pry-stack_explorer
+  pry-theme
   rake
   rspec-rails
   simplecov
 
 BUNDLED WITH
-   1.16.6
+   1.17.3
