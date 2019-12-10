@@ -37,5 +37,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-rails'
   spec.add_development_dependency 'simplecov'
 
-  spec.post_install_message = "WARNING: Decanter 2.x is unstable and not recommended for production use. Please use 1.x instead."
+  spec.post_install_message = "WARNING: Decanter 2.x is unstable and not recommended for production use. Please use another major version of this gem."
 end
