@@ -565,6 +565,37 @@ describe Decanter::Core do
       end
     end
 
+    context 'with missing non-required args' do
+      let(:decanter) {
+        Class.new(Decanter::Base) do
+          input :name, :string
+          input :description, :string
+        end
+      }
+      let(:params) { { description: 'My Trip Description' } }
+      it 'should omit missing values' do
+        decanted_params = decanter.decant(params)
+        # :name wasn't sent, so it shouldn't be in the result
+        expect(decanted_params).to eq(params)
+      end
+    end
+
+    context 'with present non-required args containing an empty value' do
+      let(:decanter) {
+        Class.new(Decanter::Base) do
+          input :name, :string
+          input :description, :string
+        end
+      }
+      let(:params) { { name: '', description: 'My Trip Description' } }
+      let(:desired_result) { { name: nil, description: 'My Trip Description' } }
+      it 'should pass through the values' do
+        decanted_params = decanter.decant(params)
+        # :name should be in the result even though it was nil
+        expect(decanted_params).to eq(desired_result)
+      end
+    end
+
     context 'without args' do
       let(:args) { nil }
       let(:inputs_required) { true }
