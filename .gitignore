@@ -1,3 +1,5 @@
 /coverage
 .env
 .DS_Store
+# Builds for push
+decanter-*.gem
