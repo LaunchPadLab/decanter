@@ -20,12 +20,6 @@ describe 'DateParser' do
       end
     end
 
-    context 'with nil' do
-      it 'returns nil' do
-        expect(parser.parse(name, nil)).to match({name => nil})
-      end
-    end
-
     context 'with a date' do
       it 'returns the date' do
         expect(parser.parse(name, Date.new(1990,2,21))).to match({name => Date.new(1990,2,21)})
@@ -35,6 +29,18 @@ describe 'DateParser' do
     context 'with a valid date string and custom format' do
       it 'returns the date' do
         expect(parser.parse(name, '2-21-1990', parse_format: '%m-%d-%Y')).to match({name => Date.new(1990,2,21)})
+      end
+    end
+
+    context 'with empty string' do
+      it 'returns nil' do
+        expect(parser.parse(name, '')).to match({name => nil})
+      end
+    end
+
+    context 'with nil' do
+      it 'returns nil' do
+        expect(parser.parse(name, nil)).to match({name => nil})
       end
     end
   end
