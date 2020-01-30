@@ -18,7 +18,7 @@ describe 'BooleanParser' do
     falses = [
       ['number', 0],
       ['number', 2],
-      ['string', 2],
+      ['string', '2'],
       ['boolean', false],
       ['string', 'tru']
     ]
