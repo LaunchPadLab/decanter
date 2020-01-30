@@ -1,0 +1,10 @@
+language: ruby
+
+cache:
+  bundler: true
+
+script:
+  - bundle exec rspec
+
+notifications:
+  email: false
