@@ -2,14 +2,17 @@ require 'spec_helper'
 
 describe 'ValueParser' do
 
-  let(:value_parser) { Class.new(Decanter::Parser::ValueParser) }
+  let(:parser) { 
+    # Mock parser just passes value through
+    Class.new(Decanter::Parser::ValueParser) do
+      parser do |val, _options|
+        val
+      end
+    end
+  }
 
-  it 'calls the parser' do
-    parser = lambda { |a,b,c| {a: 'b'} }
-    allow(parser).to receive(:call).and_return({})
-    value_parser.parser &parser
-    value_parser._parse(:first_name, nil)
-    expect(parser).to have_received(:call).with(nil, {})
+  it 'namespaces results with input name' do
+    expect(parser.parse(:foo, 'bar')).to match({ foo: 'bar' })
   end
 
 end

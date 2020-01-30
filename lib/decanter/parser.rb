@@ -13,6 +13,8 @@ module Decanter
              .flatten
       end
 
+      private
+
       # convert from a class or symbol to a string and concat 'Parser'
       def klass_or_sym_to_str(klass_or_sym)
         case klass_or_sym
