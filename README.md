@@ -56,7 +56,8 @@ In your controller:
 
 ```ruby
   def create
-    @trip = Trip.decant_new(params[:trip])
+    trip_params = TripDecanter.decant(params[:trip])
+    @trip = Trip.new(trip_params)
 
     if @trip.save
       redirect_to trips_path
@@ -67,8 +68,8 @@ In your controller:
 
   def update
     @trip = Trip.find(params[:id])
-
-    if @trip.decant_update(params[:trip])
+    trip_params = TripDecanter.decant(params[:trip])
+    if @trip.update(trip_params)
       redirect_to trips_path
     else
       render "new"
@@ -80,7 +81,7 @@ Or, if you would prefer to get the parsed hash and then do your own logic, you c
 
 ```ruby
 def create
-  parsed_params = Trip.decant(params[:trip])
+  parsed_params = TripDecanter.decant(params[:trip])
   @trip = Trip.new(parsed_params)
 
   # save logic here
@@ -119,7 +120,8 @@ With Decanter installed, here is what the same controller action would look like
 ```ruby
 class TripsController < ApplicationController
   def create
-    @trip = Trip.decant_new(params[:trip])
+    trip_params = TripDecanter.decant(params[:trip])
+    @trip = Trip.new(trip_params)
 
     if @trip.save
       redirect_to trips_path
@@ -148,7 +150,7 @@ class TripDecanter < Decanter::Base
 end
 ```
 
-You'll also notice that instead of ```@trip = Trip.new(params[:trip])``` we do ```@trip = Trip.decant_new(params[:trip])```. ```decant_new``` is where the magic happens. It is converting the params from this:
+```TripDecanter.decant(params[:trip])``` is where the magic happens. It is converting the params from this:
 
 ```ruby
 {
@@ -299,7 +301,8 @@ With that, we can use the same vanilla create action syntax you saw in the basic
 ```ruby
 class TripsController < ApplicationController
   def create
-    @trip = Trip.decant_new(params[:trip])
+    trip_params = TripDecanter.decant(params[:trip])
+    @trip = Trip.new(trip_params)
 
     if @trip.save
       redirect_to trips_path
@@ -311,35 +314,6 @@ end
 ```
 
 Each of the destinations in our params[:trip] are automatically parsed according to the DestinationDecanter inputs set above. This means that ```arrival_date``` and ```departure_date``` are converted to Ruby Date objects for each of the destinations passed through the nested params. Yeehaw!
-
-Non Database-Backed Objects
----
-
-Decanter will work for your non database-backed objects as well. We just need to call ```decant``` to parse our params according to our decanter logic.
-
-Let's say we have a search filtering object called ```SearchFilter```. We start by generating our decanter:
-
-```
-rails g decanter SearchFilter start_date:date end_date:date city:string state:string
-```
-
-```ruby
-# app/decanters/search_filter_decanter.rb
-
-class SearchFilterDecanter < Decanter::Base
-
-end
-```
-
-```ruby
-# app/controllers/search_controller.rb
-
-def search
-  decanted_params = SearchFilterDecanter.decant(params[:search])
-  # decanted_params is now parsed according to the parsers defined
-  # in SearchFilterDecanter
-end
-```
 
 Default Parsers
 ---
