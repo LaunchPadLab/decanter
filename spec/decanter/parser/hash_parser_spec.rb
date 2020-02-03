@@ -2,20 +2,25 @@ require 'spec_helper'
 
 describe 'HashParser' do
 
-  let(:hash_parser) { Class.new(Decanter::Parser::HashParser) }
+  let(:parser) { 
+    # Mock parser just passes value through
+    Class.new(Decanter::Parser::HashParser) do
+      parser do |_name, val, _options|
+        val
+      end
+    end
+  }
 
-  it 'calls the parser' do
-    parser = lambda { |a,b,c| {a: 'b'} }
-    allow(parser).to receive(:call).and_return({})
-    hash_parser.parser &parser
-    hash_parser._parse(:first_name, nil)
-    expect(parser).to have_received(:call).with(:first_name, nil, {})
+  context 'when the result is a hash' do
+    it 'returns the hash directly' do
+      expect(parser.parse(:first_name, { foo: 'bar' })).to eq({ foo: 'bar' })
+    end
   end
 
-  it 'raises an argument error if the parsing result is not a hash' do
-    hash_parser.parser &lambda { |a,b,c| 5 }
-
-    expect { hash_parser._parse(:first_name, nil) }
-      .to raise_error(ArgumentError, "Result of HashParser  was 5 when it must be a hash.")
+  context 'when the result is not a hash' do
+    it 'raises an argument error' do
+      expect { parser.parse(:first_name, 'bar') }
+        .to raise_error(ArgumentError, "Result of HashParser  was bar when it must be a hash.")
+    end
   end
 end
