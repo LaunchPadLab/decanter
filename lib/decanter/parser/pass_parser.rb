@@ -2,7 +2,10 @@ module Decanter
   module Parser
     class PassParser < ValueParser
 
-      allow Object
+      parser do |val, options|
+        next if (val.nil? || val == '')
+        val
+      end
     end
   end
 end
