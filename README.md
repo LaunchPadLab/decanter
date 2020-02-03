@@ -324,8 +324,6 @@ Decanter comes with the following parsers:
 - date_time
 - float
 - integer
-- join
-- key_value_splitter
 - pass
 - phone
 - string
