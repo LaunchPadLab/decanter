@@ -6,7 +6,7 @@ module Decanter
       allow Float, Integer
 
       parser do |val, options|
-        raise Decanter::ParseError if val.is_a? Array
+        raise Decanter::ParseError.new 'Expects a single value' if val.is_a? Array
         next if (val.nil? || val === '')
         val.scan(REGEX).join.try(:to_f)
       end
