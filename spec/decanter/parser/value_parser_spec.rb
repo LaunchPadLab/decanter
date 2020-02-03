@@ -11,8 +11,10 @@ describe 'ValueParser' do
     end
   }
 
-  it 'namespaces results with input name' do
-    expect(parser.parse(:foo, 'bar')).to match({ foo: 'bar' })
+  context 'when the result is a single value' do
+    it 'returns a hash with the value keyed under the name' do
+      expect(parser.parse(:foo, 'bar')).to match({ foo: 'bar' })
+    end
   end
 
 end
