@@ -231,6 +231,20 @@ describe Decanter::Core do
         end
       )
 
+      Object.const_set('KeyValueSplitterParser',
+        Class.new(Decanter::Parser::HashParser) do
+          def self.name
+            'KeyValueSplitterParser'
+          end
+        end.tap do |parser|
+          parser.parser do |_name, val, _options|
+            item_delimiter = ','
+            pair_delimiter = ':'
+            val.split(item_delimiter).reduce({}) { |memo, pair| memo.merge( Hash[ *pair.split(pair_delimiter) ] ) }
+          end
+        end
+      )
+
       let(:key) { :afloat }
       let(:val) { 8.0 }
 
