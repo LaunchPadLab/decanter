@@ -9,14 +9,11 @@ module Decanter
       module ClassMethods
 
         # Check if allowed, parse if not
-        def parse(name, values, options={})
-          case
-          when empty_values?(values)
-            { name => nil }
-          when allowed?(values)
-            { name => values }
+        def parse(name, value, options={})
+          if allowed?(value)
+            { name => value }
           else
-            _parse(name, values, options)
+            _parse(name, value, options)
           end
         end
 
@@ -41,14 +38,8 @@ module Decanter
         end
 
         # Check for allowed classes
-        def allowed?(values)
-          @allowed && Array.wrap(values).all? do |value|
-            @allowed.any? { |allowed| value.is_a? allowed }
-          end
-        end
-
-        def empty_values?(values)
-          return true if Array.wrap(values).all? { |value| value.nil? || value == "" }
+        def allowed?(value)
+          @allowed && @allowed.any? { |allowed| value.is_a? allowed }
         end
       end
     end

@@ -43,5 +43,14 @@ describe 'DateTimeParser' do
         expect(parser.parse(name, nil)).to match({name => nil})
       end
     end
+
+    context 'with array value' do
+      it 'raises an exception' do
+        expect { parser.parse(name, ['2/21/1990 04:15:16 PM']) }
+          .to raise_error(Decanter::ParseError)
+        expect { parser.parse(name, []) }
+          .to raise_error(Decanter::ParseError)
+      end
+    end
   end
 end

@@ -323,14 +323,14 @@ describe Decanter::Core do
 
         context 'when there are no ignored keys' do
           it 'raises an error' do
-            expect { dummy.unhandled_keys(args) }.to raise_error(Decanter::Core::UnhandledKeysError)
+            expect { dummy.unhandled_keys(args) }.to raise_error(Decanter::UnhandledKeysError)
           end
         end
 
         context 'when the unhandled keys are ignored' do          
           it 'does not raise an error' do
             dummy.ignore :foo
-            expect { dummy.unhandled_keys(args) }.to_not raise_error(Decanter::Core::UnhandledKeysError)
+            expect { dummy.unhandled_keys(args) }.to_not raise_error(Decanter::UnhandledKeysError)
           end          
         end
       end
@@ -559,7 +559,7 @@ describe Decanter::Core do
           allow(dummy).to receive(:handlers).and_return(handlers)
 
           expect{subject}.to raise_error(
-            Decanter::Core::MissingRequiredInputValue
+            Decanter::MissingRequiredInputValue
           )
         end
       end
