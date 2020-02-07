@@ -9,7 +9,8 @@ module Decanter
       def self._parse(name, value, options={})
         raise Decanter::ParseError.new('Must have parsers') unless @parsers
         # Call each parser on the result of the previous one.
-        @parsers.reduce({ name => value }) do |result, parser|
+        initial_result = { name => value }
+        @parsers.reduce(initial_result) do |result, parser|
           result.keys.reduce({}) do |acc, key| 
             acc.merge(parser.parse(key, result[key], options)) 
           end
