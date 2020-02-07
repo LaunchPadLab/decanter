@@ -2,7 +2,7 @@ module Decanter
   module Parser
     class ArrayParser < ValueParser
 
-      DUMMY_NAME = '_'.freeze
+      DUMMY_VALUE_KEY = '_'.freeze
 
       parser do |val, options|
         next if val.nil?
@@ -17,10 +17,10 @@ module Decanter
         item_parser = Parser.compose_parsers(item_parsers)
         # Parse all values
         val.map do |item| 
-          # Value parsers will expect a "name" for the value they're parsing, 
+          # Value parsers will expect a "key" for the value they're parsing, 
           # so we provide a dummy one.
-          result = item_parser.parse(DUMMY_NAME, item, options)
-          result[DUMMY_NAME]
+          result = item_parser.parse(DUMMY_VALUE_KEY, item, options)
+          result[DUMMY_VALUE_KEY]
         end
       end
 
