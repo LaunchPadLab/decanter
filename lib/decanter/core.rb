@@ -198,7 +198,7 @@ module Decanter
           raise ArgumentError.new("No value for required argument: #{key}") 
         end
         parser_classes = Parser.parsers_for(parsers)
-        Parser.compose(parser_classes).parse(key, value, options)
+        Parser.compose_parsers(parser_classes).parse(key, value, options)
       end
 
       def handlers        

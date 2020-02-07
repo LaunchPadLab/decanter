@@ -13,12 +13,13 @@ module Decanter
         unless item_parsers.all? { |parser| parser <= ValueParser }
           raise Decanter::ParseError.new 'parser(s) for array items must subclass ValueParser'
         end
-        # Compose parsers and apply to all values
-        composed_parser = Parser.compose(item_parsers)
+        # Compose supplied parsers 
+        item_parser = Parser.compose_parsers(item_parsers)
+        # Parse all values
         val.map do |item| 
           # Value parsers will expect a "name" for the value they're parsing, 
           # so we provide a dummy one.
-          result = composed_parser.parse(DUMMY_NAME, item, options)
+          result = item_parser.parse(DUMMY_NAME, item, options)
           result[DUMMY_NAME]
         end
       end
