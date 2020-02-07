@@ -7,7 +7,7 @@ module Decanter
     class ComposeParser < Base
 
       def self._parse(name, value, options={})
-        raise Decanter::ParseError.new('Must have parsers set') unless @parsers
+        raise Decanter::ParseError.new('Must have parsers') unless @parsers
         # Call each parser on the result of the previous one.
         @parsers.reduce({ name => value }) do |result, parser|
           result.keys.reduce({}) do |acc, key| 
