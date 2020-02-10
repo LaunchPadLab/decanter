@@ -192,18 +192,13 @@ module Decanter
         end
       end
 
-      def parse(key, parsers, values, options)
-        case
-        when !parsers
-          { key => values }
-        when options[:required] == true && Array.wrap(values).all? { |value| value.nil? || value == "" }
-          raise ArgumentError.new("No value for required argument: #{key}")
-        else
-          Parser.parsers_for(parsers)
-                .reduce({key => values}) do |vals_hash, parser|
-                  vals_hash.keys.reduce({}) { |acc, k| acc.merge(parser.parse(k, vals_hash[k], options)) }
-                end
+      def parse(key, parsers, value, options)
+        return { key => value } unless parsers
+        if options[:required] && value_missing?(value)
+          raise ArgumentError.new("No value for required argument: #{key}") 
         end
+        parser_classes = Parser.parsers_for(parsers)
+        Parser.compose_parsers(parser_classes).parse(key, value, options)
       end
 
       def handlers        
@@ -217,6 +212,15 @@ module Decanter
       def strict_mode
         @strict_mode.nil? ? Decanter.configuration.strict : @strict_mode
       end
+
+      # Helpers
+
+      private
+
+      def value_missing?(value)
+        Array.wrap(value).all? { |v| v.nil? || v == "" }
+      end
+
     end
   end
 end

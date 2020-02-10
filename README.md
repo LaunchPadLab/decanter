@@ -319,6 +319,7 @@ Default Parsers
 ---
 
 Decanter comes with the following parsers:
+- array
 - boolean
 - date
 - date_time
@@ -329,6 +330,12 @@ Decanter comes with the following parsers:
 - string
 
 As an example as to how these parsers differ, let's consider ```float```. The float parser will perform a regex to find only characters that are digits or decimals. By doing that, your users can enter in commas and currency symbols without your backend throwing a hissy fit.
+
+Note: all of these default parsers are designed to operate on a single value, except for `:array`. This parser expects an array, and will use the `parse_each` option to call a given parser on each of its elements:
+
+```ruby
+input :ids, :array, parse_each: :integer
+```
 
 We encourage you to create your own parsers for other needs in your app, or generate one of the above listed parsers to override its behavior.
 
