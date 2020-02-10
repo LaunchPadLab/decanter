@@ -555,12 +555,22 @@ describe Decanter::Core do
     
     context 'with args' do  
       context 'when inputs are required' do
-        it 'should raise an exception if no required values' do
-          allow(dummy).to receive(:handlers).and_return(handlers)
-
-          expect{subject}.to raise_error(
-            Decanter::MissingRequiredInputValue
-          )
+        let(:decanter) {
+          Class.new(Decanter::Base) do
+            input :name, :pass, required: true
+          end
+        }
+        it 'should raise an exception if required values are missing' do
+          expect{ decanter.decant({ name: nil }) }
+            .to raise_error(Decanter::MissingRequiredInputValue)
+        end
+        it 'should not raise an exception if required values are present' do
+          expect{ decanter.decant({ name: 'foo' }) }
+            .not_to raise_error
+        end
+        it 'should treat empty arrays as present' do
+          expect{ decanter.decant({ name: [] }) }
+            .not_to raise_error
         end
       end
 
