@@ -218,7 +218,7 @@ module Decanter
       private
 
       def value_missing?(value)
-        Array.wrap(value).all? { |v| v.nil? || v == "" }
+        value.nil? || value == ""
       end
 
     end
