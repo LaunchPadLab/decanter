@@ -449,6 +449,8 @@ class TripDecanter <  Decanter::Base
 end
 ```
 
+*Note: we recommend using [Active Record validations](https://guides.rubyonrails.org/active_record_validations.html) to check for presence of an attribute, rather than using the `required` option. This method is intended for use in non-RESTful routes or cases where Active Record validations are not available.*
+
 #### Ignoring Params
 
 If you anticipate your decanter will receive certain params that you simply want to ignore and therefore do not want Decanter to raise an exception, you can do so by calling the `ignore` method:
