@@ -103,9 +103,7 @@ module Decanter
             .map { |handler| "#{handler[:name]}_attributes".to_sym }            
 
         return {} unless unhandled_keys.any?
-        if strict_mode 
-          raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
-        end
+        raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.") if strict_mode
         args.select { |key| unhandled_keys.include? key }
       end
 
