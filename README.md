@@ -129,6 +129,8 @@ class TripDecanter <  Decanter::Base
 end
 ```
 
+You can also disable strict mode globally using a [global configuration](#global-configuration) setting.
+
 ## Advanced Usage
 
 ### Custom Parsers
