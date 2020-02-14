@@ -4,7 +4,7 @@ module Decanter
     attr_accessor :strict
 
     def initialize
-      @strict = :with_exception
+      @strict = true
     end
   end
 end
