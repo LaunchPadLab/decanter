@@ -311,15 +311,7 @@ describe Decanter::Core do
 
       context 'and strict mode is true' do
 
-        it 'spits out a warning' do
-          dummy.strict true
-          # Not sure how to test this
-          true
-        end
-      end
-
-      context 'and strict mode is :with_exception' do
-        before(:each) { dummy.strict :with_exception }
+        before(:each) { dummy.strict true }
 
         context 'when there are no ignored keys' do
           it 'raises an error' do
