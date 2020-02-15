@@ -22,5 +22,12 @@ describe 'PassParser' do
         expect(parser.parse(name, nil)).to match({name => nil})
       end
     end
+
+    context 'with array value' do
+      it 'returns the array value' do
+        expect(parser.parse(name, ['123'])).to match({name => ['123']})
+        expect(parser.parse(name, [])).to match({name => []})
+      end
+    end
   end
 end

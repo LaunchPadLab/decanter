@@ -13,6 +13,14 @@ module Decanter
              .flatten
       end
 
+      # Composes multiple parsers into a single parser
+      def compose_parsers(parsers)
+        raise ArgumentError.new('expects an array') unless parsers.is_a? Array
+        composed_parser = Class.new(Decanter::Parser::ComposeParser)
+        composed_parser.parsers(parsers)
+        composed_parser
+      end
+
       private
 
       # convert from a class or symbol to a string and concat 'Parser'

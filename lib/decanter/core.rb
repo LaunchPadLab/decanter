@@ -49,7 +49,7 @@ module Decanter
       end
 
       def strict(mode)
-        raise(ArgumentError, "#{self.name}: Unknown strict value #{mode}") unless [:with_exception, true, false].include? mode
+        raise(ArgumentError, "#{self.name}: Unknown strict value #{mode}") unless [true, false].include? mode
         @strict_mode = mode
       end
 
@@ -102,19 +102,9 @@ module Decanter
             .select { |handler| handler[:type] != :input }
             .map { |handler| "#{handler[:name]}_attributes".to_sym }            
 
-        if unhandled_keys.any?
-          case strict_mode
-          when true
-            p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
-            {}
-          when :with_exception            
-            raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
-          else
-            args.select { |key| unhandled_keys.include? key }
-          end
-        else
-          {}
-        end
+        return {} unless unhandled_keys.any?
+        raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.") if strict_mode
+        args.select { |key| unhandled_keys.include? key }
       end
 
       def handled_keys(args)
@@ -192,18 +182,13 @@ module Decanter
         end
       end
 
-      def parse(key, parsers, values, options)
-        case
-        when !parsers
-          { key => values }
-        when options[:required] == true && Array.wrap(values).all? { |value| value.nil? || value == "" }
-          raise ArgumentError.new("No value for required argument: #{key}")
-        else
-          Parser.parsers_for(parsers)
-                .reduce({key => values}) do |vals_hash, parser|
-                  vals_hash.keys.reduce({}) { |acc, k| acc.merge(parser.parse(k, vals_hash[k], options)) }
-                end
+      def parse(key, parsers, value, options)
+        return { key => value } unless parsers
+        if options[:required] && value_missing?(value)
+          raise ArgumentError.new("No value for required argument: #{key}") 
         end
+        parser_classes = Parser.parsers_for(parsers)
+        Parser.compose_parsers(parser_classes).parse(key, value, options)
       end
 
       def handlers        
@@ -217,6 +202,15 @@ module Decanter
       def strict_mode
         @strict_mode.nil? ? Decanter.configuration.strict : @strict_mode
       end
+
+      # Helpers
+
+      private
+
+      def value_missing?(value)
+        value.nil? || value == ""
+      end
+
     end
   end
 end

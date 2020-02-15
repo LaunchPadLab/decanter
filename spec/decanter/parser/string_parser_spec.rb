@@ -30,5 +30,14 @@ describe 'StringParser' do
         expect(parser.parse(name, nil)).to match({name => nil})
       end
     end
+
+    context 'with array value' do
+      it 'raises an exception' do
+        expect { parser.parse(name, [8]) }
+          .to raise_error(Decanter::ParseError)
+        expect { parser.parse(name, []) }
+          .to raise_error(Decanter::ParseError)
+      end
+    end
   end
 end

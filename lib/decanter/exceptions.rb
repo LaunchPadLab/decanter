@@ -1,7 +1,6 @@
 module Decanter
-  module Core
-    class Error < StandardError; end
-    class UnhandledKeysError < Error; end
-    class MissingRequiredInputValue < Error; end
-  end
+  class Error < StandardError; end
+  class UnhandledKeysError < Error; end
+  class MissingRequiredInputValue < Error; end
+  class ParseError < Error; end
 end

@@ -231,6 +231,20 @@ describe Decanter::Core do
         end
       )
 
+      Object.const_set('KeyValueSplitterParser',
+        Class.new(Decanter::Parser::HashParser) do
+          def self.name
+            'KeyValueSplitterParser'
+          end
+        end.tap do |parser|
+          parser.parser do |_name, val, _options|
+            item_delimiter = ','
+            pair_delimiter = ':'
+            val.split(item_delimiter).reduce({}) { |memo, pair| memo.merge( Hash[ *pair.split(pair_delimiter) ] ) }
+          end
+        end
+      )
+
       let(:key) { :afloat }
       let(:val) { 8.0 }
 
@@ -297,26 +311,18 @@ describe Decanter::Core do
 
       context 'and strict mode is true' do
 
-        it 'spits out a warning' do
-          dummy.strict true
-          # Not sure how to test this
-          true
-        end
-      end
-
-      context 'and strict mode is :with_exception' do
-        before(:each) { dummy.strict :with_exception }
+        before(:each) { dummy.strict true }
 
         context 'when there are no ignored keys' do
           it 'raises an error' do
-            expect { dummy.unhandled_keys(args) }.to raise_error(Decanter::Core::UnhandledKeysError)
+            expect { dummy.unhandled_keys(args) }.to raise_error(Decanter::UnhandledKeysError)
           end
         end
 
         context 'when the unhandled keys are ignored' do          
           it 'does not raise an error' do
             dummy.ignore :foo
-            expect { dummy.unhandled_keys(args) }.to_not raise_error(Decanter::Core::UnhandledKeysError)
+            expect { dummy.unhandled_keys(args) }.to_not raise_error(Decanter::UnhandledKeysError)
           end          
         end
       end
@@ -541,12 +547,22 @@ describe Decanter::Core do
     
     context 'with args' do  
       context 'when inputs are required' do
-        it 'should raise an exception if no required values' do
-          allow(dummy).to receive(:handlers).and_return(handlers)
-
-          expect{subject}.to raise_error(
-            Decanter::Core::MissingRequiredInputValue
-          )
+        let(:decanter) {
+          Class.new(Decanter::Base) do
+            input :name, :pass, required: true
+          end
+        }
+        it 'should raise an exception if required values are missing' do
+          expect{ decanter.decant({ name: nil }) }
+            .to raise_error(Decanter::MissingRequiredInputValue)
+        end
+        it 'should not raise an exception if required values are present' do
+          expect{ decanter.decant({ name: 'foo' }) }
+            .not_to raise_error
+        end
+        it 'should treat empty arrays as present' do
+          expect{ decanter.decant({ name: [] }) }
+            .not_to raise_error
         end
       end
 
