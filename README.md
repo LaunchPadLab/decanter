@@ -6,7 +6,30 @@ Decanter is a Ruby gem that makes it easy to transform incoming data before it h
 gem 'decanter', '~> 3'
 ```
 
-## Usage
+## Contents
+
+- [Migration guides](#migration-guides)
+- [Basic Usage](#basic-usage)
+  - [Decanters](#decanters)
+  - [Generators](#generators)
+  - [Nested resources](#nested-resources)
+  - [Default parsers](#default-parsers)
+  - [Parser options](#parser-options)
+  - [Exceptions](#exceptions)
+- [Advanced usage](#advanced-usage)
+  - [Custom parsers](#custom-parsers)
+  - [Squashing inputs](#squashing-inputs)
+  - [Chaining parsers](#chaining-parsers)
+  - [Requiring params](#requiring-params)
+  - [Global configuration](#global-configuration)
+
+## Migration Guides
+
+- [v3.0.0](migration-guides/v3.0.0.md)
+
+## Basic Usage
+
+### Decanters
 
 Declare a `Decanter` for a model:
 
@@ -34,7 +57,7 @@ Transform incoming params in your controller using `Decanter#decant`:
 
 ```
 
-## Generators
+### Generators
 
 Decanter comes with generators for creating `Decanter` and `Parser` files:
 
@@ -46,7 +69,7 @@ rails g decanter Trip name:string start_date:date end_date:date
 rails g parser TruncatedString
 ```
 
-## Nested resources
+### Nested resources
 
 Decanters can declare relationships using `ActiveRecord`-style declarators:
 
@@ -56,7 +79,7 @@ class TripDecanter < Decanter::Base
 end
 ```
 
-## Default parsers
+### Default parsers
 
 Decanter comes with the following parsers out of the box:
 
@@ -76,7 +99,7 @@ Note: these parsers are designed to operate on a single value, except for `:arra
 input :ids, :array, parse_each: :integer
 ```
 
-## Parser options
+### Parser options
 
 Parsers can receive options that modify their behavior. These options are passed in as named arguments to `input`:
 
@@ -86,9 +109,9 @@ input :start_date, :date, parse_format: '%Y-%m-%d'
 
 This decanter will look up and apply the corresponding `DestinationDecanter` whenever necessary to transform nested resources.
 
-## Exception handling
+### Exceptions
 
-By default, `Decanter#decant` will raise will raise an exception when unexpected parameters are passed. To override this behavior, you can disable strict mode:
+By default, `Decanter#decant` will raise an exception when unexpected parameters are passed. To override this behavior, you can disable strict mode:
 
 ```ruby
 class TripDecanter <  Decanter::Base
@@ -105,6 +128,8 @@ class TripDecanter <  Decanter::Base
   # ...
 end
 ```
+
+You can also disable strict mode globally using a [global configuration](#global-configuration) setting.
 
 ## Advanced Usage
 
@@ -182,7 +207,7 @@ class SomeDecanter < Decanter::Base
 end
 ```
 
-### Requiring Params
+### Requiring params
 
 If you provide the option `:required` for an input in your decanter, an exception will be thrown if the parameter is `nil` or an empty string.
 
@@ -194,7 +219,7 @@ end
 
 _Note: we recommend using [Active Record validations](https://guides.rubyonrails.org/active_record_validations.html) to check for presence of an attribute, rather than using the `required` option. This method is intended for use in non-RESTful routes or cases where Active Record validations are not available._
 
-### Global Configuration
+### Global configuration
 
 You can generate a local copy of the default configuration with `rails generate decanter:install`. This will create an initializer where you can do global configuration:
 
