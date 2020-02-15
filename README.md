@@ -3,7 +3,7 @@
 Decanter is a Ruby gem that makes it easy to transform incoming data before it hits the model.
 
 ```ruby
-gem 'decanter', '~> 3'
+gem 'decanter', '~> 3.0'
 ```
 
 ## Contents
