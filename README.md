@@ -78,6 +78,8 @@ class TripDecanter < Decanter::Base
 end
 ```
 
+This decanter will look up and apply the corresponding `DestinationDecanter` whenever necessary to transform nested resources.
+
 ### Default parsers
 
 Decanter comes with the following parsers out of the box:
@@ -105,8 +107,6 @@ Parsers can receive options that modify their behavior. These options are passed
 ```ruby
 input :start_date, :date, parse_format: '%Y-%m-%d'
 ```
-
-This decanter will look up and apply the corresponding `DestinationDecanter` whenever necessary to transform nested resources.
 
 ### Exceptions
 
