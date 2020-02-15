@@ -6,9 +6,12 @@ Decanter is a Ruby gem that makes it easy to transform incoming data before it h
 gem 'decanter', '~> 3.0'
 ```
 
+## Migration Guides
+
+- [v3.0.0](migration-guides/v3.0.0.md)
+
 ## Contents
 
-- [Migration guides](#migration-guides)
 - [Basic Usage](#basic-usage)
   - [Decanters](#decanters)
   - [Generators](#generators)
@@ -22,10 +25,6 @@ gem 'decanter', '~> 3.0'
   - [Chaining parsers](#chaining-parsers)
   - [Requiring params](#requiring-params)
   - [Global configuration](#global-configuration)
-
-## Migration Guides
-
-- [v3.0.0](migration-guides/v3.0.0.md)
 
 ## Basic Usage
 
