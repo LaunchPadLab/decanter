@@ -42,7 +42,7 @@ class TripDecanter < Decanter::Base
 end
 ```
 
-Transform incoming params in your controller using `Decanter#decant`:
+Then, transform incoming params in your controller using `Decanter#decant`:
 
 ```rb
 # app/controllers/trips_controller.rb
