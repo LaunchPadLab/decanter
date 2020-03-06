@@ -25,6 +25,7 @@ gem 'decanter', '~> 3.0'
   - [Chaining parsers](#chaining-parsers)
   - [Requiring params](#requiring-params)
   - [Global configuration](#global-configuration)
+- [Contributing](#contributing)
 
 ## Basic Usage
 
@@ -229,3 +230,11 @@ Decanter.config do |config|
   config.strict = false
 end
 ```
+
+## Contributing
+
+This project is maintained by developers at [LaunchPad Lab](https://launchpadlab.com/). Contributions of any kind are welcome!
+
+We aim to provide a response to incoming issues within 48 hours. However, please note that we are an active dev shop and these responses may be as simple as _"we do not have time to respond to this right now, but can address it at {x} time"_.
+
+For detailed information specific to contributing to this project, reference our [Contribution guide](CONTRIBUTING.md).
