@@ -1,6 +1,6 @@
 # Decanter
 
-Decanter is a Ruby gem that makes it easy to transform incoming data before it hits the model. You can think of Decanter as the opposite of Active Model Serializers. While AMS transforms your outbound data into a format that your frontend consumes, Decanter transforms your incoming data into a format that your backend consumes.
+Decanter is a Ruby gem that makes it easy to transform incoming data before it hits the model. You can think of Decanter as the opposite of Active Model Serializers (AMS). While AMS transforms your outbound data into a format that your frontend consumes, Decanter transforms your incoming data into a format that your backend consumes.
 
 ```ruby
 gem 'decanter', '~> 3.0'
@@ -49,8 +49,9 @@ Then, transform incoming params in your controller using `Decanter#decant`:
 # app/controllers/trips_controller.rb
 
   def create
-    trip_params = TripDecanter.decant(params[:trip])
-    @trip = Trip.new(trip_params)
+    trip_params = params.require(:trip) # or params[:trip] if you are not using Strong Parameters
+    transformed_trip_params = TripDecanter.decant(trip_params)
+    @trip = Trip.new(transformed_trip_params)
 
     # ...any response logic
   end
