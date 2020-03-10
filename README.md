@@ -50,8 +50,8 @@ Then, transform incoming params in your controller using `Decanter#decant`:
 
   def create
     trip_params = params.require(:trip) # or params[:trip] if you are not using Strong Parameters
-    transformed_trip_params = TripDecanter.decant(trip_params)
-    @trip = Trip.new(transformed_trip_params)
+    decanted_trip_params = TripDecanter.decant(trip_params)
+    @trip = Trip.new(decanted_trip_params)
 
     # ...any response logic
   end
