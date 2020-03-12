@@ -9,7 +9,7 @@ module Decanter
       
       def input(name, parsers=nil, **options)
 
-        _name = [name].flatten
+        _name = [name].flatten.map(&:to_sym)
 
         if _name.length > 1 && parsers.blank?
           raise ArgumentError.new("#{self.name} no parser specified for input with multiple values.")

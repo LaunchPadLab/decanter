@@ -582,6 +582,19 @@ describe Decanter::Core do
           decanted_params = decanter.decant(args)
           expect(decanted_params.keys).to all(be_a(Symbol))
         end
+        
+        context 'and when inputs are strings' do
+          let(:decanter) {
+            Class.new(Decanter::Base) do
+              input 'name', :string
+              input 'description', :string
+            end
+          }
+          it 'returns the merged result' do
+            decanted_params = decanter.decant(args)
+            expect(decanted_params.with_indifferent_access).to match(args)
+          end
+        end
       end
 
       it 'passes the args to unhandled keys' do
