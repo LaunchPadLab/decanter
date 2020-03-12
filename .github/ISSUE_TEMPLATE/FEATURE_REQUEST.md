@@ -1,3 +1,9 @@
+---
+name: Feature Request
+about: Suggest a feature for Decanter
+labels: enhancement
+---
+
 ## Feature Description
 
 ## Suggested Solution

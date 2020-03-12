@@ -1,3 +1,9 @@
+---
+name: Bug Report
+about: Report a bug with Decanter
+labels: bug
+---
+
 <!--
   Please fill out this template with all the relevant information so we can
   understand what's going on and fix the issue. We encourage you to submit a PR
