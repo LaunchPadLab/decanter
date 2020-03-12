@@ -1,6 +1,6 @@
 # Decanter
 
-Decanter is a Ruby gem that makes it easy to transform incoming data before it hits the model. You can think of Decanter as the opposite of Active Model Serializers. While AMS transforms your outbound data into a format that your frontend consumes, Decanter transforms your incoming data into a format that your backend consumes.
+Decanter is a Ruby gem that makes it easy to transform incoming data before it hits the model. You can think of Decanter as the opposite of Active Model Serializers (AMS). While AMS transforms your outbound data into a format that your frontend consumes, Decanter transforms your incoming data into a format that your backend consumes.
 
 ```ruby
 gem 'decanter', '~> 3.0'
@@ -25,6 +25,7 @@ gem 'decanter', '~> 3.0'
   - [Chaining parsers](#chaining-parsers)
   - [Requiring params](#requiring-params)
   - [Global configuration](#global-configuration)
+- [Contributing](#contributing)
 
 ## Basic Usage
 
@@ -48,8 +49,9 @@ Then, transform incoming params in your controller using `Decanter#decant`:
 # app/controllers/trips_controller.rb
 
   def create
-    trip_params = TripDecanter.decant(params[:trip])
-    @trip = Trip.new(trip_params)
+    trip_params = params.require(:trip) # or params[:trip] if you are not using Strong Parameters
+    decanted_trip_params = TripDecanter.decant(trip_params)
+    @trip = Trip.new(decanted_trip_params)
 
     # ...any response logic
   end
@@ -229,3 +231,11 @@ Decanter.config do |config|
   config.strict = false
 end
 ```
+
+## Contributing
+
+This project is maintained by developers at [LaunchPad Lab](https://launchpadlab.com/). Contributions of any kind are welcome!
+
+We aim to provide a response to incoming issues within 48 hours. However, please note that we are an active dev shop and these responses may be as simple as _"we do not have time to respond to this right now, but can address it at {x} time"_.
+
+For detailed information specific to contributing to this project, reference our [Contribution guide](CONTRIBUTING.md).
