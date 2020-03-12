@@ -56,9 +56,9 @@ module Decanter
       def decant(args)
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
-        args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
-        {}.merge( unhandled_keys(args) )
-          .merge( handled_keys(args) )
+        accessible_args = transform_args(args).with_indifferent_access
+        {}.merge( unhandled_keys(accessible_args) )
+          .merge( handled_keys(accessible_args) )
       end
 
       def handle_empty_args    
@@ -104,7 +104,7 @@ module Decanter
 
         return {} unless unhandled_keys.any?
         raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.") if strict_mode
-        args.select { |key| unhandled_keys.include? key }
+        args.select { |key| unhandled_keys.include? key.to_sym }
       end
 
       def handled_keys(args)
@@ -210,7 +210,11 @@ module Decanter
       def value_missing?(value)
         value.nil? || value == ""
       end
-
+      
+      def transform_args(args)
+        return args.to_unsafe_h if args.class.name == 'ActionController::Parameters'
+        args
+      end
     end
   end
 end
