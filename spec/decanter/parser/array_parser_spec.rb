@@ -15,7 +15,7 @@ describe 'ArrayParser' do
 
     context 'with an array of "empty" values' do
       it 'returns an empty array' do
-        expect(parser.parse(name, [nil])).to match({name => []})
+        expect(parser.parse(name, [''])).to match({name => []})
       end
     end
 
