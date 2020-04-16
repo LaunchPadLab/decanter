@@ -13,6 +13,12 @@ describe 'ArrayParser' do
       end
     end
 
+    context 'with an array of "empty" values' do
+      it 'returns an empty array' do
+        expect(parser.parse(name, [''])).to match({name => []})
+      end
+    end
+
     context 'with no parse_each option' do
       it 'defaults to PassParser' do
         expect(parser.parse(name, [1, '2'])).to match({name => [1, '2']})
@@ -25,11 +31,13 @@ describe 'ArrayParser' do
           expect(parser.parse(name, [1, 2, 3], parse_each: :string)).to match({name => ['1', '2', '3']})
         end
       end
+
       context 'with multiple parsers' do
         it 'applies all parsers' do
           expect(parser.parse(name, [0, 1], parse_each: [:boolean, :string])).to eq({name => ['false', 'true']})
         end
       end
+
       context 'with non-value parser' do
         let(:foo_parser) { Class.new(Decanter::Parser::HashParser) }
         it 'raises an exception' do
@@ -50,7 +58,7 @@ describe 'ArrayParser' do
       end
     end
 
-    # Note: this follows example above, 
+    # Note: this follows example above,
     # but it's still worth testing since it departs from the behavior of other parsers.
     context 'with empty string' do
       it 'raises an exception' do
@@ -64,6 +72,5 @@ describe 'ArrayParser' do
         expect(parser.parse(name, nil)).to match({name => nil})
       end
     end
-
   end
 end
