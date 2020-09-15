@@ -57,9 +57,9 @@ module Decanter
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
         args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
-        {}.merge( unhandled_keys(args) )
+        {}.merge(default_values)
+          .merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
-          .merge( default_values )
       end
 
       def default_values
