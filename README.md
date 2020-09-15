@@ -220,6 +220,17 @@ end
 
 _Note: we recommend using [Active Record validations](https://guides.rubyonrails.org/active_record_validations.html) to check for presence of an attribute, rather than using the `required` option. This method is intended for use in non-RESTful routes or cases where Active Record validations are not available._
 
+
+### Default values
+
+If you provide the option `:default_value` for an input in your decanter, the input key will be initialized with the given default value. Input keys not found in the incoming data parameters will be set to the provided default rather than ignoring the missing key.
+
+```ruby
+class TripDecanter <  Decanter::Base
+  input :some_boolean, :boolean, default_value: true
+end
+```
+
 ### Global configuration
 
 You can generate a local copy of the default configuration with `rails generate decanter:install`. This will create an initializer where you can do global configuration:
