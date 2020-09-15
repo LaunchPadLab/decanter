@@ -596,7 +596,7 @@ describe Decanter::Core do
       end
     end
 
-    context 'with missing args with a :default_value in the decanter' do
+    context 'with missing args keys with a :default_value in the decanter' do
       let(:decanter) {
         Class.new(Decanter::Base) do
           input :name, :string, default_value: 'foo'
