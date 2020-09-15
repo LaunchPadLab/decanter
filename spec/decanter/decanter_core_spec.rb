@@ -319,11 +319,11 @@ describe Decanter::Core do
           end
         end
 
-        context 'when the unhandled keys are ignored' do          
+        context 'when the unhandled keys are ignored' do
           it 'does not raise an error' do
             dummy.ignore :foo
             expect { dummy.unhandled_keys(args) }.to_not raise_error(Decanter::UnhandledKeysError)
-          end          
+          end
         end
       end
 
@@ -528,24 +528,24 @@ describe Decanter::Core do
     let(:args) { { foo: 'bar', baz: 'foo'} }
     let(:subject) { dummy.decant(args) }
     let(:is_required) { true }
-    
+
     let(:input_hash) do
       {
         key: 'sky',
         options: {
           required: is_required
         }
-      }      
+      }
     end
-    let(:handler) { [[:title], input_hash] }    
-    let(:handlers) { [handler] }   
+    let(:handler) { [[:title], input_hash] }
+    let(:handlers) { [handler] }
 
     before(:each) do
       allow(dummy).to receive(:unhandled_keys).and_return(args)
       allow(dummy).to receive(:handled_keys).and_return(args)
     end
-    
-    context 'with args' do  
+
+    context 'with args' do
       context 'when inputs are required' do
         let(:decanter) {
           Class.new(Decanter::Base) do
@@ -592,6 +592,21 @@ describe Decanter::Core do
       it 'should omit missing values' do
         decanted_params = decanter.decant(params)
         # :name wasn't sent, so it shouldn't be in the result
+        expect(decanted_params).to eq(params)
+      end
+    end
+
+    context 'with missing args with a :default_value in the decanter' do
+      let(:decanter) {
+        Class.new(Decanter::Base) do
+          input :name, :string, default_value: 'foo'
+          input :description, :string
+        end
+      }
+      let(:params) { { description: 'My Trip Description', name: 'foo' } }
+      it 'should include the missing args key default value' do
+        decanted_params = decanter.decant(params)
+        # :name wasn't sent, but it should have a default value of 'foo'
         expect(decanted_params).to eq(params)
       end
     end
@@ -643,13 +658,13 @@ describe Decanter::Core do
         options: {
           required: is_required
         }
-      }      
+      }
     end
-    let(:handler) { [[:title], input_hash] }    
-    let(:handlers) { [handler] }    
-    before(:each) { 
+    let(:handler) { [[:title], input_hash] }
+    let(:handlers) { [handler] }
+    before(:each) {
       allow(dummy).to receive(:handlers).and_return(handlers)
-    }    
+    }
 
     context 'when required' do
       it 'should return true' do
@@ -674,11 +689,11 @@ describe Decanter::Core do
         options: {
           required: is_required
         }
-      }      
+      }
     end
-    let(:handler) { [[:title], input_hash] }    
-    let(:handlers) { [handler] }    
-    before(:each) { allow(dummy).to receive(:handlers).and_return(handlers) } 
+    let(:handler) { [[:title], input_hash] }
+    let(:handlers) { [handler] }
+    before(:each) { allow(dummy).to receive(:handlers).and_return(handlers) }
 
     context 'when required args are present' do
       it 'should return true' do

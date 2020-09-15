@@ -1,12 +1,12 @@
 module Decanter
   module Core
-    
+
     def self.included(base)
       base.extend(ClassMethods)
     end
 
     module ClassMethods
-      
+
       def input(name, parsers=nil, **options)
 
         _name = [name].flatten
@@ -59,9 +59,21 @@ module Decanter
         args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
         {}.merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
+          .merge( default_values )
       end
 
-      def handle_empty_args    
+      def default_values
+        # return keys with provided default value when key is not defined within incoming args
+        default_value_inputs
+          .map { |input| [input[:key], input[:options][:default_value]] }
+          .to_h
+      end
+
+      def default_value_inputs
+        handlers.values.select { |input| input[:options].key?(:default_value) }
+      end
+
+      def handle_empty_args
         any_inputs_required? ? empty_args_error : {}
       end
 
@@ -73,7 +85,7 @@ module Decanter
         handlers.map do |h|
           options = h.last[:options]
           h.first.first if options && options[:required]
-        end  
+        end
       end
 
       def required_input_keys_present?(args={})
@@ -100,7 +112,7 @@ module Decanter
           keys_to_ignore -
           handlers.values
             .select { |handler| handler[:type] != :input }
-            .map { |handler| "#{handler[:name]}_attributes".to_sym }            
+            .map { |handler| "#{handler[:name]}_attributes".to_sym }
 
         return {} unless unhandled_keys.any?
         raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.") if strict_mode
@@ -185,13 +197,13 @@ module Decanter
       def parse(key, parsers, value, options)
         return { key => value } unless parsers
         if options[:required] && value_missing?(value)
-          raise ArgumentError.new("No value for required argument: #{key}") 
+          raise ArgumentError.new("No value for required argument: #{key}")
         end
         parser_classes = Parser.parsers_for(parsers)
         Parser.compose_parsers(parser_classes).parse(key, value, options)
       end
 
-      def handlers        
+      def handlers
         @handlers ||= {}
       end
 
