@@ -69,6 +69,7 @@ module Decanter
           .map { |input| [input[:key], input[:options][DEFAULT_VALUE_KEY]] }
           .to_h
 
+        # parse default values
         handled_keys(default_result)
       end
 
