@@ -596,18 +596,41 @@ describe Decanter::Core do
       end
     end
 
-    context 'with missing args keys with a :default_value in the decanter' do
+    context 'with key having a :default_value in the decanter' do
       let(:decanter) {
         Class.new(Decanter::Base) do
           input :name, :string, default_value: 'foo'
           input :description, :string
         end
       }
-      let(:params) { { description: 'My Trip Description', name: 'foo' } }
-      it 'should include the missing args key default value' do
+
+      it 'should include the missing key and its default value' do
+        params = { description: 'My Trip Description' }
         decanted_params = decanter.decant(params)
         # :name wasn't sent, but it should have a default value of 'foo'
+        expect(decanted_params).to eq(params.merge(name: 'foo'))
+      end
+
+      it 'should not override an existing value' do
+        params = { description: 'My Trip Description', name: 'bar' }
+        decanted_params = decanter.decant(params)
+        # :name has a default value of 'foo', but it was sent as and should remain 'bar'
         expect(decanted_params).to eq(params)
+      end
+
+      it 'should not override an existing nil value' do
+        params = { description: 'My Trip Description', name: nil }
+        decanted_params = decanter.decant(params)
+        # :name has a default value of 'foo', but it was sent as and should remain nil
+        expect(decanted_params).to eq(params)
+      end
+
+      it 'should not override an existing blank value' do
+        params = { description: 'My Trip Description', name: '' }
+        desired_result = params.merge(name: nil)
+        decanted_params = decanter.decant(params)
+        # :name has a default value of 'foo', but it was sent as and should remain ''
+        expect(decanted_params).to eq(desired_result)
       end
     end
 

@@ -1,5 +1,6 @@
 module Decanter
   module Core
+    DEFAULT_VALUE_KEY = :default_value
 
     def self.included(base)
       base.extend(ClassMethods)
@@ -57,20 +58,20 @@ module Decanter
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
         args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
-        {}.merge(default_values)
+        {}.merge( default_keys )
           .merge( unhandled_keys(args) )
           .merge( handled_keys(args) )
       end
 
-      def default_values
+      def default_keys
         # return keys with provided default value when key is not defined within incoming args
         default_value_inputs
-          .map { |input| [input[:key], input[:options][:default_value]] }
+          .map { |input| [input[:key], input[:options][DEFAULT_VALUE_KEY]] }
           .to_h
       end
 
       def default_value_inputs
-        handlers.values.select { |input| input[:options].key?(:default_value) }
+        handlers.values.select { |input| input[:options].key?(DEFAULT_VALUE_KEY) }
       end
 
       def handle_empty_args

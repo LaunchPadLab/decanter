@@ -223,12 +223,20 @@ _Note: we recommend using [Active Record validations](https://guides.rubyonrails
 
 ### Default values
 
-If you provide the option `:default_value` for an input in your decanter, the input key will be initialized with the given default value. Input keys not found in the incoming data parameters will be set to the provided default rather than ignoring the missing key.
+If you provide the option `:default_value` for an input in your decanter, the input key will be initialized with the given default value. Input keys not found in the incoming data parameters will be set to the provided default rather than ignoring the missing key. Note: `nil` and empty keys will not be overridden.
 
 ```ruby
-class SomeDecanter <  Decanter::Base
-  input :some_boolean, :boolean, default_value: true
+class TripDecanter <  Decanter::Base
+  input :name, :string
+  input :destination, :string, default_value: 'Chicago'
 end
+
+```
+
+```
+TripDecanter.decant({ name: 'Vacation 2020' })
+=> { name: 'Vacation 2020', destination: 'Chicago' }
+
 ```
 
 ### Global configuration
