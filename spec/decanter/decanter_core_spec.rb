@@ -629,7 +629,7 @@ describe Decanter::Core do
         params = { description: 'My Trip Description', name: '' }
         desired_result = params.merge(name: nil)
         decanted_params = decanter.decant(params)
-        # :name has a default value of 'foo', but it was sent as and should remain ''
+        # :name has a default value of 'foo', but it was sent as empty and should remain empty/nil
         expect(decanted_params).to eq(desired_result)
       end
     end
