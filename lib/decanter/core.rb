@@ -65,9 +65,11 @@ module Decanter
 
       def default_keys
         # return keys with provided default value when key is not defined within incoming args
-        default_value_inputs
+        default_result = default_value_inputs
           .map { |input| [input[:key], input[:options][DEFAULT_VALUE_KEY]] }
           .to_h
+
+        handled_keys(default_result)
       end
 
       def default_value_inputs

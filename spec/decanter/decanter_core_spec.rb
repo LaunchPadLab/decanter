@@ -600,35 +600,43 @@ describe Decanter::Core do
       let(:decanter) {
         Class.new(Decanter::Base) do
           input :name, :string, default_value: 'foo'
+          input :cost, :float, default_value: '99.99'
           input :description, :string
         end
       }
 
-      it 'should include the missing key and its default value' do
+      it 'should include missing keys and their parsed default values' do
         params = { description: 'My Trip Description' }
         decanted_params = decanter.decant(params)
+        desired_result = params.merge(name: 'foo', cost: 99.99)
         # :name wasn't sent, but it should have a default value of 'foo'
-        expect(decanted_params).to eq(params.merge(name: 'foo'))
+        # :cost wasn't sent, but it should have a parsed float default value of 99.99
+        expect(decanted_params).to eq(desired_result)
+        expect(decanted_params[:cost]).to be_kind_of(Float)
       end
 
-      it 'should not override an existing value' do
-        params = { description: 'My Trip Description', name: 'bar' }
+      it 'should not override a (parsed) existing value' do
+        params = { description: 'My Trip Description', name: 'bar', cost: '25.99' }
         decanted_params = decanter.decant(params)
+        desired_result = params.merge(cost: 25.99)
         # :name has a default value of 'foo', but it was sent as and should remain 'bar'
-        expect(decanted_params).to eq(params)
+        # :cost has default value of '99.99', but it was sent as '25.99'
+        # and should have a parsed float value of 25.99
+        expect(decanted_params).to eq(desired_result)
       end
 
       it 'should not override an existing nil value' do
         params = { description: 'My Trip Description', name: nil }
         decanted_params = decanter.decant(params)
+        desired_result = params.merge(cost: 99.99)
         # :name has a default value of 'foo', but it was sent as and should remain nil
-        expect(decanted_params).to eq(params)
+        expect(decanted_params).to eq(desired_result)
       end
 
       it 'should not override an existing blank value' do
-        params = { description: 'My Trip Description', name: '' }
-        desired_result = params.merge(name: nil)
+        params = { description: 'My Trip Description', name: '', cost: '99.99' }
         decanted_params = decanter.decant(params)
+        desired_result = params.merge(name: nil, cost: 99.99)
         # :name has a default value of 'foo', but it was sent as empty and should remain empty/nil
         expect(decanted_params).to eq(desired_result)
       end
