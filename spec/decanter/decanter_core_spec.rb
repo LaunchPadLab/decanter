@@ -319,11 +319,11 @@ describe Decanter::Core do
           end
         end
 
-        context 'when the unhandled keys are ignored' do          
+        context 'when the unhandled keys are ignored' do
           it 'does not raise an error' do
             dummy.ignore :foo
             expect { dummy.unhandled_keys(args) }.to_not raise_error(Decanter::UnhandledKeysError)
-          end          
+          end
         end
       end
 
@@ -528,24 +528,24 @@ describe Decanter::Core do
     let(:args) { { foo: 'bar', baz: 'foo'} }
     let(:subject) { dummy.decant(args) }
     let(:is_required) { true }
-    
+
     let(:input_hash) do
       {
         key: 'sky',
         options: {
           required: is_required
         }
-      }      
+      }
     end
-    let(:handler) { [[:title], input_hash] }    
-    let(:handlers) { [handler] }   
+    let(:handler) { [[:title], input_hash] }
+    let(:handlers) { [handler] }
 
     before(:each) do
       allow(dummy).to receive(:unhandled_keys).and_return(args)
       allow(dummy).to receive(:handled_keys).and_return(args)
     end
-    
-    context 'with args' do  
+
+    context 'with args' do
       context 'when inputs are required' do
         let(:decanter) {
           Class.new(Decanter::Base) do
@@ -596,6 +596,52 @@ describe Decanter::Core do
       end
     end
 
+    context 'with key having a :default_value in the decanter' do
+      let(:decanter) {
+        Class.new(Decanter::Base) do
+          input :name, :string, default_value: 'foo'
+          input :cost, :float, default_value: '99.99'
+          input :description, :string
+        end
+      }
+
+      it 'should include missing keys and their parsed default values' do
+        params = { description: 'My Trip Description' }
+        decanted_params = decanter.decant(params)
+        desired_result = params.merge(name: 'foo', cost: 99.99)
+        # :name wasn't sent, but it should have a default value of 'foo'
+        # :cost wasn't sent, but it should have a parsed float default value of 99.99
+        expect(decanted_params).to eq(desired_result)
+        expect(decanted_params[:cost]).to be_kind_of(Float)
+      end
+
+      it 'should not override a (parsed) existing value' do
+        params = { description: 'My Trip Description', name: 'bar', cost: '25.99' }
+        decanted_params = decanter.decant(params)
+        desired_result = params.merge(cost: 25.99)
+        # :name has a default value of 'foo', but it was sent as and should remain 'bar'
+        # :cost has default value of '99.99', but it was sent as '25.99'
+        # and should have a parsed float value of 25.99
+        expect(decanted_params).to eq(desired_result)
+      end
+
+      it 'should not override an existing nil value' do
+        params = { description: 'My Trip Description', name: nil }
+        decanted_params = decanter.decant(params)
+        desired_result = params.merge(cost: 99.99)
+        # :name has a default value of 'foo', but it was sent as and should remain nil
+        expect(decanted_params).to eq(desired_result)
+      end
+
+      it 'should not override an existing blank value' do
+        params = { description: 'My Trip Description', name: '', cost: '99.99' }
+        decanted_params = decanter.decant(params)
+        desired_result = params.merge(name: nil, cost: 99.99)
+        # :name has a default value of 'foo', but it was sent as empty and should remain empty/nil
+        expect(decanted_params).to eq(desired_result)
+      end
+    end
+
     context 'with present non-required args containing an empty value' do
       let(:decanter) {
         Class.new(Decanter::Base) do
@@ -643,13 +689,13 @@ describe Decanter::Core do
         options: {
           required: is_required
         }
-      }      
+      }
     end
-    let(:handler) { [[:title], input_hash] }    
-    let(:handlers) { [handler] }    
-    before(:each) { 
+    let(:handler) { [[:title], input_hash] }
+    let(:handlers) { [handler] }
+    before(:each) {
       allow(dummy).to receive(:handlers).and_return(handlers)
-    }    
+    }
 
     context 'when required' do
       it 'should return true' do
@@ -674,11 +720,11 @@ describe Decanter::Core do
         options: {
           required: is_required
         }
-      }      
+      }
     end
-    let(:handler) { [[:title], input_hash] }    
-    let(:handlers) { [handler] }    
-    before(:each) { allow(dummy).to receive(:handlers).and_return(handlers) } 
+    let(:handler) { [[:title], input_hash] }
+    let(:handlers) { [handler] }
+    before(:each) { allow(dummy).to receive(:handlers).and_return(handlers) }
 
     context 'when required args are present' do
       it 'should return true' do
