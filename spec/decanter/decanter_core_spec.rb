@@ -525,7 +525,7 @@ describe Decanter::Core do
   end
 
   describe '#decant' do
-    let(:args) { { foo: 'bar', baz: 'foo'} }
+    let(:args) { { foo: 'bar', 'baz' => 'foo'} }
     let(:subject) { dummy.decant(args) }
     let(:is_required) { true }
 
@@ -565,8 +565,8 @@ describe Decanter::Core do
             .not_to raise_error
         end
       end
-      
-      context 'when keys are strings' do
+
+      context 'when params keys are strings' do
         let(:decanter) {
           Class.new(Decanter::Base) do
             input :name, :string
@@ -582,7 +582,7 @@ describe Decanter::Core do
           decanted_params = decanter.decant(args)
           expect(decanted_params.keys).to all(be_a(Symbol))
         end
-        
+
         context 'and when inputs are strings' do
           let(:decanter) {
             Class.new(Decanter::Base) do
