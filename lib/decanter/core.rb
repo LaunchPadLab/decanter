@@ -9,7 +9,6 @@ module Decanter
     module ClassMethods
 
       def input(name, parsers=nil, **options)
-
         # Convert all input names to symbols to avoid accessor ambiguity
         input_names = [name].flatten.map(&:to_sym)
 
