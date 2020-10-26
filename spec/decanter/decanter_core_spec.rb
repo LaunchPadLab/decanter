@@ -525,7 +525,7 @@ describe Decanter::Core do
   end
 
   describe '#decant' do
-    let(:args) { { foo: 'bar', 'baz' => 'foo'} }
+    let(:args) { { foo: 'bar', baz: 'foo'} }
     let(:subject) { dummy.decant(args) }
     let(:is_required) { true }
 
