@@ -564,6 +564,14 @@ describe Decanter::Core do
           expect{ decanter.decant({ name: [] }) }
             .not_to raise_error
         end
+        it 'should treaty empty strings as missing' do
+          expect{ decanter.decant({ name: '' }) }
+            .to raise_error(ArgumentError)
+        end
+        it 'should treat blank strings as present' do
+          expect{ decanter.decant({ name: '   ' })}
+            .not_to raise_error
+        end
       end
 
       context 'when params keys are strings' do
