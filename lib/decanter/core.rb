@@ -10,15 +10,16 @@ module Decanter
 
       def input(name, parsers=nil, **options)
 
-        _name = [name].flatten.map(&:to_sym)
+        # Convert all input names to symbols to avoid accessor ambiguity
+        input_names = [name].flatten.map(&:to_sym)
 
-        if _name.length > 1 && parsers.blank?
+        if input_names.length > 1 && parsers.blank?
           raise ArgumentError.new("#{self.name} no parser specified for input with multiple values.")
         end
 
-        handlers[_name] = {
-          key:     options.fetch(:key, _name.first),
-          name:    _name,
+        handlers[input_names] = {
+          key:     options.fetch(:key, input_names.first),
+          name:    input_names,
           options: options,
           parsers:  parsers,
           type:    :input
