@@ -58,6 +58,8 @@ module Decanter
       def decant(args)
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
+
+        # Convert all params passed to a decanter to a hash with indifferent access to mitigate accessor ambiguity
         accessible_args = to_indifferent_hash(args)
         {}.merge( default_keys )
           .merge( unhandled_keys(accessible_args) )
@@ -228,7 +230,6 @@ module Decanter
         value.nil? || value == ""
       end
 
-      # Convert all params passed to a decanter to a hash with indifferent access to mitigate accessor ambiguity
       def to_indifferent_hash(args)
         return args.to_unsafe_h if args.class.name == ACTION_CONTROLLER_PARAMETERS_CLASS_NAME
         args.to_h.with_indifferent_access
