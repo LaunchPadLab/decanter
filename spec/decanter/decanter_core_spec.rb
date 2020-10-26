@@ -321,7 +321,7 @@ describe Decanter::Core do
 
         context 'when the unhandled keys are ignored' do
           it 'does not raise an error' do
-            dummy.ignore :foo, :baz
+            dummy.ignore :foo, 'baz'
             expect { dummy.unhandled_keys(args) }.to_not raise_error(Decanter::UnhandledKeysError)
           end
         end

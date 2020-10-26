@@ -47,7 +47,7 @@ module Decanter
       end
 
       def ignore(*args)
-        keys_to_ignore.push(*args)
+        keys_to_ignore.push(*args).map!(&:to_sym)
       end
 
       def strict(mode)
