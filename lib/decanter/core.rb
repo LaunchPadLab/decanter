@@ -1,12 +1,13 @@
 module Decanter
   module Core
-    
+    DEFAULT_VALUE_KEY = :default_value
+
     def self.included(base)
       base.extend(ClassMethods)
     end
 
     module ClassMethods
-      
+
       def input(name, parsers=nil, **options)
 
         _name = [name].flatten.map(&:to_sym)
@@ -57,11 +58,26 @@ module Decanter
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
         accessible_args = transform_args(args).with_indifferent_access
-        {}.merge( unhandled_keys(accessible_args) )
+        {}.merge( default_keys )
+          .merge( unhandled_keys(accessible_args) )
           .merge( handled_keys(accessible_args) )
       end
 
-      def handle_empty_args    
+      def default_keys
+        # return keys with provided default value when key is not defined within incoming args
+        default_result = default_value_inputs
+          .map { |input| [input[:key], input[:options][DEFAULT_VALUE_KEY]] }
+          .to_h
+
+        # parse default values
+        handled_keys(default_result)
+      end
+
+      def default_value_inputs
+        handlers.values.select { |input| input[:options].key?(DEFAULT_VALUE_KEY) }
+      end
+
+      def handle_empty_args
         any_inputs_required? ? empty_args_error : {}
       end
 
@@ -73,7 +89,7 @@ module Decanter
         handlers.map do |h|
           options = h.last[:options]
           h.first.first if options && options[:required]
-        end  
+        end
       end
 
       def required_input_keys_present?(args={})
@@ -100,7 +116,7 @@ module Decanter
           keys_to_ignore -
           handlers.values
             .select { |handler| handler[:type] != :input }
-            .map { |handler| "#{handler[:name]}_attributes".to_sym }            
+            .map { |handler| "#{handler[:name]}_attributes".to_sym }
 
         return {} unless unhandled_keys.any?
         raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.") if strict_mode
@@ -185,13 +201,13 @@ module Decanter
       def parse(key, parsers, value, options)
         return { key => value } unless parsers
         if options[:required] && value_missing?(value)
-          raise ArgumentError.new("No value for required argument: #{key}") 
+          raise ArgumentError.new("No value for required argument: #{key}")
         end
         parser_classes = Parser.parsers_for(parsers)
         Parser.compose_parsers(parser_classes).parse(key, value, options)
       end
 
-      def handlers        
+      def handlers
         @handlers ||= {}
       end
 
@@ -210,7 +226,7 @@ module Decanter
       def value_missing?(value)
         value.nil? || value == ""
       end
-      
+
       def transform_args(args)
         return args.to_unsafe_h if args.class.name == 'ActionController::Parameters'
         args
