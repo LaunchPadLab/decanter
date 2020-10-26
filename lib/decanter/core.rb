@@ -1,6 +1,7 @@
 module Decanter
   module Core
     DEFAULT_VALUE_KEY = :default_value
+    ACTION_CONTROLLER_PARAMETERS_CLASS_NAME = 'ActionController::Parameters'
 
     def self.included(base)
       base.extend(ClassMethods)
@@ -9,7 +10,7 @@ module Decanter
     module ClassMethods
 
       def input(name, parsers=nil, **options)
-        # Convert all input names to symbols to avoid accessor ambiguity
+        # Convert all input names to symbols to correctly calculate handled vs. unhandled keys
         input_names = [name].flatten.map(&:to_sym)
 
         if input_names.length > 1 && parsers.blank?
@@ -57,7 +58,7 @@ module Decanter
       def decant(args)
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
-        accessible_args = transform_args(args).with_indifferent_access
+        accessible_args = to_indifferent_hash(args)
         {}.merge( default_keys )
           .merge( unhandled_keys(accessible_args) )
           .merge( handled_keys(accessible_args) )
@@ -227,9 +228,10 @@ module Decanter
         value.nil? || value == ""
       end
 
-      def transform_args(args)
-        return args.to_unsafe_h if args.class.name == 'ActionController::Parameters'
-        args
+      # Convert all params passed to a decanter to a hash with indifferent access to mitigate accessor ambiguity
+      def to_indifferent_hash(args)
+        return args.to_unsafe_h if args.class.name == ACTION_CONTROLLER_PARAMETERS_CLASS_NAME
+        args.to_h.with_indifferent_access
       end
     end
   end
