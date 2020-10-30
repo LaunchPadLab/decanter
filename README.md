@@ -92,7 +92,7 @@ Decanter can decant a collection of a resource, applying the patterns used in th
 
 **Control Over Decanting Collections**
 
-You can use `is_collection` option for explicit control over decanting collections, using the `is_collection` option.
+You can use the `is_collection` option for explicit control over decanting collections.
 
 `decanted_trip_params = TripDecanter.decant(trip_params[:trips], is_collection: true)`
 
