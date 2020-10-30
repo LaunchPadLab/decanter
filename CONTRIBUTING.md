@@ -1,4 +1,4 @@
-≤# Contributing
+# Contributing
 
 Thanks for your interest in contributing! This project follows our [Gem guidelines](https://github.com/LaunchPadLab/opex-public/blob/master/gists/gem-guidelines.md).
 
