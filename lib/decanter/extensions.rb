@@ -20,7 +20,6 @@ module Decanter
     end
 
     module ClassMethods
-
       def decant_create(args, **options)
         self.new(decant(args, options))
             .save(context: options[:context])
@@ -50,6 +49,8 @@ module Decanter
           Decanter.decanter_for(self)
         end.decant(args)
       end
+
+      private
 
       ## leveraging the approach used in the [fast JSON API gem](https://github.com/Netflix/fast_jsonapi#collection-serialization)
       def is_collection?(args, collection_option=nil)

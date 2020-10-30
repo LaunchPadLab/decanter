@@ -118,21 +118,21 @@ describe Decanter::Extensions do
 
     context 'true' do
       it 'when options[:is_collection] is nil and collection is provided' do
-        expect(dummy_class.is_collection?(collection_args)).to be(true)
+        expect(dummy_class.send(:is_collection?, collection_args)).to be(true)
       end
 
       it 'when options[:is_collection] is true' do
-        expect(dummy_class.is_collection?(singular_args, { is_collection: true })).to be(true)
+        expect(dummy_class.send(:is_collection?, singular_args, { is_collection: true })).to be(true)
       end
     end
 
     context 'false' do
       it 'when options[:is_collection] is nil and single object is provided' do
-        expect(dummy_class.is_collection?(singular_args)).to be(false)
+        expect(dummy_class.send(:is_collection?, singular_args)).to be(false)
       end
 
        it 'when options[:is_collection] is false' do
-        expect(dummy_class.is_collection?(collection_args, { is_collection: false })).to be(false)
+        expect(dummy_class.send(:is_collection?, collection_args, { is_collection: false })).to be(false)
       end
     end
   end
