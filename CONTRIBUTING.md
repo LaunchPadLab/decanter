@@ -1,4 +1,4 @@
-# Contributing
+≤# Contributing
 
 Thanks for your interest in contributing! This project follows our [Gem guidelines](https://github.com/LaunchPadLab/opex-public/blob/master/gists/gem-guidelines.md).
 
@@ -33,4 +33,4 @@ For any non-trivial change, we prefer an issue to be created first. This helps u
 ### Sending a Pull Request
 If this is your first Pull Request, we recommend learning how to navigate GitHub via this free video tutorial: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github).
 
-The LaunchPad Lab team monitors this repository for pull requests. Once a pull request has been created from a forked repository that **meets all the guidelines** outlined in the [Pull Request Checklist](.github/PULL_REQUEST_TEMPLATE.md), we will review the request and either merge it, request changes, or close it with an explanation. We aim to respond to pull requests within 48 hours. 
+The LaunchPad Lab team monitors this repository for pull requests. Once a pull request has been created from a forked repository that **meets all the guidelines** outlined in the [Pull Request Checklist](.github/PULL_REQUEST_TEMPLATE.md), we will review the request and either merge it, request changes, or close it with an explanation. We aim to respond to pull requests within 48 hours.

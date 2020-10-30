@@ -7,11 +7,9 @@ module Decanter
     end
 
     module ClassMethods
-
       def input(name, parsers=nil, **options)
 
         _name = [name].flatten
-
         if _name.length > 1 && parsers.blank?
           raise ArgumentError.new("#{self.name} no parser specified for input with multiple values.")
         end
@@ -226,7 +224,6 @@ module Decanter
       def value_missing?(value)
         value.nil? || value == ""
       end
-
     end
   end
 end

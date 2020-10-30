@@ -15,6 +15,7 @@ gem 'decanter', '~> 3.0'
 - [Basic Usage](#basic-usage)
   - [Decanters](#decanters)
   - [Generators](#generators)
+  - [Decanting Collections](#decanting-collections)
   - [Nested resources](#nested-resources)
   - [Default parsers](#default-parsers)
   - [Parser options](#parser-options)
@@ -69,6 +70,37 @@ rails g decanter Trip name:string start_date:date end_date:date
 ```
 rails g parser TruncatedString
 ```
+
+### Decanting Collections
+
+Decanter can decant a collection of a resource, applying the patterns used in the [fast JSON API gem](https://github.com/Netflix/fast_jsonapi#collection-serialization):
+
+```rb
+# app/controllers/trips_controller.rb
+
+  def create
+    trip_params = {
+      trips: [
+        { name: 'Disney World', start_date: '12/24/2018', end_date: '12/28/2018' },
+        { name: 'Yosemeite', start_date: '5/1/2017', end_date: '5/4/2017' }
+      ]
+    }
+    decanted_trip_params = TripDecanter.decant(trip_params[:trips])
+    Trip.create(decanted_trip_params) # bulk create trips with decanted params
+  end
+```
+
+**Control Over Decanting Collections**
+
+You can use `is_collection` option for explicit control over decanting collections, using the `is_collection` option.
+
+`decanted_trip_params = TripDecanter.decant(trip_params[:trips], is_collection: true)`
+
+If this option is not provided, autedetect logic is used to determine if the providing incoming params holds a single object or collection of objects.
+
+- `nil` or not provided: will try to autodetect single vs collection
+- `true` will always treat the incoming params args as *collection*
+- `false` will always treat incoming params args as *single object*
 
 ### Nested resources
 
