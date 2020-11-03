@@ -582,7 +582,7 @@ describe Decanter::Core do
           end
         }
         let(:args) { { 'name' => 'My Trip', 'description' => 'My Trip Description' } }
-        it 'returns the merged result' do
+        it 'returns a hash with the declared key-value pairs' do
           decanted_params = decanter.decant(args)
           expect(decanted_params.with_indifferent_access).to match(args)
         end
@@ -598,7 +598,7 @@ describe Decanter::Core do
               input 'description', :string
             end
           }
-          it 'returns the merged result' do
+          it 'returns a hash with the declared key-value pairs' do
             decanted_params = decanter.decant(args)
             expect(decanted_params.with_indifferent_access).to match(args)
           end
