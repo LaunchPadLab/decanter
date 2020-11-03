@@ -1,6 +1,7 @@
 module Decanter
   module Core
     DEFAULT_VALUE_KEY = :default_value
+    ACTION_CONTROLLER_PARAMETERS_CLASS_NAME = 'ActionController::Parameters'
 
     def self.included(base)
       base.extend(ClassMethods)
@@ -9,16 +10,16 @@ module Decanter
     module ClassMethods
 
       def input(name, parsers=nil, **options)
+        # Convert all input names to symbols to correctly calculate handled vs. unhandled keys
+        input_names = [name].flatten.map(&:to_sym)
 
-        _name = [name].flatten
-
-        if _name.length > 1 && parsers.blank?
+        if input_names.length > 1 && parsers.blank?
           raise ArgumentError.new("#{self.name} no parser specified for input with multiple values.")
         end
 
-        handlers[_name] = {
-          key:     options.fetch(:key, _name.first),
-          name:    _name,
+        handlers[input_names] = {
+          key:     options.fetch(:key, input_names.first),
+          name:    input_names,
           options: options,
           parsers:  parsers,
           type:    :input
@@ -46,7 +47,7 @@ module Decanter
       end
 
       def ignore(*args)
-        keys_to_ignore.push(*args)
+        keys_to_ignore.push(*args).map!(&:to_sym)
       end
 
       def strict(mode)
@@ -57,10 +58,12 @@ module Decanter
       def decant(args)
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
-        args = args.to_unsafe_h.with_indifferent_access if args.class.name == 'ActionController::Parameters'
+
+        # Convert all params passed to a decanter to a hash with indifferent access to mitigate accessor ambiguity
+        accessible_args = to_indifferent_hash(args)
         {}.merge( default_keys )
-          .merge( unhandled_keys(args) )
-          .merge( handled_keys(args) )
+          .merge( unhandled_keys(accessible_args) )
+          .merge( handled_keys(accessible_args) )
       end
 
       def default_keys
@@ -120,7 +123,7 @@ module Decanter
 
         return {} unless unhandled_keys.any?
         raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.") if strict_mode
-        args.select { |key| unhandled_keys.include? key }
+        args.select { |key| unhandled_keys.include? key.to_sym }
       end
 
       def handled_keys(args)
@@ -227,6 +230,10 @@ module Decanter
         value.nil? || value == ""
       end
 
+      def to_indifferent_hash(args)
+        return args.to_unsafe_h if args.class.name == ACTION_CONTROLLER_PARAMETERS_CLASS_NAME
+        args.to_h.with_indifferent_access
+      end
     end
   end
 end

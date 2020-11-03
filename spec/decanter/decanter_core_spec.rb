@@ -294,11 +294,11 @@ describe Decanter::Core do
 
   describe '#unhandled_keys' do
 
-    let(:args) { { foo: :bar } }
+    let(:args) { { foo: :bar, 'baz' => 'foo' } }
 
     context 'when there are no unhandled keys' do
 
-      before(:each) { allow(dummy).to receive(:handlers).and_return({foo: { type: :input }}) }
+      before(:each) { allow(dummy).to receive(:handlers).and_return({foo: { type: :input }, baz: { type: :input }}) }
 
       it 'returns an empty hash' do
         expect(dummy.unhandled_keys(args)).to match({})
@@ -321,7 +321,7 @@ describe Decanter::Core do
 
         context 'when the unhandled keys are ignored' do
           it 'does not raise an error' do
-            dummy.ignore :foo
+            dummy.ignore :foo, 'baz'
             expect { dummy.unhandled_keys(args) }.to_not raise_error(Decanter::UnhandledKeysError)
           end
         end
@@ -563,6 +563,45 @@ describe Decanter::Core do
         it 'should treat empty arrays as present' do
           expect{ decanter.decant({ name: [] }) }
             .not_to raise_error
+        end
+        it 'should treat empty strings as missing' do
+          expect{ decanter.decant({ name: '' }) }
+            .to raise_error(ArgumentError)
+        end
+        it 'should treat blank strings as present' do
+          expect{ decanter.decant({ name: '   ' })}
+            .not_to raise_error
+        end
+      end
+
+      context 'when params keys are strings' do
+        let(:decanter) {
+          Class.new(Decanter::Base) do
+            input :name, :string
+            input :description, :string
+          end
+        }
+        let(:args) { { 'name' => 'My Trip', 'description' => 'My Trip Description' } }
+        it 'returns a hash with the declared key-value pairs' do
+          decanted_params = decanter.decant(args)
+          expect(decanted_params.with_indifferent_access).to match(args)
+        end
+        it 'converts all keys to symbols in the merged result' do
+          decanted_params = decanter.decant(args)
+          expect(decanted_params.keys).to all(be_a(Symbol))
+        end
+
+        context 'and when inputs are strings' do
+          let(:decanter) {
+            Class.new(Decanter::Base) do
+              input 'name', :string
+              input 'description', :string
+            end
+          }
+          it 'returns a hash with the declared key-value pairs' do
+            decanted_params = decanter.decant(args)
+            expect(decanted_params.with_indifferent_access).to match(args)
+          end
         end
       end
 
