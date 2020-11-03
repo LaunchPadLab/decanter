@@ -82,7 +82,7 @@ Decanter can decant a collection of a resource, applying the patterns used in th
     trip_params = {
       trips: [
         { name: 'Disney World', start_date: '12/24/2018', end_date: '12/28/2018' },
-        { name: 'Yosemeite', start_date: '5/1/2017', end_date: '5/4/2017' }
+        { name: 'Yosemite', start_date: '5/1/2017', end_date: '5/4/2017' }
       ]
     }
     decanted_trip_params = TripDecanter.decant(trip_params[:trips])
@@ -90,13 +90,13 @@ Decanter can decant a collection of a resource, applying the patterns used in th
   end
 ```
 
-**Control Over Decanting Collections**
+#### Control Over Decanting Collections
 
 You can use the `is_collection` option for explicit control over decanting collections.
 
 `decanted_trip_params = TripDecanter.decant(trip_params[:trips], is_collection: true)`
 
-If this option is not provided, autedetect logic is used to determine if the providing incoming params holds a single object or collection of objects.
+If this option is not provided, autodetect logic is used to determine if the providing incoming params holds a single object or collection of objects.
 
 - `nil` or not provided: will try to autodetect single vs collection
 - `true` will always treat the incoming params args as *collection*

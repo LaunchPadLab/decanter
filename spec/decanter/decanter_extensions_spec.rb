@@ -47,7 +47,6 @@ describe Decanter::Extensions do
     end
 
     it 'calls decant_args on each element in the collection' do
-      # expect(dummy_class).to receive(:decant_args).twice
       dummy_class.decant_collection(args, options)
       expect(dummy_class)
         .to have_received(:decant_args)
