@@ -136,7 +136,7 @@ describe Decanter do
           let(:foo) {
             Class.new do
               def self.name
-                'Foo'.freeze # ActiveRecord classes have a frozen name
+                'Foo'.freeze # ActiveRecord classes might have a frozen name (Rails 5.2.3)
               end
             end
           }
