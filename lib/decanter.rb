@@ -13,7 +13,7 @@ module Decanter
           klass_or_sym.to_s.singularize.camelize
         else
           raise ArgumentError.new("cannot lookup decanter for #{klass_or_sym} with class #{klass_or_sym.class}")
-        end.concat('Decanter')
+        end + 'Decanter'
       begin
         decanter_name.constantize
       rescue

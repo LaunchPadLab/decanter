@@ -102,7 +102,6 @@ describe Decanter do
     end
 
     context 'for a class' do
-
       context 'when a corresponding decanter does not exist' do
 
         let(:foo) do
@@ -131,6 +130,20 @@ describe Decanter do
 
         it 'returns the decanter' do
           expect(Decanter::decanter_for(foo)).to eq FooDecanter
+        end
+
+        context 'and the class name is a frozen string' do
+          let(:foo) {
+            Class.new do
+              def self.name
+                'Foo'.freeze # ActiveRecord classes might have a frozen name (Rails 5.2.3)
+              end
+            end
+          }
+
+          it 'returns the decanter' do
+            expect(Decanter::decanter_for(foo)).to eq FooDecanter
+          end
         end
       end
     end
