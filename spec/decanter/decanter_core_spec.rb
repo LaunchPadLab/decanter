@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Decanter::Core do
 
-  let(:dummy) { Class.new(Decanter::Base) }
+  let(:dummy) { Class.new { include Decanter::Core } }
 
   before(:each) do
     Decanter::Core.class_variable_set(:@@handlers, {})
@@ -548,7 +548,8 @@ describe Decanter::Core do
     context 'with args' do
       context 'when inputs are required' do
         let(:decanter) {
-          Class.new(Decanter::Base) do
+          Class.new do
+            include Decanter::Core
             input :name, :pass, required: true
           end
         }
@@ -576,7 +577,8 @@ describe Decanter::Core do
 
       context 'when params keys are strings' do
         let(:decanter) {
-          Class.new(Decanter::Base) do
+          Class.new do
+            include Decanter::Core
             input :name, :string
             input :description, :string
           end
@@ -593,7 +595,8 @@ describe Decanter::Core do
 
         context 'and when inputs are strings' do
           let(:decanter) {
-            Class.new(Decanter::Base) do
+            Class.new do
+              include Decanter::Core
               input 'name', :string
               input 'description', :string
             end
@@ -622,7 +625,8 @@ describe Decanter::Core do
 
     context 'with missing non-required args' do
       let(:decanter) {
-        Class.new(Decanter::Base) do
+        Class.new do
+          include Decanter::Core
           input :name, :string
           input :description, :string
         end
@@ -637,7 +641,8 @@ describe Decanter::Core do
 
     context 'with key having a :default_value in the decanter' do
       let(:decanter) {
-        Class.new(Decanter::Base) do
+        Class.new do
+          include Decanter::Core
           input :name, :string, default_value: 'foo'
           input :cost, :float, default_value: '99.99'
           input :description, :string
