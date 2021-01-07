@@ -72,13 +72,6 @@ describe Decanter::CollectionDetection do
           expect(base_decanter).to have_received(:decant).once.with(args)
         end
       end
-
-      context 'and the value is falsey' do
-        it 'is not considered a collection' do
-          decanter.decant(args, is_collection: '')
-          expect(base_decanter).to have_received(:decant).once.with(args)
-        end
-      end
     end
   end
 end
