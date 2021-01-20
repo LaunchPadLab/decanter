@@ -50,7 +50,7 @@ module Decanter
       end
 
       def strict(mode)
-        raise(ArgumentError, "#{self.name}: Unknown strict value #{mode}") unless [true, false].include? mode
+        raise(ArgumentError, "#{self.name}: Unknown strict value #{mode}") unless [:ignore, true, false].include? mode
         @strict_mode = mode
       end
 
@@ -121,8 +121,16 @@ module Decanter
             .map { |handler| "#{handler[:name]}_attributes".to_sym }
 
         return {} unless unhandled_keys.any?
-        raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.") if strict_mode
-        args.select { |key| unhandled_keys.include? key.to_sym }
+
+        case strict_mode
+        when :ignore
+          p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
+          {}
+        when true
+          raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
+        else
+          args.select { |key| unhandled_keys.include? key.to_sym }
+        end
       end
 
       def handled_keys(args)
