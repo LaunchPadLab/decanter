@@ -58,25 +58,13 @@ module Decanter
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
 
-        # Convert all params passed to a decanter to a hash with indifferent access to mitigate accessor ambiguity
-        # accessible_args = to_indifferent_hash(args)
-        # x = {}.merge( default_keys ).with_indifferent_access
-        # y = x.merge( unhandled_keys(accessible_args) ).with_indifferent_access
-        # p '*** unhandled_keys merge ***'
-        # p y
-        # binding.pry
-        # z = y.merge(handled_keys(y.merge(accessible_args)))
-        # binding.pry
-        # z
-
+        #Convert all params passed to a decanter to a hash with indifferent access to mitigate accessor ambiguity
         accessible_args = to_indifferent_hash(args)
-        combined_args = {}
-          .merge( default_keys )
-          .with_indifferent_access
-          .merge( unhandled_keys(accessible_args) )
 
-        combined_args
-          .merge(handled_keys(combined_args.merge(accessible_args)))
+        {}
+          .merge( default_keys )
+          .merge( unhandled_keys(accessible_args) )
+          .merge( handled_keys(accessible_args) )
       end
 
       def default_keys
@@ -85,8 +73,8 @@ module Decanter
           .map { |input| [input[:key], input[:options][DEFAULT_VALUE_KEY]] }
           .to_h
 
-        # parse handled default values, include keys with defaults not included in handled keys
-        # if
+        # parse handled default values, including keys
+        # with defaults not already managed by handled_keys
         default_result.merge(handled_keys(default_result))
       end
 
