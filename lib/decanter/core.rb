@@ -74,7 +74,8 @@ module Decanter
 
         # parse handled default values, including keys
         # with defaults not already managed by handled_keys
-        default_result.merge(handled_keys(default_result))
+        handled_keys(default_result)
+        # default_result.merge(handled_keys(default_result))
       end
 
       def default_value_inputs
