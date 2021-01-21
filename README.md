@@ -144,7 +144,11 @@ input :start_date, :date, parse_format: '%Y-%m-%d'
 
 ### Exceptions
 
-By default, `Decanter#decant` will raise an exception when unexpected parameters are passed. To override this behavior, you can disable strict mode:
+By default, `Decanter#decant` will raise an exception when unexpected parameters are passed. To override this behavior, you can change the strict mode option to one of:
+
+- `:ignore`: unhandled keys will be ignored from the decanted result
+- `true`: unhandled keys will raise an unexpected parameters exception
+- `false`: all parameter key-value pairs will be included in the result
 
 ```ruby
 class TripDecanter <  Decanter::Base
