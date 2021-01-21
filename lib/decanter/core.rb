@@ -58,7 +58,7 @@ module Decanter
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
 
-        #Convert all params passed to a decanter to a hash with indifferent access to mitigate accessor ambiguity
+        # Convert all params passed to a decanter to a hash with indifferent access to mitigate accessor ambiguity
         accessible_args = to_indifferent_hash(args)
 
         {}

@@ -307,10 +307,9 @@ describe Decanter::Core do
 
     context 'when there are unhandled keys' do
 
-      before(:each) { allow(dummy).to receive(:handlers).and_return({}) }
-
       context 'and strict mode is true' do
 
+        before(:each) { allow(dummy).to receive(:handlers).and_return({}) }
         before(:each) { dummy.strict true }
 
         context 'when there are no ignored keys' do
@@ -327,10 +326,18 @@ describe Decanter::Core do
         end
       end
 
-      context 'and strict mode is false' do
+      context 'and strict mode is :ignore' do
 
+        it 'returns a hash without the unhandled keys and values' do
+          dummy.strict :ignore
+          expect(dummy.unhandled_keys(args)).to match({})
+        end
+      end
+
+      context 'and strict mode is false' do
         it 'returns a hash with the unhandled keys and values' do
           dummy.strict false
+          allow(dummy).to receive(:handlers).and_return({})
           expect(dummy.unhandled_keys(args)).to match(args)
         end
       end
@@ -546,6 +553,28 @@ describe Decanter::Core do
     end
 
     context 'with args' do
+      context 'when strict mode is set to :ignore' do
+        context 'and params include unhandled keys' do
+          let(:decanter) {
+            Class.new(Decanter::Base) do
+              input :name, :string
+              input :description, :string
+            end
+          }
+
+          let(:args) { { name: 'My Trip', description: 'My Trip Description', foo: 'bar' } }
+
+          it 'returns a hash with the declared key-value pairs, ignores unhandled key-vale pairs' do
+            decanter.strict :ignore
+            decanted_params = decanter.decant(args)
+
+            expect(decanted_params).not_to match(args)
+            expect(decanted_params.keys).not_to include([:foo])
+            expect(decanted_params.keys).to eq([:name, :description])
+          end
+        end
+      end
+
       context 'when inputs are required' do
         let(:decanter) {
           Class.new(Decanter::Base) do
