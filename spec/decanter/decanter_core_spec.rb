@@ -570,7 +570,6 @@ describe Decanter::Core do
 
             expect(decanted_params).not_to match(args)
             expect(decanted_params.keys).not_to include([:foo])
-            expect(decanted_params.keys).to eq([:name, :description])
           end
         end
       end
