@@ -60,8 +60,7 @@ module Decanter
 
         # Convert all params passed to a decanter to a hash with indifferent access to mitigate accessor ambiguity
         accessible_args = to_indifferent_hash(args)
-        {}
-          .merge( default_keys )
+        {}.merge( default_keys )
           .merge( unhandled_keys(accessible_args) )
           .merge( handled_keys(accessible_args) )
       end
