@@ -564,7 +564,7 @@ describe Decanter::Core do
 
           let(:args) { { name: 'My Trip', description: 'My Trip Description', foo: 'bar' } }
 
-          it 'returns a hash with the declared key-value pairs, ignores unhandled key-vale pairs' do
+          it 'returns a hash with the declared key-value pairs, ignores unhandled key-value pairs' do
             decanter.strict :ignore
             decanted_params = decanter.decant(args)
 
