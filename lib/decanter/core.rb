@@ -50,7 +50,7 @@ module Decanter
       end
 
       def strict(mode)
-        raise(ArgumentError, "#{self.name}: Unknown strict value #{mode}") unless [true, false].include? mode
+        raise(ArgumentError, "#{self.name}: Unknown strict value #{mode}") unless [:ignore, true, false].include? mode
         @strict_mode = mode
       end
 
@@ -71,8 +71,9 @@ module Decanter
           .map { |input| [input[:key], input[:options][DEFAULT_VALUE_KEY]] }
           .to_h
 
-        # parse default values
-        handled_keys(default_result)
+        # parse handled default values, including keys
+        # with defaults not already managed by handled_keys
+        default_result.merge(handled_keys(default_result))
       end
 
       def default_value_inputs
@@ -121,14 +122,21 @@ module Decanter
             .map { |handler| "#{handler[:name]}_attributes".to_sym }
 
         return {} unless unhandled_keys.any?
-        raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.") if strict_mode
-        args.select { |key| unhandled_keys.include? key.to_sym }
+
+        case strict_mode
+        when :ignore
+          p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
+          {}
+        when true
+          raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
+        else
+          args.select { |key| unhandled_keys.include? key.to_sym }
+        end
       end
 
       def handled_keys(args)
         arg_keys = args.keys.map(&:to_sym)
         inputs, assocs = handlers.values.partition { |handler| handler[:type] == :input }
-
         {}.merge(
           # Inputs
           inputs.select     { |handler| (arg_keys & handler[:name]).any? }
