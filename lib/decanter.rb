@@ -57,7 +57,6 @@ end
 
 require 'decanter/version'
 require 'decanter/configuration'
-require 'decanter/core'
 require 'decanter/base'
 require 'decanter/extensions'
 require 'decanter/exceptions'
