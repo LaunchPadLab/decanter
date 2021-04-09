@@ -67,9 +67,8 @@ describe Decanter::CollectionDetection do
       end
 
       context 'and the value is truthy' do
-        it 'is not considered a collection' do
-          decanter.decant(args, is_collection: 'yes')
-          expect(base_decanter).to have_received(:decant).once.with(args)
+        it 'raises an error' do
+          expect { decanter.decant(args, is_collection: 'yes') }.to raise_error(ArgumentError)
         end
       end
     end
