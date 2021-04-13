@@ -101,6 +101,7 @@ If this option is not provided, autodetect logic is used to determine if the pro
 - `nil` or not provided: will try to autodetect single vs collection
 - `true` will always treat the incoming params args as *collection*
 - `false` will always treat incoming params args as *single object*
+- `truthy` will raise an error
 
 ### Nested resources
 
