@@ -169,6 +169,16 @@ describe Decanter::Core do
     end
   end
 
+  describe '#log_unhandled_keys' do
+
+    let(:mode) { false }
+
+    it 'sets the log_unhandled_keys mode' do
+      dummy.log_unhandled_keys mode
+      expect(dummy.log_unhandled_keys mode).to eq mode
+    end
+  end
+
   describe '#parse' do
 
     context 'when a parser is not specified' do
@@ -331,6 +341,20 @@ describe Decanter::Core do
         it 'returns a hash without the unhandled keys and values' do
           dummy.strict :ignore
           expect(dummy.unhandled_keys(args)).to match({})
+        end
+
+        it 'logs the unhandled keys' do
+          dummy.strict :ignore
+          expect { dummy.unhandled_keys(args) }.to output(/ignoring unhandled keys: foo, baz/).to_stdout
+        end
+
+        context 'and log_unhandled_keys mode is false' do
+
+          it 'does not log the unhandled keys' do
+            dummy.strict :ignore
+            dummy.log_unhandled_keys false
+            expect { dummy.unhandled_keys(args) }.not_to output(/ignoring unhandled keys: foo, baz/).to_stdout
+          end
         end
       end
 
