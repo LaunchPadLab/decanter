@@ -173,9 +173,18 @@ describe Decanter::Core do
 
     let(:mode) { false }
 
-    it 'sets the log_unhandled_keys mode' do
-      dummy.log_unhandled_keys mode
-      expect(dummy.log_unhandled_keys mode).to eq mode
+    it 'sets the @log_unhandled_keys_mode' do
+      dummy.log_unhandled_keys(mode)
+      expect(dummy.log_unhandled_keys_mode).to eq mode
+    end
+
+    context 'for an unknown mode' do
+
+      let(:mode) { :foo }
+
+      it 'raises an error' do
+        expect { dummy.log_unhandled_keys(mode) }.to raise_error(ArgumentError)
+      end
     end
   end
 

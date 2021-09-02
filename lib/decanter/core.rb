@@ -55,6 +55,7 @@ module Decanter
       end
 
       def log_unhandled_keys(mode)
+        raise(ArgumentError, "#{self.name}: Unknown log_unhandled_keys value #{mode}") unless [true, false].include? mode
         @log_unhandled_keys_mode = mode
       end
 
@@ -234,7 +235,8 @@ module Decanter
       end
 
       def log_unhandled_keys_mode
-        @log_unhandled_keys_mode.nil? ? Decanter.configuration.log_unhandled_keys : @log_unhandled_keys_mode
+        return !!(Decanter.configuration.log_unhandled_keys) if @log_unhandled_keys_mode.nil?
+        !!@log_unhandled_keys_mode
       end
 
       # Helpers
