@@ -54,6 +54,11 @@ module Decanter
         @strict_mode = mode
       end
 
+      def log_unhandled_keys(mode)
+        raise(ArgumentError, "#{self.name}: Unknown log_unhandled_keys value #{mode}") unless [true, false].include? mode
+        @log_unhandled_keys_mode = mode
+      end
+
       def decant(args)
         return handle_empty_args if args.blank?
         return empty_required_input_error unless required_input_keys_present?(args)
@@ -125,7 +130,7 @@ module Decanter
 
         case strict_mode
         when :ignore
-          p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
+          p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}." if log_unhandled_keys_mode
           {}
         when true
           raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
@@ -227,6 +232,11 @@ module Decanter
 
       def strict_mode
         @strict_mode.nil? ? Decanter.configuration.strict : @strict_mode
+      end
+
+      def log_unhandled_keys_mode
+        return !!(Decanter.configuration.log_unhandled_keys) if @log_unhandled_keys_mode.nil?
+        !!@log_unhandled_keys_mode
       end
 
       # Helpers

@@ -280,11 +280,14 @@ TripDecanter.decant({ name: 'Vacation 2020' })
 
 You can generate a local copy of the default configuration with `rails generate decanter:install`. This will create an initializer where you can do global configuration:
 
+Setting strict mode to :ignore will log out any unhandled keys. To avoid excessive logging, the global configuration can be set to `log_unhandled_keys = false`
+
 ```ruby
 # ./config/initializers/decanter.rb
 
 Decanter.config do |config|
   config.strict = false
+  config.log_unhandled_keys = false
 end
 ```
 
