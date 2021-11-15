@@ -9,13 +9,13 @@ describe 'IntegerParser' do
   describe '#parse' do
     context 'with a string' do
       context 'with a positive value' do
-        it 'returns an integer' do
+        it 'returns a positive integer' do
           expect(parser.parse(name, '1')).to match({name => 1})
         end
       end
 
       context 'with a negative value' do
-        it 'returns an integer' do
+        it 'returns a negative integer' do
           expect(parser.parse(name, '-1')).to match({name => -1})
         end
       end
