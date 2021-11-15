@@ -8,8 +8,16 @@ describe 'IntegerParser' do
 
   describe '#parse' do
     context 'with a string' do
-      it 'returns an integer' do
-        expect(parser.parse(name, '1')).to match({name => 1})
+      context 'with a positive value' do
+        it 'returns an integer' do
+          expect(parser.parse(name, '1')).to match({name => 1})
+        end
+      end
+
+      context 'with a negative value' do
+        it 'returns an integer' do
+          expect(parser.parse(name, '-1')).to match({name => -1})
+        end
       end
     end
 

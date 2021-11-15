@@ -8,8 +8,16 @@ describe 'FloatParser' do
 
   describe '#parse' do
     context 'with a string' do
-      it 'returns a float' do
-        expect(parser.parse(name, '1.00')).to match({name => 1.00})
+      context 'with a positive value' do
+        it 'returns a float' do
+          expect(parser.parse(name, '1.00')).to match({name => 1.00})
+        end
+      end
+
+      context 'with a negative value' do
+        it 'returns a float' do
+          expect(parser.parse(name, '-1.00')).to match({name => -1.00})
+        end
       end
     end
 
