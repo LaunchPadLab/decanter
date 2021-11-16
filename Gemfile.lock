@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    decanter (3.6.1)
+    decanter (3.7.0)
       actionpack (>= 4.2.10)
       activesupport
       rails-html-sanitizer (>= 1.0.4)
