@@ -3,7 +3,7 @@
 Decanter is a Ruby gem that makes it easy to transform incoming data before it hits the model. You can think of Decanter as the opposite of Active Model Serializers (AMS). While AMS transforms your outbound data into a format that your frontend consumes, Decanter transforms your incoming data into a format that your backend consumes.
 
 ```ruby
-gem 'decanter', '~> 3.0'
+gem 'decanter', '~> 4.0'
 ```
 
 ## Migration Guides

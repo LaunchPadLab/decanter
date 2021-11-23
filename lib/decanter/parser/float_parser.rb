@@ -1,7 +1,7 @@
 module Decanter
   module Parser
     class FloatParser < ValueParser
-      REGEX = /(\d|[.])/
+      REGEX = /(\d|[.]|[-])/
 
       allow Float, Integer
 

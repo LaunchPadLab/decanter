@@ -8,20 +8,28 @@ describe 'FloatParser' do
 
   describe '#parse' do
     context 'with a string' do
-      it 'returns a float' do
-        expect(parser.parse(name, '1.00')).to match({name => 1.00})
+      context 'with a positive value' do
+        it 'returns a positive float' do
+          expect(parser.parse(name, '1.00')).to eq({ foo: 1.00 })
+        end
+      end
+
+      context 'with a negative value' do
+        it 'returns a negative float' do
+          expect(parser.parse(name, '-1.00')).to eq({ foo: -1.00 })
+        end
       end
     end
 
     context 'with empty string' do
       it 'returns nil' do
-        expect(parser.parse(name, '')).to match({name => nil})
+        expect(parser.parse(name, '')).to eq({ foo: nil })
       end
     end
 
     context 'with nil' do
       it 'returns nil' do
-        expect(parser.parse(name, nil)).to match({name => nil})
+        expect(parser.parse(name, nil)).to eq({ foo: nil })
       end
     end
 

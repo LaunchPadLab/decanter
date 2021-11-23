@@ -1,7 +1,7 @@
 module Decanter
   module Parser
     class IntegerParser < ValueParser
-      REGEX = /(\d|[.])/
+      REGEX = /(\d|[.]|[-])/
 
       allow Integer
 
