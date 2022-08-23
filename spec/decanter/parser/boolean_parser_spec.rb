@@ -12,7 +12,7 @@ describe 'BooleanParser' do
       ['boolean', true],
       ['string', 'true'],
       ['string', 'True'],
-      ['string', 'truE']
+      ['string', 'truE'],
     ]
 
     falses = [
@@ -20,7 +20,24 @@ describe 'BooleanParser' do
       ['number', 2],
       ['string', '2'],
       ['boolean', false],
-      ['string', 'tru']
+      ['string', 'tru'],
+    ]
+
+    trues_with_options = [
+      ['string', 'yes', 'string', 'yes'],
+      ['string', 'Yes', 'string', 'yes'],
+      ['string', 'is true', 'string', 'is true'],
+      ['string', 'is truE', 'string', 'is True'],
+      ['number', 3, 'number', 3],
+      ['number', 3, 'string', '3'],
+      ['string', '3', 'number', 3],
+    ]
+
+    falses_with_options = [
+      ['string', 'false', 'string', 'false'],
+      ['string', 'false', 'string', 'False'],
+      ['string', 'yes', 'string', ''],
+      ['string', 'yes', 'string', '@yes']
     ]
 
     let(:name) { :foo }
@@ -59,6 +76,34 @@ describe 'BooleanParser' do
           .to raise_error(Decanter::ParseError)
         expect { parser.parse(name, []) }
           .to raise_error(Decanter::ParseError)
+      end
+    end
+
+    context 'returns true with options for' do
+      trues_with_options.each do |cond|
+        it "#{cond[0]}: #{cond[1]}, option: {#{cond[2]}: #{cond[3]}}" do
+          expect(parser.parse(name, cond[1], truth: cond[3])).to match({name => true})
+        end
+      end
+    end
+
+    context 'returns false with options for' do
+      falses_with_options.each do |cond|
+        it "#{cond[0]}: #{cond[1]}, option: {#{cond[2]}: #{cond[3]}}" do
+          expect(parser.parse(name, cond[1], truth: cond[3])).to match({name => false})
+        end
+      end
+    end
+
+    context 'with empty string and empty options' do
+      it 'returns nil' do
+        expect(parser.parse(name, '', truth: '')).to match({name => nil})
+      end
+    end
+
+    context 'with nil and nil options' do
+      it 'returns nil' do
+        expect(parser.parse(name, nil, truth: nil)).to match({name => nil})
       end
     end
   end
