@@ -11,11 +11,11 @@ module Decanter
       end
 
       def self.parse_options(val, options)
-        truth = options.fetch(:truth, nil)&.to_s&.downcase
-        accounted_for_values = [nil, "false", "true", "1", "0", ""]
+        truth = options.fetch(:truth, '').to_s.downcase
+        raise Decanter::ParseError.new 'Expects a single value' if truth.is_a? Array
+        accounted_for_values = ['false', 'true', '1', '0', '']
         return false if accounted_for_values.include?(truth)
 
-        raise Decanter::ParseError.new 'Expects a single value' if truth.is_a? Array
         !!/#{truth}/i.match(val.to_s)
       end
     end

@@ -12,7 +12,6 @@ describe 'BooleanParser' do
       ['boolean', true],
       ['string', 'true'],
       ['string', 'True'],
-      ['string', 'truE'],
     ]
 
     falses = [
@@ -20,7 +19,6 @@ describe 'BooleanParser' do
       ['number', 2],
       ['string', '2'],
       ['boolean', false],
-      ['string', 'tru'],
     ]
 
     trues_with_options = [
@@ -37,7 +35,6 @@ describe 'BooleanParser' do
       ['string', 'false', 'string', 'false'],
       ['string', 'false', 'string', 'False'],
       ['string', 'yes', 'string', ''],
-      ['string', 'yes', 'string', '@yes']
     ]
 
     let(:name) { :foo }
