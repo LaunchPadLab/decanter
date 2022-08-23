@@ -135,6 +135,12 @@ Note: these parsers are designed to operate on a single value, except for `:arra
 input :ids, :array, parse_each: :integer
 ```
 
+`:boolean` will parse values of `true` and `1` as truthy. If another value is expected to be truthy, use the option `truth_value` to assign a custom truthy case.
+
+```ruby
+input :checkbox, :boolean, truth_value: 'yes'
+```
+
 ### Parser options
 
 Parsers can receive options that modify their behavior. These options are passed in as named arguments to `input`:
