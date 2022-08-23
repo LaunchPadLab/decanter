@@ -79,7 +79,7 @@ describe 'BooleanParser' do
     context 'returns true with options for' do
       trues_with_options.each do |cond|
         it "#{cond[0]}: #{cond[1]}, option: {#{cond[2]}: #{cond[3]}}" do
-          expect(parser.parse(name, cond[1], truth: cond[3])).to match({name => true})
+          expect(parser.parse(name, cond[1], true_value: cond[3])).to match({name => true})
         end
       end
     end
@@ -87,20 +87,20 @@ describe 'BooleanParser' do
     context 'returns false with options for' do
       falses_with_options.each do |cond|
         it "#{cond[0]}: #{cond[1]}, option: {#{cond[2]}: #{cond[3]}}" do
-          expect(parser.parse(name, cond[1], truth: cond[3])).to match({name => false})
+          expect(parser.parse(name, cond[1], true_value: cond[3])).to match({name => false})
         end
       end
     end
 
     context 'with empty string and empty options' do
       it 'returns nil' do
-        expect(parser.parse(name, '', truth: '')).to match({name => nil})
+        expect(parser.parse(name, '', true_value: '')).to match({name => nil})
       end
     end
 
     context 'with nil and nil options' do
       it 'returns nil' do
-        expect(parser.parse(name, nil, truth: nil)).to match({name => nil})
+        expect(parser.parse(name, nil, true_value: nil)).to match({name => nil})
       end
     end
   end
