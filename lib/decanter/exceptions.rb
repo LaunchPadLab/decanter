@@ -3,4 +3,5 @@ module Decanter
   class UnhandledKeysError < Error; end
   class MissingRequiredInputValue < Error; end
   class ParseError < Error; end
+  class ValueFormatError < Error; end
 end
