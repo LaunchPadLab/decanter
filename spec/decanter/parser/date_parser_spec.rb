@@ -20,6 +20,13 @@ describe 'DateParser' do
       end
     end
 
+    context 'with a invalid date string and custom format' do
+      it 'raises an Argument Error' do
+        expect { parser.parse(name, '2-21-1990', parse_format: '%d-%m-%Y') }
+          .to raise_error(Decanter::ValueFormatError, 'invalid Date value for format')
+      end
+    end
+
     context 'with a date' do
       it 'returns the date' do
         expect(parser.parse(name, Date.new(1990,2,21))).to match({name => Date.new(1990,2,21)})
