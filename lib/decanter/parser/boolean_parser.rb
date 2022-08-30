@@ -5,27 +5,22 @@ module Decanter
       allow TrueClass, FalseClass
 
       parser do |val, options|
-        single_value_check(val)
-        next if (val.nil? || val === '')
-        [1, '1'].include?(val) || !!/true/i.match(val.to_s) || parse_options(val, options)
+        normalized_val = normalize(val)
+        next if normalized_val.nil?
+
+        true_values = ['1', 'true']
+
+        option_val = options.fetch(:true_value, nil)
+        normalized_option = normalize(option_val)
+
+        true_values << normalized_option if normalized_option
+        true_values.find {|tv| !!/#{tv}/i.match(normalized_val)}.present?
       end
 
-      def self.parse_options(val, options)
-        raw_true_value = options.fetch(:true_value, nil)
-        return false if raw_true_value.nil?
-
-        single_value_check(raw_true_value)
-        true_value = raw_true_value.to_s.downcase
-
-        # want to avoid using values that are already implemented
-        accounted_for_values = ['false', 'true', '1', '0', '']
-        return false if accounted_for_values.include?(true_value)
-
-        !!/#{true_value}/i.match(val.to_s)
-      end
-
-      def self.single_value_check(v)
-        raise Decanter::ParseError.new 'Expects a single value' if v.is_a? Array
+      def self.normalize(value)
+        return if (value.nil? || value === '')
+        raise Decanter::ParseError.new 'Expects a single value' if value.is_a? Array
+        value.to_s.downcase
       end
     end
   end

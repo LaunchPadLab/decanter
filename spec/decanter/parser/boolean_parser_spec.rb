@@ -29,12 +29,12 @@ describe 'BooleanParser' do
       ['number', 3, 'number', 3],
       ['number', 3, 'string', '3'],
       ['string', '3', 'number', 3],
+      ['string', 'false', 'string', 'false'],
+      ['string', 'false', 'string', 'False'],
     ]
 
     falses_with_options = [
-      ['string', 'false', 'string', 'false'],
-      ['string', 'false', 'string', 'False'],
-      ['string', 'yes', 'string', ''],
+      ['string', 'yes', 'string', '']
     ]
 
     let(:name) { :foo }
