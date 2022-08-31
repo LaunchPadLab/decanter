@@ -143,6 +143,12 @@ Parsers can receive options that modify their behavior. These options are passed
 input :start_date, :date, parse_format: '%Y-%m-%d'
 ```
 
+`:boolean` will parse values of `true` and `1` as truthy. If another value is expected to be truthy, use the option `truth_value` to assign a custom truthy case.
+
+```ruby
+input :checkbox, :boolean, truth_value: 'yes'
+```
+
 ### Exceptions
 
 By default, `Decanter#decant` will raise an exception when unexpected parameters are passed. To override this behavior, you can change the strict mode option to one of:
