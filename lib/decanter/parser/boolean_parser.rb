@@ -18,9 +18,10 @@ module Decanter
       end
 
       def self.normalize(value)
-        return if (value.nil? || value === '')
         raise Decanter::ParseError.new 'Expects a single value' if value.is_a? Array
-        value.to_s.downcase
+        return if (value.nil? || value.blank?)
+       
+        value.to_s
       end
     end
   end
