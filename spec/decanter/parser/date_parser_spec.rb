@@ -16,7 +16,14 @@ describe 'DateParser' do
     context 'with an invalid date string' do
       it 'raises an Argument Error' do
         expect { parser.parse(name, '2-21-1990') }
-          .to raise_error(ArgumentError, 'invalid date')
+          .to raise_error(Decanter::ValueFormatError, 'invalid Date value for format')
+      end
+    end
+
+    context 'with a invalid date string and custom format' do
+      it 'raises an Argument Error' do
+        expect { parser.parse(name, '2-21-1990', parse_format: '%d-%m-%Y') }
+          .to raise_error(Decanter::ValueFormatError, 'invalid Date value for format')
       end
     end
 
