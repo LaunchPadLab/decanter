@@ -20,7 +20,8 @@ describe 'BooleanParser' do
       ['number', 2],
       ['string', '2'],
       ['boolean', false],
-      ['string', 'tru']
+      ['string', 'tru'],
+      ['string', 'not true']
     ]
 
     let(:name) { :foo }
