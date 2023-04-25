@@ -8,7 +8,7 @@ describe 'JsonParser' do
 
   describe '#parse' do
     it 'parses string value and returns a parsed JSON' do
-      expect(parser.parse(name, '{"key": "value"}')).to match({name => "{\"key\": \"value\"}"})
+      expect(parser.parse(name, '{"key": "value"}')).to match({name => {"key" => "value"}})
     end
 
     context 'with empty string' do
