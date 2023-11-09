@@ -128,6 +128,7 @@ Decanter comes with the following parsers out of the box:
 - `:phone`
 - `:string`
 - `:array`
+- `:json`
 
 Note: these parsers are designed to operate on a single value, except for `:array`. This parser expects an array, and will use the `parse_each` option to call a given parser on each of its elements:
 
