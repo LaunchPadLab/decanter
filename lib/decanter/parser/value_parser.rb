@@ -3,9 +3,10 @@ require_relative 'core'
 module Decanter
   module Parser
     class ValueParser < Base
+
       def self._parse(name, value, options={})
         self.validate_singularity(value)
-        { name => @parser.call(value, options) }
+        super(name, value, options)
       end
 
       def self.validate_singularity(value)

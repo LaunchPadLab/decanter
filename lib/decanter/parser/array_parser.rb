@@ -1,6 +1,6 @@
 module Decanter
   module Parser
-    class ArrayParser < ValueParser
+    class ArrayParser < Base
 
       DUMMY_VALUE_KEY = '_'.freeze
 
