@@ -1,3 +1,3 @@
 module Decanter
-  VERSION = '4.0.3'.freeze
+  VERSION = '4.0.2'.freeze
 end
