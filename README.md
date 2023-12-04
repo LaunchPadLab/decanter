@@ -147,7 +147,7 @@ input :start_date, :date, parse_format: '%Y-%m-%d'
 **Available Options:**
 | Parser      | Option      | Default    | Notes
 | ----------- | ----------- | -----------| -----------
-| `ArrayParser`   | `parse_each`| N/A | Accepts a parser type, then uses that parser to parse each item in the array
+| `ArrayParser`   | `parse_each`| N/A | Accepts a parser type, then uses that parser to parse each element in the array. If this option is not defined, each element is simply returned.
 | `DateParser`| `parse_format` | `'%m/%d/%Y'`| Accepts any format string accepted by Ruby's `strftime` method
 | `DateTimeParser` | `parse_format` | `'%m/%d/%Y %I:%M:%S %p'` | Accepts any format string accepted by Ruby's `strftime` method
 
