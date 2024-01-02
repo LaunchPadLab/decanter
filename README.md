@@ -61,7 +61,7 @@ Then, transform incoming params in your controller using `Decanter#decant`:
 
 ### Generators
 
-Decanter comes with generators for creating `Decanter` and `Parser` files:
+Decanter comes with custom generators for creating `Decanter` and `Parser` files:
 
 ```
 rails g decanter Trip name:string start_date:date end_date:date
@@ -69,6 +69,21 @@ rails g decanter Trip name:string start_date:date end_date:date
 
 ```
 rails g parser TruncatedString
+```
+
+Additionally, when using the Rails resource generator in a project that includes Decanter, Decanter will automatically create a decanter for the new resource:
+
+```
+$ rails g resource Trip name:string start_date:date end_date:date
+
+// Creates app/decanters/trip_decanter.rb
+
+class TripDecanter < Decanter::Base
+  input :id, :integer
+  input :name, :string
+  input :start_date, :date
+  input :end_date, :date
+end
 ```
 
 ### Decanting Collections
