@@ -74,6 +74,8 @@ rails g decanter Trip name:string start_date:date end_date:date
 rails g parser TruncatedString
 ```
 
+See more details on using custom parsers [here](#custom-parsers).
+
 #### Resources
 
 When using the Rails resource generator in a project that includes Decanter, a decanter will be automatically created for the new resource:
