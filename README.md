@@ -191,8 +191,8 @@ You can also disable strict mode globally using a [global configuration](#global
 To add a custom parser, first create a parser class:
 
 ```rb
-# app/parsers/truncate_string_parser.rb
-class TruncateStringParser < Decanter::Parser::ValueParser
+# app/parsers/truncated_string_parser.rb
+class TruncatedStringParser < Decanter::Parser::ValueParser
 
   parser do |value, options|
     length = options.fetch(:length, 100)
@@ -204,7 +204,7 @@ end
 Then, use the appropriate key to look up the parser:
 
 ```ruby
-  input :name, :truncate_string #=> TruncateStringParser
+  input :name, :truncated_string #=> TruncatedStringParser
 ```
 
 #### Custom parser methods
