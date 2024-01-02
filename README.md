@@ -67,11 +67,26 @@ Decanter comes with custom generators for creating `Decanter` and `Parser` files
 
 ```
 rails g decanter Trip name:string start_date:date end_date:date
+
+# Creates app/decanters/trip_decanter.rb:
+class TripDecanter < Decanter::Base
+  input :id, :integer
+  input :name, :string
+  input :start_date, :date
+  input :end_date, :date
+end
 ```
 
 #### Parsers
 ```
 rails g parser TruncatedString
+
+# Creates lib/decanter/parsers/truncated_string_parser.rb:
+class TruncatedStringParser < Decanter::Parser::ValueParser
+  parser do |value, options|
+    value
+  end
+end
 ```
 
 See more details on using custom parsers [here](#custom-parsers).
@@ -83,8 +98,7 @@ When using the Rails resource generator in a project that includes Decanter, a d
 ```
 rails g resource Trip name:string start_date:date end_date:date
 
-// Creates app/decanters/trip_decanter.rb
-
+# Creates app/decanters/trip_decanter.rb:
 class TripDecanter < Decanter::Base
   input :id, :integer
   input :name, :string
