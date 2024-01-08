@@ -88,7 +88,7 @@ class TruncatedStringParser < Decanter::Parser::ValueParser
 end
 ```
 
-[Learn more about using custom parsers.](#custom-parsers)
+[Learn more about using custom parsers](#custom-parsers)
 
 #### Resources
 
