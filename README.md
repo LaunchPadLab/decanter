@@ -70,7 +70,6 @@ rails g decanter Trip name:string start_date:date end_date:date
 
 # Creates app/decanters/trip_decanter.rb:
 class TripDecanter < Decanter::Base
-  input :id, :integer
   input :name, :string
   input :start_date, :date
   input :end_date, :date
@@ -89,7 +88,7 @@ class TruncatedStringParser < Decanter::Parser::ValueParser
 end
 ```
 
-See more details on using custom parsers [here](#custom-parsers).
+[Learn more about using custom parsers.](#custom-parsers)
 
 #### Resources
 
@@ -100,7 +99,6 @@ rails g resource Trip name:string start_date:date end_date:date
 
 # Creates app/decanters/trip_decanter.rb:
 class TripDecanter < Decanter::Base
-  input :id, :integer
   input :name, :string
   input :start_date, :date
   input :end_date, :date
