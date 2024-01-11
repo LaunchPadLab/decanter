@@ -61,14 +61,48 @@ Then, transform incoming params in your controller using `Decanter#decant`:
 
 ### Generators
 
-Decanter comes with generators for creating `Decanter` and `Parser` files:
+Decanter comes with custom generators for creating `Decanter` and `Parser` files:
+
+#### Decanters
 
 ```
 rails g decanter Trip name:string start_date:date end_date:date
+
+# Creates app/decanters/trip_decanter.rb:
+class TripDecanter < Decanter::Base
+  input :name, :string
+  input :start_date, :date
+  input :end_date, :date
+end
 ```
 
+#### Parsers
 ```
 rails g parser TruncatedString
+
+# Creates lib/decanter/parsers/truncated_string_parser.rb:
+class TruncatedStringParser < Decanter::Parser::ValueParser
+  parser do |value, options|
+    value
+  end
+end
+```
+
+[Learn more about using custom parsers](#custom-parsers)
+
+#### Resources
+
+When using the Rails resource generator in a project that includes Decanter, a decanter will be automatically created for the new resource:
+
+```
+rails g resource Trip name:string start_date:date end_date:date
+
+# Creates app/decanters/trip_decanter.rb:
+class TripDecanter < Decanter::Base
+  input :name, :string
+  input :start_date, :date
+  input :end_date, :date
+end
 ```
 
 ### Decanting Collections
@@ -184,8 +218,8 @@ You can also disable strict mode globally using a [global configuration](#global
 To add a custom parser, first create a parser class:
 
 ```rb
-# app/parsers/truncate_string_parser.rb
-class TruncateStringParser < Decanter::Parser::ValueParser
+# app/parsers/truncated_string_parser.rb
+class TruncatedStringParser < Decanter::Parser::ValueParser
 
   parser do |value, options|
     length = options.fetch(:length, 100)
@@ -197,7 +231,7 @@ end
 Then, use the appropriate key to look up the parser:
 
 ```ruby
-  input :name, :truncate_string #=> TruncateStringParser
+  input :name, :truncated_string #=> TruncatedStringParser
 ```
 
 #### Custom parser methods
