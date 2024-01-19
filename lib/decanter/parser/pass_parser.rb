@@ -1,6 +1,6 @@
 module Decanter
   module Parser
-    class PassParser < ValueParser
+    class PassParser < Base
 
       parser do |val, options|
         next if (val.nil? || val == '')

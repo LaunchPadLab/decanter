@@ -8,6 +8,10 @@ module Decanter
 
       module ClassMethods
 
+        def _parse(name, value, options={})
+          { name => @parser.call(value, options) }
+        end
+
         # Check if allowed, parse if not
         def parse(name, value, options={})
           if allowed?(value)
