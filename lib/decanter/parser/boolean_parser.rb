@@ -18,10 +18,9 @@ module Decanter
       end
 
       def self.normalize(value)
-        raise Decanter::ParseError.new 'Expects a single value' if value.is_a? Array
-        return if (value.nil? || value.blank?)
-       
-        value.to_s
+        raise Decanter::ParseError.new 'Expects a single value' if val.is_a? Array
+        next if (val.nil? || val === '')
+        [1, '1'].include?(val) || !!/^true$/i.match?(val.to_s)
       end
     end
   end
