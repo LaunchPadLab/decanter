@@ -27,11 +27,11 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'actionpack', '>= 4.2.10'
+  spec.add_dependency 'actionpack', '>= 7.1.3.2'
   spec.add_dependency 'activesupport'
   spec.add_dependency 'rails-html-sanitizer', '>= 1.0.4'
 
-  spec.add_development_dependency 'bundler', '~> 1.9'
+  spec.add_development_dependency 'bundler', '~> 2.4.22'
   spec.add_development_dependency 'dotenv'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rspec-rails', '~> 3.9'
