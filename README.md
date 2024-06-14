@@ -3,7 +3,7 @@
 Decanter is a Ruby gem that makes it easy to transform incoming data before it hits the model. You can think of Decanter as the opposite of Active Model Serializers (AMS). While AMS transforms your outbound data into a format that your frontend consumes, Decanter transforms your incoming data into a format that your backend consumes.
 
 ```ruby
-gem 'decanter', '~> 4.0'
+gem 'decanter', '~> 5.0'
 ```
 
 ## Migration Guides
@@ -77,6 +77,7 @@ end
 ```
 
 #### Parsers
+
 ```
 rails g parser TruncatedString
 
@@ -133,8 +134,8 @@ You can use the `is_collection` option for explicit control over decanting colle
 If this option is not provided, autodetect logic is used to determine if the providing incoming params holds a single object or collection of objects.
 
 - `nil` or not provided: will try to autodetect single vs collection
-- `true` will always treat the incoming params args as *collection*
-- `false` will always treat incoming params args as *single object*
+- `true` will always treat the incoming params args as _collection_
+- `false` will always treat incoming params args as _single object_
 - `truthy` will raise an error
 
 ### Nested resources
@@ -178,10 +179,11 @@ Some parsers can receive options that modify their behavior. These options are p
 ```ruby
 input :start_date, :date, parse_format: '%Y-%m-%d'
 ```
+
 **Available Options:**
-| Parser      | Option      | Default    | Notes
+| Parser | Option | Default | Notes
 | ----------- | ----------- | -----------| -----------
-| `ArrayParser`   | `parse_each`| N/A | Accepts a parser type, then uses that parser to parse each element in the array. If this option is not defined, each element is simply returned.
+| `ArrayParser` | `parse_each`| N/A | Accepts a parser type, then uses that parser to parse each element in the array. If this option is not defined, each element is simply returned.
 | `DateParser`| `parse_format` | `'%m/%d/%Y'`| Accepts any format string accepted by Ruby's `strftime` method
 | `DateTimeParser` | `parse_format` | `'%m/%d/%Y %I:%M:%S %p'` | Accepts any format string accepted by Ruby's `strftime` method
 
@@ -298,7 +300,6 @@ end
 ```
 
 _Note: we recommend using [Active Record validations](https://guides.rubyonrails.org/active_record_validations.html) to check for presence of an attribute, rather than using the `required` option. This method is intended for use in non-RESTful routes or cases where Active Record validations are not available._
-
 
 ### Default values
 

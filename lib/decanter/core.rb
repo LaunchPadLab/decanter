@@ -1,3 +1,5 @@
+require 'action_controller'
+
 module Decanter
   module Core
     DEFAULT_VALUE_KEY = :default_value
@@ -8,40 +10,42 @@ module Decanter
     end
 
     module ClassMethods
-      def input(name, parsers=nil, **options)
+      def input(name, parsers = nil, **options)
         # Convert all input names to symbols to correctly calculate handled vs. unhandled keys
         input_names = [name].flatten.map(&:to_sym)
 
         if input_names.length > 1 && parsers.blank?
-          raise ArgumentError.new("#{self.name} no parser specified for input with multiple values.")
+          raise ArgumentError, "#{self.name} no parser specified for input with multiple values."
         end
 
         handlers[input_names] = {
-          key:     options.fetch(:key, input_names.first),
-          name:    input_names,
-          options: options,
-          parsers:  parsers,
-          type:    :input
+          key: options.fetch(:key, input_names.first),
+          name: input_names,
+          options:,
+          parsers:,
+          type: :input
         }
       end
 
+      # Adjusting has_many to explicitly define keyword arguments
       def has_many(assoc, **options)
         handlers[assoc] = {
-          assoc:   assoc,
-          key:     options.fetch(:key, assoc),
-          name:    assoc,
-          options: options,
-          type:    :has_many
+          assoc:,
+          key: options.fetch(:key, assoc),
+          name: assoc,
+          options:,
+          type: :has_many
         }
       end
 
+      # Adjusting has_one similarly
       def has_one(assoc, **options)
         handlers[assoc] = {
-          assoc:   assoc,
-          key:     options.fetch(:key, assoc),
-          name:    assoc,
-          options: options,
-          type:    :has_one
+          assoc:,
+          key: options.fetch(:key, assoc),
+          name: assoc,
+          options:,
+          type: :has_one
         }
       end
 
@@ -50,12 +54,15 @@ module Decanter
       end
 
       def strict(mode)
-        raise(ArgumentError, "#{self.name}: Unknown strict value #{mode}") unless [:ignore, true, false].include? mode
+        raise(ArgumentError, "#{name}: Unknown strict value #{mode}") unless [:ignore, true, false].include? mode
+
         @strict_mode = mode
       end
 
       def log_unhandled_keys(mode)
-        raise(ArgumentError, "#{self.name}: Unknown log_unhandled_keys value #{mode}") unless [true, false].include? mode
+        raise(ArgumentError, "#{name}: Unknown log_unhandled_keys value #{mode}") unless [true,
+                                                                                          false].include? mode
+
         @log_unhandled_keys_mode = mode
       end
 
@@ -65,16 +72,16 @@ module Decanter
 
         # Convert all params passed to a decanter to a hash with indifferent access to mitigate accessor ambiguity
         accessible_args = to_indifferent_hash(args)
-        {}.merge( default_keys )
-          .merge( unhandled_keys(accessible_args) )
-          .merge( handled_keys(accessible_args) )
+        {}.merge(default_keys)
+          .merge(unhandled_keys(accessible_args))
+          .merge(handled_keys(accessible_args))
       end
 
       def default_keys
         # return keys with provided default value when key is not defined within incoming args
         default_result = default_value_inputs
-          .map { |input| [input[:key], input[:options][DEFAULT_VALUE_KEY]] }
-          .to_h
+                         .map { |input| [input[:key], input[:options][DEFAULT_VALUE_KEY]] }
+                         .to_h
 
         # parse handled default values, including keys
         # with defaults not already managed by handled_keys
@@ -100,8 +107,9 @@ module Decanter
         end
       end
 
-      def required_input_keys_present?(args={})
+      def required_input_keys_present?(args = {})
         return true unless any_inputs_required?
+
         compact_inputs = required_inputs.compact
         compact_inputs.all? do |input|
           args.keys.map(&:to_sym).include?(input) && !args[input].nil?
@@ -109,7 +117,8 @@ module Decanter
       end
 
       def empty_required_input_error
-        raise(MissingRequiredInputValue, 'Required inputs have been declared, but no values for those inputs were passed.')
+        raise(MissingRequiredInputValue,
+              'Required inputs have been declared, but no values for those inputs were passed.')
       end
 
       def empty_args_error
@@ -120,20 +129,20 @@ module Decanter
 
       def unhandled_keys(args)
         unhandled_keys = args.keys.map(&:to_sym) -
-          handlers.keys.flatten.uniq -
-          keys_to_ignore -
-          handlers.values
-            .select { |handler| handler[:type] != :input }
-            .map { |handler| "#{handler[:name]}_attributes".to_sym }
+                         handlers.keys.flatten.uniq -
+                         keys_to_ignore -
+                         handlers.values
+                                 .select { |handler| handler[:type] != :input }
+                                 .map { |handler| "#{handler[:name]}_attributes".to_sym }
 
         return {} unless unhandled_keys.any?
 
         case strict_mode
         when :ignore
-          p "#{self.name} ignoring unhandled keys: #{unhandled_keys.join(', ')}." if log_unhandled_keys_mode
+          p "#{name} ignoring unhandled keys: #{unhandled_keys.join(', ')}." if log_unhandled_keys_mode
           {}
         when true
-          raise(UnhandledKeysError, "#{self.name} received unhandled keys: #{unhandled_keys.join(', ')}.")
+          raise(UnhandledKeysError, "#{name} received unhandled keys: #{unhandled_keys.join(', ')}.")
         else
           args.select { |key| unhandled_keys.include? key.to_sym }
         end
@@ -155,22 +164,22 @@ module Decanter
       def handle(handler, args)
         values = args.values_at(*handler[:name])
         values = values.length == 1 ? values.first : values
-        self.send("handle_#{handler[:type]}", handler, values)
+        send("handle_#{handler[:type]}", handler, values)
       end
 
       def handle_input(handler, args)
-         values = args.values_at(*handler[:name])
-         values = values.length == 1 ? values.first : values
-         parse(handler[:key], handler[:parsers], values, handler[:options])
+        values = args.values_at(*handler[:name])
+        values = values.length == 1 ? values.first : values
+        parse(handler[:key], handler[:parsers], values, handler[:options])
       end
 
       def handle_association(handler, args)
         assoc_handlers = [
           handler,
           handler.merge({
-            key:   handler[:options].fetch(:key, "#{handler[:name]}_attributes").to_sym,
-            name:  "#{handler[:name]}_attributes".to_sym
-          })
+                          key: handler[:options].fetch(:key, "#{handler[:name]}_attributes").to_sym,
+                          name: "#{handler[:name]}_attributes".to_sym
+                        })
         ]
 
         assoc_handler_names = assoc_handlers.map { |_handler| _handler[:name] }
@@ -180,20 +189,21 @@ module Decanter
           {}
         when 1
           _handler = assoc_handlers.detect { |_handler| args.has_key?(_handler[:name]) }
-          self.send("handle_#{_handler[:type]}", _handler, args[_handler[:name]])
+          send("handle_#{_handler[:type]}", _handler, args[_handler[:name]])
         else
-          raise ArgumentError.new("Handler #{handler[:name]} matches multiple keys: #{assoc_handler_names}.")
+          raise ArgumentError, "Handler #{handler[:name]} matches multiple keys: #{assoc_handler_names}."
         end
       end
 
       def handle_has_many(handler, values)
         decanter = decanter_for_handler(handler)
         if values.is_a?(Hash)
-          parsed_values = values.map do |index, input_values|
+          parsed_values = values.map do |_index, input_values|
             next if input_values.nil?
+
             decanter.decant(input_values)
           end
-          return { handler[:key] => parsed_values }
+          { handler[:key] => parsed_values }
         else
           {
             handler[:key] => values.compact.map { |value| decanter.decant(value) }
@@ -207,17 +217,16 @@ module Decanter
 
       def decanter_for_handler(handler)
         if specified_decanter = handler[:options][:decanter]
-          Decanter::decanter_from(specified_decanter)
+          Decanter.decanter_from(specified_decanter)
         else
-          Decanter::decanter_for(handler[:assoc])
+          Decanter.decanter_for(handler[:assoc])
         end
       end
 
       def parse(key, parsers, value, options)
         return { key => value } unless parsers
-        if options[:required] && value_missing?(value)
-          raise ArgumentError.new("No value for required argument: #{key}")
-        end
+        raise ArgumentError, "No value for required argument: #{key}" if options[:required] && value_missing?(value)
+
         parser_classes = Parser.parsers_for(parsers)
         Parser.compose_parsers(parser_classes).parse(key, value, options)
       end
@@ -235,7 +244,8 @@ module Decanter
       end
 
       def log_unhandled_keys_mode
-        return !!(Decanter.configuration.log_unhandled_keys) if @log_unhandled_keys_mode.nil?
+        return !!Decanter.configuration.log_unhandled_keys if @log_unhandled_keys_mode.nil?
+
         !!@log_unhandled_keys_mode
       end
 
@@ -244,11 +254,12 @@ module Decanter
       private
 
       def value_missing?(value)
-        value.nil? || value == ""
+        value.nil? || value == ''
       end
 
       def to_indifferent_hash(args)
-        return args.to_unsafe_h if args.class.name == ACTION_CONTROLLER_PARAMETERS_CLASS_NAME
+        return args.to_unsafe_h if args.instance_of?(ActionController::Parameters)
+
         args.to_h.with_indifferent_access
       end
     end
