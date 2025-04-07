@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.description   = 'Decanter aims to reduce complexity in Rails controllers by creating a place for transforming data before it hits the model and database.'
   spec.homepage      = 'https://github.com/launchpadlab/decanter'
   spec.license       = 'MIT'
-  spec.required_ruby_version = '>= 3.2.0'
+  spec.required_ruby_version = '>= 3.3.0'
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.
@@ -36,11 +36,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rails', '>= 7.1.3.2'
   spec.add_dependency 'rails-html-sanitizer', '>= 1.0.4'
 
-  spec.add_development_dependency 'bundler', '~> 2.4.22'
-  spec.add_development_dependency 'dotenv'
-  spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rspec-rails', '~> 3.9'
-  spec.add_development_dependency 'rubocop', '~> 1.59'
-  spec.add_development_dependency 'simplecov', '~> 0.15.1'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
