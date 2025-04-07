@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Decanter
   module Parser
     class FloatParser < ValueParser
@@ -5,8 +7,9 @@ module Decanter
 
       allow Float, Integer
 
-      parser do |val, options|
-        next if (val.nil? || val === '')
+      parser do |val, _options|
+        next if val.nil? || val == ''
+
         val.scan(REGEX).join.try(:to_f)
       end
     end

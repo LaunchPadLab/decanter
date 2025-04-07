@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'IntegerParser' do
-
   let(:name) { :foo }
 
   let(:parser) { Decanter::Parser::IntegerParser }

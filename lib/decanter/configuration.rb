@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module Decanter
   class Configuration
-
     attr_accessor :strict, :log_unhandled_keys
 
     def initialize

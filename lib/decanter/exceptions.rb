@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Decanter
   class Error < StandardError; end
   class UnhandledKeysError < Error; end

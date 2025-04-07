@@ -1,0 +1,50 @@
+AllCops:
+  TargetRubyVersion: 3.3.0
+  NewCops: enable
+  Exclude:
+    - 'bin/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'coverage/**/*'
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'decanter.gemspec'
+
+Lint/UnderscorePrefixedVariableName:
+  Exclude:
+    - 'lib/decanter/core.rb'
+
+Metrics/AbcSize:
+  Max: 20
+  Exclude:
+    - 'lib/decanter/core.rb'    
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+    - 'decanter.gemspec'
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/decanter/core.rb'
+
+Metrics/MethodLength:
+  Max: 25
+
+Metrics/ModuleLength:
+  Max: 205
+
+Naming/PredicateName:
+  Exclude:
+    - 'lib/decanter/core.rb'
+
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
