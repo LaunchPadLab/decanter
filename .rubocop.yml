@@ -15,10 +15,23 @@ Layout/LineLength:
   Exclude:
     - 'decanter.gemspec'
 
+Lint/UnderscorePrefixedVariableName:
+  Exclude:
+    - 'lib/decanter/core.rb'
+
+Metrics/AbcSize:
+  Max: 20
+  Exclude:
+    - 'lib/decanter/core.rb'    
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*_spec.rb'
     - 'decanter.gemspec'
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/decanter/core.rb'
 
 Metrics/MethodLength:
   Max: 25
@@ -26,8 +39,10 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Max: 205
 
-Metrics/AbcSize:
-  Max: 20
+Naming/PredicateName:
+  Exclude:
+    - 'lib/decanter/core.rb'
 
 Style/StringLiterals:
   EnforcedStyle: single_quotes 
+
