@@ -12,6 +12,8 @@ jobs:
       matrix:
         ruby: ["3.2.0", "3.2.7", "3.3.0", "3.3.7"]
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
