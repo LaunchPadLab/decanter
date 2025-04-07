@@ -6,13 +6,13 @@ describe Decanter::Core do
   let(:dummy) { Class.new { include Decanter::Core } }
 
   before(:each) do
-    Decanter::Core.class_variable_set(:@@handlers, {})
-    Decanter::Core.class_variable_set(:@@strict_mode, {})
+    Decanter::Core.instance_variable_set(:@handlers, {})
+    Decanter::Core.instance_variable_set(:@strict_mode, {})
   end
 
   after(:each) do
-    Decanter::Core.class_variable_set(:@@handlers, {})
-    Decanter::Core.class_variable_set(:@@strict_mode, {})
+    Decanter::Core.instance_variable_set(:@handlers, {})
+    Decanter::Core.instance_variable_set(:@strict_mode, {})
   end
 
   describe '#input' do
