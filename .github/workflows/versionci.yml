@@ -12,9 +12,12 @@ jobs:
       matrix:
         ruby: ["3.2.0", "3.2.7", "3.3.0", "3.3.7"]
     steps:
-      - uses: actions/checkout@v3
-      - uses: ruby/setup-ruby@v1
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: bundle exec rspec
+      - name: Run Rubocop
+        run: bundle exec rubocop --force-exclusion --autocorrect --fail-level autocorrect
+      - name: Run Tests
+        run: bundle exec rspec
