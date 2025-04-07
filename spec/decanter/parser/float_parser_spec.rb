@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'FloatParser' do
-
   let(:name) { :foo }
 
   let(:parser) { Decanter::Parser::FloatParser }

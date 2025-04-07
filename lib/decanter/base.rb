@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'decanter/core'
 require 'decanter/collection_detection'
 

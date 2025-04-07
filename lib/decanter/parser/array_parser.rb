@@ -1,18 +1,22 @@
+# frozen_string_literal: true
+
 module Decanter
   module Parser
     class ArrayParser < Base
-
-      DUMMY_VALUE_KEY = '_'.freeze
+      DUMMY_VALUE_KEY = '_'
 
       parser do |val, options|
         next if val.nil?
-        raise Decanter::ParseError.new 'Expects an array' unless val.is_a? Array
+        raise Decanter::ParseError, 'Expects an array' unless val.is_a? Array
+
         # Fetch parser classes for provided keys
         parse_each = options.fetch(:parse_each, :pass)
         item_parsers = Parser.parsers_for(Array.wrap(parse_each))
-        unless item_parsers.all? { |parser| parser <= ValueParser || parser <= PassParser } 
-          raise Decanter::ParseError.new 'parser(s) for array items must subclass either ValueParser or PassParser'
+        unless item_parsers.all? { |parser| parser <= ValueParser || parser <= PassParser }
+          raise Decanter::ParseError,
+                'parser(s) for array items must subclass either ValueParser or PassParser'
         end
+
         # Compose supplied parsers
         item_parser = Parser.compose_parsers(item_parsers)
         # Parse all values

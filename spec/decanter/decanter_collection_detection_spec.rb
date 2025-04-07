@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Decanter::CollectionDetection do
-  let(:base_decanter) {
+  let(:base_decanter) do
     stub_const('BaseDecanter', Class.new)
-  }
+  end
 
-  let(:decanter) {
+  let(:decanter) do
     stub_const('TripDecanter', base_decanter.new)
     TripDecanter.class_eval { include Decanter::CollectionDetection }
-  }
+  end
   let(:args) { { destination: 'Hawaii' } }
 
-  before(:each) {
+  before(:each) do
     allow(base_decanter).to receive(:decant)
-  }
+  end
 
   describe '#decant' do
     context 'when args are a single hash' do
@@ -35,7 +37,7 @@ describe Decanter::CollectionDetection do
       end
 
       context 'and args are not a collection' do
-        let(:args) { { "0": [{ destination: 'Hawaii' }] } }
+        let(:args) { { '0': [{ destination: 'Hawaii' }] } }
         it 'calls decant on the entire element' do
           decanter.decant(args)
           expect(base_decanter).to have_received(:decant).once.with(args)

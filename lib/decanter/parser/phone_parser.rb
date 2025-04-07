@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Decanter
   module Parser
     class PhoneParser < ValueParser
@@ -5,8 +7,9 @@ module Decanter
 
       allow Integer
 
-      parser do |val, options|
-        next if (val.nil? || val === '')
+      parser do |val, _options|
+        next if val.nil? || val === ''
+
         val.scan(REGEX).join.to_s
       end
     end

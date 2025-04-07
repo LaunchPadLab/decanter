@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Decanter
   module CollectionDetection
     def self.included(base)
@@ -15,7 +17,12 @@ module Decanter
 
       # leveraging the approach used in the [fast JSON API gem](https://github.com/Netflix/fast_jsonapi#collection-serialization)
       def collection?(args, collection_option = nil)
-        raise(ArgumentError, "#{name}: Unknown collection option value: #{collection_option}") unless [true, false, nil].include? collection_option
+        unless [
+          true, false, nil
+        ].include? collection_option
+          raise(ArgumentError,
+                "#{name}: Unknown collection option value: #{collection_option}")
+        end
 
         return collection_option unless collection_option.nil?
 

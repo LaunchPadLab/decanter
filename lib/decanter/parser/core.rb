@@ -1,19 +1,19 @@
+# frozen_string_literal: true
+
 module Decanter
   module Parser
     module Core
-
       def self.included(base)
         base.extend(ClassMethods)
       end
 
       module ClassMethods
-
-        def _parse(name, value, options={})
+        def _parse(name, value, options = {})
           { name => @parser.call(value, options) }
         end
 
         # Check if allowed, parse if not
-        def parse(name, value, options={})
+        def parse(name, value, options = {})
           if allowed?(value)
             { name => value }
           else
@@ -43,7 +43,7 @@ module Decanter
 
         # Check for allowed classes
         def allowed?(value)
-          @allowed && @allowed.any? { |allowed| value.is_a? allowed }
+          @allowed&.any? { |allowed| value.is_a? allowed }
         end
       end
     end

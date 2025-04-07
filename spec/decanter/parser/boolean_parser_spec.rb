@@ -1,18 +1,18 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'BooleanParser' do
-
   let(:parser) { Decanter::Parser::BooleanParser }
 
   describe '#parse' do
-
     trues = [
       ['number', 1],
       ['string', 1],
       ['boolean', true],
-      ['string', 'true'],
-      ['string', 'True'],
-      ['string', 'truE']
+      %w[string true],
+      %w[string True],
+      %w[string truE]
     ]
 
     falses = [
@@ -29,7 +29,7 @@ describe 'BooleanParser' do
     context 'returns true for' do
       trues.each do |cond|
         it "#{cond[0]}: #{cond[1]}" do
-          expect(parser.parse(name, cond[1])).to match({name => true})
+          expect(parser.parse(name, cond[1])).to match({ name => true })
         end
       end
     end
@@ -37,20 +37,20 @@ describe 'BooleanParser' do
     context 'returns false for' do
       falses.each do |cond|
         it "#{cond[0]}: #{cond[1]}" do
-          expect(parser.parse(name, cond[1])).to match({name => false})
+          expect(parser.parse(name, cond[1])).to match({ name => false })
         end
       end
     end
 
     context 'with empty string' do
       it 'returns nil' do
-        expect(parser.parse(name, '')).to match({name => nil})
+        expect(parser.parse(name, '')).to match({ name => nil })
       end
     end
 
     context 'with nil' do
       it 'returns nil' do
-        expect(parser.parse(name, nil)).to match({name => nil})
+        expect(parser.parse(name, nil)).to match({ name => nil })
       end
     end
 

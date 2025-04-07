@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'parser/utils'
 
 module Decanter
@@ -15,7 +17,8 @@ module Decanter
 
       # Composes multiple parsers into a single parser
       def compose_parsers(parsers)
-        raise ArgumentError.new('expects an array') unless parsers.is_a? Array
+        raise ArgumentError, 'expects an array' unless parsers.is_a? Array
+
         composed_parser = Class.new(Decanter::Parser::ComposeParser)
         composed_parser.parsers(parsers)
         composed_parser
@@ -31,7 +34,8 @@ module Decanter
         when Symbol
           symbol_to_string(klass_or_sym)
         else
-          raise ArgumentError.new("cannot lookup parser for #{klass_or_sym} with class #{klass_or_sym.class}")
+          raise ArgumentError,
+                "cannot lookup parser for #{klass_or_sym} with class #{klass_or_sym.class}"
         end.concat('Parser')
       end
 
@@ -40,7 +44,7 @@ module Decanter
         # safe_constantize returns nil if match not found
         parser_str.safe_constantize ||
           concat_str(parser_str).safe_constantize ||
-          raise(NameError.new("cannot find parser #{parser_str}"))
+          raise(NameError, "cannot find parser #{parser_str}")
       end
 
       # expand to include preparsers
