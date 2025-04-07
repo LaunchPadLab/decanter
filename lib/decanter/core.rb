@@ -141,9 +141,7 @@ module Decanter
 
         case strict_mode
         when :ignore
-          if log_unhandled_keys_mode
-            p "#{name} ignoring unhandled keys: #{unhandled_keys.join(', ')}."
-          end
+          p "#{name} ignoring unhandled keys: #{unhandled_keys.join(', ')}." if log_unhandled_keys_mode
           {}
         when true
           raise(UnhandledKeysError,

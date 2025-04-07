@@ -38,9 +38,7 @@ module Decanter
                 "cannot find decanter from #{klass_or_string} with class #{klass_or_string.class}"
         end
 
-      unless constant.ancestors.include? Decanter::Base
-        raise ArgumentError, "#{constant.name} is not a decanter"
-      end
+      raise ArgumentError, "#{constant.name} is not a decanter" unless constant.ancestors.include? Decanter::Base
 
       constant
     end
