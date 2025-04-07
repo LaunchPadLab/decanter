@@ -9,10 +9,12 @@ module Decanter
         parse_format = options.fetch(:parse_format, '%m/%d/%Y')
         begin
           ::Date.strptime(val, parse_format)
-        rescue ArgumentError => e
-          raise Decanter::ValueFormatError, 'invalid Date value for format' if e.message == 'invalid date'
-
-          raise ArgumentError, e.message
+        rescue Date::Error => e
+          if e.message == 'invalid date'
+            raise Decanter::ValueFormatError, 'invalid Date value for format'
+          else
+            raise Decanter::ValueFormatError, e.message
+          end
         end
       end
     end
