@@ -7,7 +7,7 @@ AllCops:
     - 'tmp/**/*'
     - 'coverage/**/*'
 
-Style/Documentation:
+Gemspec/RequiredRubyVersion:
   Enabled: false
 
 Layout/LineLength:
@@ -43,6 +43,8 @@ Naming/PredicateName:
   Exclude:
     - 'lib/decanter/core.rb'
 
-Style/StringLiterals:
-  EnforcedStyle: single_quotes 
+Style/Documentation:
+  Enabled: false
 
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
