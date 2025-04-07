@@ -6,7 +6,6 @@ module Decanter
       parser do |val, options|
         raise Decanter::ParseError, 'Expects a single value' if val.is_a? Array
         next if val.nil? || val === ''
-
         parse_format = options.fetch(:parse_format, '%m/%d/%Y %I:%M:%S %p')
         begin
           ::DateTime.strptime(val, parse_format)
