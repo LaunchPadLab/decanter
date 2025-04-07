@@ -8,13 +8,13 @@ module Decanter
       decanter_name =
         case klass_or_sym
         when Class
-          klass_or_sym.name
+          "#{klass_or_sym.name}Decanter"
         when Symbol
-          klass_or_sym.to_s.singularize.camelize
+          "#{klass_or_sym.to_s.singularize.camelize}Decanter"
         else
           raise ArgumentError,
                 "cannot lookup decanter for #{klass_or_sym} with class #{klass_or_sym.class}"
-        end + 'Decanter'
+        end
       begin
         decanter_name.constantize
       rescue StandardError
