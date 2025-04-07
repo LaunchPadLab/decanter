@@ -8,7 +8,7 @@ module Decanter
       allow Integer
 
       parser do |val, _options|
-        next if val.nil? || val === ''
+        next if val.nil? || val == ''
 
         val.scan(REGEX).join.to_s
       end

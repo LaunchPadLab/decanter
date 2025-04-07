@@ -8,7 +8,7 @@ module Decanter
       allow Integer
 
       parser do |val, _options|
-        next if val.nil? || val === ''
+        next if val.nil? || val == ''
 
         if val.is_a?(Float)
           val.to_i
