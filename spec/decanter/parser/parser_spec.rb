@@ -16,17 +16,16 @@ describe Decanter::Parser do
                        def self.name
                          'BarParser'
                        end
-                     end.tap do |parser|
-                       parser.pre :date, :float
                      end)
+    BarParser.pre :date, :float
+
     Object.const_set('CheckInFieldDataParser',
                      Class.new(Decanter::Parser::ValueParser) do
                        def self.name
                          'BarParser'
                        end
-                     end.tap do |parser|
-                       parser.pre :date, :float
                      end)
+    CheckInFieldDataParser.pre :date, :float
   end
 
   describe '#parsers_for' do

@@ -232,27 +232,27 @@ describe Decanter::Core do
                          def self.name
                            'PctParser'
                          end
-                       end.tap do |parser|
-                         parser.pre :float
-                         parser.parser do |val, _options|
-                           val / 100
-                         end
                        end)
+
+      PctParser.pre :float
+      PctParser.parser do |val, _options|
+        val / 100
+      end
 
       Object.const_set('KeyValueSplitterParser',
                        Class.new(Decanter::Parser::HashParser) do
                          def self.name
                            'KeyValueSplitterParser'
                          end
-                       end.tap do |parser|
-                         parser.parser do |_name, val, _options|
-                           item_delimiter = ','
-                           pair_delimiter = ':'
-                           val.split(item_delimiter).reduce({}) do |memo, pair|
-                             memo.merge(Hash[*pair.split(pair_delimiter)])
-                           end
-                         end
                        end)
+
+      KeyValueSplitterParser.parser do |_name, val, _options|
+        item_delimiter = ','
+        pair_delimiter = ':'
+        val.split(item_delimiter).reduce({}) do |memo, pair|
+          memo.merge(Hash[*pair.split(pair_delimiter)])
+        end
+      end
 
       let(:key) { :afloat }
       let(:val) { 8.0 }
