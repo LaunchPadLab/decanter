@@ -27,6 +27,7 @@ describe 'JsonParser' do
       it 'raises a Decanter::ParseError' do
         expect { parser.parse(name, 1) }.to raise_error(Decanter::ParseError, 'Expects a JSON string')
         expect { parser.parse(name, true) }.to raise_error(Decanter::ParseError, 'Expects a JSON string')
+        expect { parser.parse(name, {}) }.to raise_error(Decanter::ParseError, 'Expects a JSON string')
       end
     end
 
