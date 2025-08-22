@@ -22,5 +22,11 @@ describe 'JsonParser' do
         expect(parser.parse(name, nil)).to match({name => nil})
       end
     end
+
+    context 'when provided with an invalid JSON string' do
+      it 'raises a Decanter::ParseError' do
+        expect { parser.parse(name, 'invalid') }.to raise_error(Decanter::ParseError)
+      end
+    end
   end
 end
