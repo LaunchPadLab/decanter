@@ -9,7 +9,7 @@ describe 'JsonParser' do
   describe '#parse' do
 
   context 'with a valid JSON string' do
-    it 'parses string value and returns a parsed JSON' do
+    it 'parses the string value and returns a parsed JSON' do
       expect(parser.parse(name, '{"key": "value"}')).to match({name => {"key" => "value"}})
       expect(parser.parse(name, '["hello", "goodbye"]')).to match({name => ["hello", "goodbye"]})
     end
@@ -35,7 +35,7 @@ describe 'JsonParser' do
       end
     end
 
-    context 'with string that is invalid JSON' do
+    context 'with a string that is invalid JSON' do
       json_parser_error = 'Invalid JSON string'
       it 'raises a Decanter::ParseError' do
         expect { parser.parse(name, 'invalid') }.to raise_error(Decanter::ParseError, json_parser_error)
