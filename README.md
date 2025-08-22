@@ -12,21 +12,31 @@ gem 'decanter', '~> 5.0'
 
 ## Contents
 
-- [Basic Usage](#basic-usage)
-  - [Decanters](#decanters)
-  - [Generators](#generators)
-  - [Decanting Collections](#decanting-collections)
-  - [Nested resources](#nested-resources)
-  - [Default parsers](#default-parsers)
-  - [Parser options](#parser-options)
-  - [Exceptions](#exceptions)
-- [Advanced usage](#advanced-usage)
-  - [Custom parsers](#custom-parsers)
-  - [Squashing inputs](#squashing-inputs)
-  - [Chaining parsers](#chaining-parsers)
-  - [Requiring params](#requiring-params)
-  - [Global configuration](#global-configuration)
-- [Contributing](#contributing)
+- [Decanter](#decanter)
+  - [Migration Guides](#migration-guides)
+  - [Contents](#contents)
+  - [Basic Usage](#basic-usage)
+    - [Decanters](#decanters)
+    - [Generators](#generators)
+      - [Decanters](#decanters-1)
+      - [Parsers](#parsers)
+      - [Resources](#resources)
+    - [Decanting Collections](#decanting-collections)
+      - [Control Over Decanting Collections](#control-over-decanting-collections)
+    - [Nested resources](#nested-resources)
+    - [Default parsers](#default-parsers)
+    - [Parser options](#parser-options)
+    - [Exceptions](#exceptions)
+  - [Advanced Usage](#advanced-usage)
+    - [Custom Parsers](#custom-parsers)
+      - [Custom parser methods](#custom-parser-methods)
+      - [Custom parser base classes](#custom-parser-base-classes)
+    - [Squashing inputs](#squashing-inputs)
+    - [Chaining parsers](#chaining-parsers)
+    - [Requiring params](#requiring-params)
+    - [Default values](#default-values)
+    - [Global configuration](#global-configuration)
+  - [Contributing](#contributing)
 
 ## Basic Usage
 
@@ -169,6 +179,11 @@ Note: these parsers are designed to operate on a single value, except for `:arra
 
 ```ruby
 input :ids, :array, parse_each: :integer
+```
+
+The `:json` parser may also accept an array, but the array must be provided as a single JSON-encoded string value:
+```
+'["abc", "def"]'
 ```
 
 ### Parser options
