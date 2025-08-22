@@ -3,8 +3,8 @@ module Decanter
     class JsonParser < ValueParser
 
       parser do |val, options|
-        raise Decanter::ParseError.new 'Expects a JSON string' if val.is_a?(Array) || val.is_a?(Hash)
         next if (val.nil? || val === '')
+        raise Decanter::ParseError.new 'Expects a JSON string' unless val.is_a?(String)
         JSON.parse(val)
       end
     end
