@@ -23,9 +23,10 @@ describe 'JsonParser' do
       end
     end
 
-    context 'with a number' do
+    context 'with a non-string value' do
       it 'raises a Decanter::ParseError' do
         expect { parser.parse(name, 1) }.to raise_error(Decanter::ParseError, 'Expects a JSON string')
+        expect { parser.parse(name, true) }.to raise_error(Decanter::ParseError, 'Expects a JSON string')
       end
     end
 

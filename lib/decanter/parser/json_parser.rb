@@ -11,7 +11,7 @@ module Decanter
       def self.parse_json(val)
         begin
           JSON.parse(val)
-        rescue JSON::ParserError
+        rescue 
           raise Decanter::ParseError.new 'Invalid JSON string'
         end
       end
