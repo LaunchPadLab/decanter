@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    decanter (5.0.0)
+    decanter (5.1.0)
       actionpack (>= 7.1.3.2)
       activesupport
       rails (>= 7.1.3.2)
