@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rails', '~> 7.1.3'
   spec.add_dependency 'actionpack', '~> 7.1.3'
   spec.add_dependency 'activesupport'
+  spec.add_dependency 'rack', '>= 3.1.18'
   spec.add_dependency 'rails-html-sanitizer', '>= 1.6.2'
 
   spec.add_development_dependency 'bundler', '~> 2.4.22'
